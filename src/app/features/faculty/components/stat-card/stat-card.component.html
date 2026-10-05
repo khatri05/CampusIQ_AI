@@ -1,0 +1,70 @@
+<div class="stat-card">
+
+  <!-- Top -->
+  <div class="stat-card-header">
+
+    <!-- Icon -->
+    <div
+      class="stat-icon"
+      [class.blue]="color === 'blue'"
+      [class.green]="color === 'green'"
+      [class.orange]="color === 'orange'"
+      [class.purple]="color === 'purple'"
+      [class.red]="color === 'red'"
+      [class.yellow]="color === 'yellow'"
+    >
+
+      <i [class]="'bi ' + icon"></i>
+
+    </div>
+
+
+    <!-- Trend -->
+    @if (trend) {
+
+      <span
+        class="stat-trend"
+        [class.trend-up]="trendType === 'up'"
+        [class.trend-down]="trendType === 'down'"
+        [class.trend-neutral]="trendType === 'neutral'"
+      >
+
+        @if (trendType === 'up') {
+          <i class="bi bi-arrow-up"></i>
+        }
+
+        @if (trendType === 'down') {
+          <i class="bi bi-arrow-down"></i>
+        }
+
+        {{ trend }}
+
+      </span>
+
+    }
+
+  </div>
+
+
+  <!-- Content -->
+  <div class="stat-card-content">
+
+    <span class="stat-title">
+      {{ title }}
+    </span>
+
+    <h2 class="stat-value">
+      {{ value }}
+    </h2>
+
+    @if (subtitle) {
+
+      <span class="stat-subtitle">
+        {{ subtitle }}
+      </span>
+
+    }
+
+  </div>
+
+</div>

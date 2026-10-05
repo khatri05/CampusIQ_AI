@@ -1,0 +1,880 @@
+<div class="projects-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Student Projects
+      </h1>
+
+      <p>
+        Monitor and review student academic projects
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  @if (errorMessage) {
+
+    <div class="alert alert-danger">
+
+      <i class="bi bi-exclamation-circle-fill"></i>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="btn-close"
+        (click)="errorMessage = ''"
+      ></button>
+
+    </div>
+
+  }
+
+
+  <!-- SUCCESS -->
+
+  @if (successMessage) {
+
+    <div class="alert alert-success">
+
+      <i class="bi bi-check-circle-fill"></i>
+
+      <span>
+        {{ successMessage }}
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon total">
+
+        <i class="bi bi-kanban-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Total Projects
+        </span>
+
+        <h3>
+          {{ totalProjects }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon ongoing">
+
+        <i class="bi bi-arrow-repeat"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Ongoing
+        </span>
+
+        <h3>
+          {{ ongoingProjects }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon completed">
+
+        <i class="bi bi-check-circle-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Completed
+        </span>
+
+        <h3>
+          {{ completedProjects }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon pending">
+
+        <i class="bi bi-hourglass-split"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Pending
+        </span>
+
+        <h3>
+          {{ pendingProjects }}
+        </h3>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTERS -->
+
+  <div class="filter-card">
+
+    <div class="search-wrapper">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="searchText"
+        (input)="filterProjects()"
+        placeholder="Search projects or students..."
+      />
+
+    </div>
+
+
+    <select
+      class="form-select filter-select"
+      [(ngModel)]="selectedSemester"
+      (change)="filterProjects()"
+    >
+
+      <option value="All">
+        All Semesters
+      </option>
+
+      @for (
+        semester of semesters;
+        track semester
+      ) {
+
+        <option
+          [value]="semester"
+        >
+          Semester {{ semester }}
+        </option>
+
+      }
+
+    </select>
+
+
+    <select
+      class="form-select filter-select"
+      [(ngModel)]="selectedDivision"
+      (change)="filterProjects()"
+    >
+
+      <option value="All">
+        All Divisions
+      </option>
+
+      @for (
+        division of divisions;
+        track division
+      ) {
+
+        <option
+          [value]="division"
+        >
+          Division {{ division }}
+        </option>
+
+      }
+
+    </select>
+
+
+    <select
+      class="form-select filter-select"
+      [(ngModel)]="selectedStatus"
+      (change)="filterProjects()"
+    >
+
+      <option value="All">
+        All Status
+      </option>
+
+      <option value="Ongoing">
+        Ongoing
+      </option>
+
+      <option value="Completed">
+        Completed
+      </option>
+
+      <option value="Pending">
+        Pending
+      </option>
+
+    </select>
+
+
+    <button
+      type="button"
+      class="clear-filter-btn"
+      (click)="clearFilters()"
+      title="Clear filters"
+    >
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  @if (isLoading) {
+
+    <div class="loading-container">
+
+      <div
+        class="spinner-border text-primary"
+      ></div>
+
+      <p>
+        Loading projects...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- EMPTY -->
+
+  @if (
+    !isLoading &&
+    filteredProjects.length === 0
+  ) {
+
+    <div class="empty-state">
+
+      <div class="empty-icon">
+
+        <i class="bi bi-kanban"></i>
+
+      </div>
+
+      <h3>
+        No Projects Found
+      </h3>
+
+      <p>
+        No student projects match your current filters.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- PROJECT TABLE -->
+
+  @if (
+    !isLoading &&
+    filteredProjects.length > 0
+  ) {
+
+    <div class="table-card">
+
+      <div class="table-responsive">
+
+        <table class="table project-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Project
+              </th>
+
+              <th>
+                Student
+              </th>
+
+              <th>
+                Semester
+              </th>
+
+              <th>
+                Division
+              </th>
+
+              <th>
+                Technologies
+              </th>
+
+              <th>
+                Start Date
+              </th>
+
+              <th>
+                End Date
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              project of filteredProjects;
+              track project.id
+            ) {
+
+              <tr>
+
+                <!-- PROJECT -->
+
+                <td>
+
+                  <div class="project-info">
+
+                    <div class="project-icon">
+
+                      <i class="bi bi-kanban-fill"></i>
+
+                    </div>
+
+                    <div>
+
+                      <strong>
+
+                        {{
+                          project.title ||
+                          project.name ||
+                          'Untitled Project'
+                        }}
+
+                      </strong>
+
+                      <small>
+
+                        {{
+                          project.description ||
+                          'No description'
+                        }}
+
+                      </small>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+
+                <!-- STUDENT -->
+
+                <td>
+
+                  <div class="student-info">
+
+                    <div class="student-avatar">
+
+                      {{
+                        (
+                          project.studentName ||
+                          project.enrollmentNo ||
+                          'S'
+                        ).charAt(0)
+                      }}
+
+                    </div>
+
+                    <div>
+
+                      <strong>
+
+                        {{
+                          project.studentName ||
+                          'Unknown Student'
+                        }}
+
+                      </strong>
+
+                      <small>
+
+                        {{
+                          project.enrollmentNo ||
+                          '-'
+                        }}
+
+                      </small>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+
+                <!-- SEMESTER -->
+
+                <td>
+
+                  @if (project.semester) {
+
+                    Sem {{ project.semester }}
+
+                  } @else {
+
+                    -
+
+                  }
+
+                </td>
+
+
+                <!-- DIVISION -->
+
+                <td>
+
+                  {{
+                    project.division ||
+                    '-'
+                  }}
+
+                </td>
+
+
+                <!-- TECHNOLOGIES -->
+
+                <td>
+
+                  <div class="technology-list">
+
+                    @for (
+                      technology of getTechnologies(project);
+                      track technology
+                    ) {
+
+                      <span class="technology-badge">
+
+                        {{ technology }}
+
+                      </span>
+
+                    } @empty {
+
+                      <span class="not-available">
+                        -
+                      </span>
+
+                    }
+
+                  </div>
+
+                </td>
+
+
+                <!-- START -->
+
+                <td>
+
+                  {{
+                    formatDate(
+                      project.startDate
+                    )
+                  }}
+
+                </td>
+
+
+                <!-- END -->
+
+                <td>
+
+                  {{
+                    formatDate(
+                      project.endDate
+                    )
+                  }}
+
+                </td>
+
+
+                <!-- STATUS -->
+
+                <td>
+
+                  <span
+                    class="status-badge"
+                    [class.ongoing-status]="
+                      getProjectStatus(project) === 'Ongoing'
+                    "
+                    [class.completed-status]="
+                      getProjectStatus(project) === 'Completed'
+                    "
+                    [class.pending-status]="
+                      getProjectStatus(project) === 'Pending'
+                    "
+                  >
+
+                    {{
+                      getProjectStatus(project)
+                    }}
+
+                  </span>
+
+                </td>
+
+
+                <!-- ACTION -->
+
+                <td>
+
+                  <button
+                    type="button"
+                    class="view-btn"
+                    title="View project"
+                    (click)="viewProject(project)"
+                  >
+
+                    <i class="bi bi-eye"></i>
+
+                  </button>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- PROJECT DETAILS -->
+
+  @if (showDetails && selectedProject) {
+
+    <div
+      class="modal-backdrop-custom"
+      (click)="closeDetails()"
+    >
+
+      <div
+        class="project-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+        <div class="modal-header-custom">
+
+          <div>
+
+            <h2>
+
+              {{
+                selectedProject.title ||
+                selectedProject.name ||
+                'Project Details'
+              }}
+
+            </h2>
+
+            <p>
+              Student Project
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="closeDetails()"
+          >
+
+            <i class="bi bi-x-lg"></i>
+
+          </button>
+
+        </div>
+
+
+        <div class="project-details">
+
+          <!-- STUDENT -->
+
+          <div class="detail-section">
+
+            <h4>
+              <i class="bi bi-person"></i>
+              Student
+            </h4>
+
+            <div class="detail-content">
+
+              <strong>
+
+                {{
+                  selectedProject.studentName ||
+                  'Unknown Student'
+                }}
+
+              </strong>
+
+              <span>
+
+                {{
+                  selectedProject.enrollmentNo ||
+                  'Enrollment not available'
+                }}
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- DESCRIPTION -->
+
+          <div class="detail-section">
+
+            <h4>
+              <i class="bi bi-file-text"></i>
+              Description
+            </h4>
+
+            <p class="description">
+
+              {{
+                selectedProject.description ||
+                'No description available.'
+              }}
+
+            </p>
+
+          </div>
+
+
+          <!-- ACADEMIC -->
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Semester
+              </span>
+
+              <strong>
+
+                {{
+                  selectedProject.semester ||
+                  '-'
+                }}
+
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Division
+              </span>
+
+              <strong>
+
+                {{
+                  selectedProject.division ||
+                  '-'
+                }}
+
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Start Date
+              </span>
+
+              <strong>
+
+                {{
+                  formatDate(
+                    selectedProject.startDate
+                  )
+                }}
+
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                End Date
+              </span>
+
+              <strong>
+
+                {{
+                  formatDate(
+                    selectedProject.endDate
+                  )
+                }}
+
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- TECHNOLOGIES -->
+
+          <div class="detail-section">
+
+            <h4>
+              <i class="bi bi-code-slash"></i>
+              Technologies
+            </h4>
+
+            <div class="technology-list large">
+
+              @for (
+                technology of getTechnologies(selectedProject);
+                track technology
+              ) {
+
+                <span class="technology-badge">
+
+                  {{ technology }}
+
+                </span>
+
+              } @empty {
+
+                <span class="not-available">
+                  No technologies specified
+                </span>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- LINKS -->
+
+          <div class="project-links">
+
+            @if (selectedProject.githubUrl) {
+
+              <a
+                [href]="selectedProject.githubUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="project-link github"
+              >
+
+                <i class="bi bi-github"></i>
+
+                GitHub
+
+              </a>
+
+            }
+
+
+            @if (selectedProject.liveUrl) {
+
+              <a
+                [href]="selectedProject.liveUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="project-link live"
+              >
+
+                <i class="bi bi-box-arrow-up-right"></i>
+
+                Live Project
+
+              </a>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,754 @@
+<div class="profile-page">
+
+  <!-- =========================
+       PAGE HEADER
+  ========================== -->
+  <div class="page-header">
+
+    <div>
+      <div class="page-title">
+        <i class="bi bi-person-vcard-fill"></i>
+        <h2>My Profile</h2>
+      </div>
+
+      <p>
+        View and manage your faculty profile information.
+      </p>
+    </div>
+
+    @if (!isEditing && !isLoading && !errorMessage) {
+      <button
+        type="button"
+        class="btn btn-primary edit-btn"
+        (click)="startEditing()"
+      >
+        <i class="bi bi-pencil-square"></i>
+        Edit Profile
+      </button>
+    }
+
+  </div>
+
+
+  <!-- =========================
+       LOADING
+  ========================== -->
+  @if (isLoading) {
+
+    <div class="state-card">
+
+      <div
+        class="spinner-border text-primary"
+        role="status"
+      ></div>
+
+      <span>Loading profile...</span>
+
+    </div>
+
+  }
+
+
+  <!-- =========================
+       ERROR
+  ========================== -->
+  @if (!isLoading && errorMessage) {
+
+    <div class="message-card error">
+
+      <i class="bi bi-exclamation-triangle-fill"></i>
+
+      <div>
+        <strong>Unable to load profile</strong>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- =========================
+       SUCCESS
+  ========================== -->
+  @if (successMessage) {
+
+    <div class="message-card success">
+
+      <i class="bi bi-check-circle-fill"></i>
+
+      <div>
+        <strong>Success</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading && !errorMessage) {
+
+    <!-- =========================
+         PROFILE SUMMARY
+    ========================== -->
+    <div class="profile-summary">
+
+      <div class="avatar-container">
+
+        @if (profile.profileImage) {
+
+          <img
+            [src]="profile.profileImage"
+            alt="Faculty profile"
+            class="profile-image"
+          />
+
+        } @else {
+
+          <div class="profile-avatar">
+            {{ initials }}
+          </div>
+
+        }
+
+        <span
+          class="online-status"
+          [class.inactive]="!isActive"
+        ></span>
+
+      </div>
+
+
+      <div class="profile-summary-info">
+
+        <h3>
+          {{ fullName }}
+        </h3>
+
+        <p class="designation">
+          <i class="bi bi-briefcase-fill"></i>
+
+          {{ profile.designation || 'Faculty' }}
+        </p>
+
+        <div class="summary-details">
+
+          <span>
+            <i class="bi bi-person-badge-fill"></i>
+            {{ profile.employeeId || 'Employee ID not available' }}
+          </span>
+
+          <span>
+            <i class="bi bi-envelope-fill"></i>
+            {{ profile.email || 'Email not available' }}
+          </span>
+
+        </div>
+
+        <span
+          class="status-badge"
+          [class.inactive]="!isActive"
+        >
+          <span class="status-dot"></span>
+
+          {{ isActive ? 'Active' : 'Inactive' }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         PERSONAL INFORMATION
+    ========================== -->
+    <div class="profile-card">
+
+      <div class="card-header-custom">
+
+        <div class="header-icon blue">
+          <i class="bi bi-person-fill"></i>
+        </div>
+
+        <div>
+          <h4>Personal Information</h4>
+
+          <p>
+            Your basic faculty information.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- =====================
+           VIEW MODE
+      ====================== -->
+      @if (!isEditing) {
+
+        <div class="info-grid">
+
+          <div class="info-item">
+            <i class="bi bi-person"></i>
+
+            <div>
+              <label>First Name</label>
+              <span>
+                {{ profile.firstName || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-person"></i>
+
+            <div>
+              <label>Last Name</label>
+              <span>
+                {{ profile.lastName || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-envelope"></i>
+
+            <div>
+              <label>Email Address</label>
+              <span>
+                {{ profile.email || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-telephone"></i>
+
+            <div>
+              <label>Phone Number</label>
+              <span>
+                {{ profile.phone || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-person-badge"></i>
+
+            <div>
+              <label>Employee ID</label>
+              <span>
+                {{ profile.employeeId || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-briefcase"></i>
+
+            <div>
+              <label>Designation</label>
+              <span>
+                {{ profile.designation || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-mortarboard"></i>
+
+            <div>
+              <label>Qualification</label>
+              <span>
+                {{ profile.qualification || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-book"></i>
+
+            <div>
+              <label>Specialization</label>
+              <span>
+                {{ profile.specialization || 'Not available' }}
+              </span>
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-building"></i>
+
+            <div>
+              <label>Department</label>
+
+              <span>
+                {{
+                  profile.departmentName ||
+                  profile.departmentId ||
+                  'Not available'
+                }}
+              </span>
+
+            </div>
+          </div>
+
+
+          <div class="info-item">
+            <i class="bi bi-calendar-event"></i>
+
+            <div>
+              <label>Joining Date</label>
+
+              <span>
+                {{
+                  profile.joiningDate
+                    ? (profile.joiningDate | date:'dd MMM yyyy')
+                    : 'Not available'
+                }}
+              </span>
+
+            </div>
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- =====================
+           EDIT MODE
+      ====================== -->
+      @if (isEditing) {
+
+        <form
+          class="profile-form"
+          (ngSubmit)="saveProfile()"
+        >
+
+          <div class="form-grid">
+
+
+            <!-- First Name -->
+            <div class="form-group">
+
+              <label for="firstName">
+                First Name
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-person"></i>
+
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editProfile.firstName"
+                  placeholder="Enter first name"
+                  required
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Last Name -->
+            <div class="form-group">
+
+              <label for="lastName">
+                Last Name
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-person"></i>
+
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editProfile.lastName"
+                  placeholder="Enter last name"
+                  required
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Email -->
+            <div class="form-group">
+
+              <label for="email">
+                Email Address
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-envelope"></i>
+
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  [value]="profile.email"
+                  disabled
+                />
+
+              </div>
+
+              <small>
+                <i class="bi bi-lock-fill"></i>
+                Email cannot be changed.
+              </small>
+
+            </div>
+
+
+            <!-- Employee ID -->
+            <div class="form-group">
+
+              <label for="employeeId">
+                Employee ID
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-person-badge"></i>
+
+                <input
+                  id="employeeId"
+                  type="text"
+                  class="form-control"
+                  [value]="profile.employeeId"
+                  disabled
+                />
+
+              </div>
+
+              <small>
+                <i class="bi bi-lock-fill"></i>
+                Employee ID is managed by administration.
+              </small>
+
+            </div>
+
+
+            <!-- Phone -->
+            <div class="form-group">
+
+              <label for="phone">
+                Phone Number
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-telephone"></i>
+
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  class="form-control"
+                  [(ngModel)]="editProfile.phone"
+                  placeholder="Enter phone number"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Designation -->
+            <div class="form-group">
+
+              <label for="designation">
+                Designation
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-briefcase"></i>
+
+                <input
+                  id="designation"
+                  name="designation"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editProfile.designation"
+                  placeholder="Enter designation"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Qualification -->
+            <div class="form-group">
+
+              <label for="qualification">
+                Qualification
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-mortarboard"></i>
+
+                <input
+                  id="qualification"
+                  name="qualification"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editProfile.qualification"
+                  placeholder="Enter qualification"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Specialization -->
+            <div class="form-group">
+
+              <label for="specialization">
+                Specialization
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-book"></i>
+
+                <input
+                  id="specialization"
+                  name="specialization"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editProfile.specialization"
+                  placeholder="Enter specialization"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Department -->
+            <div class="form-group">
+
+              <label for="department">
+                Department
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-building"></i>
+
+                <input
+                  id="department"
+                  type="text"
+                  class="form-control"
+                  [value]="
+                    profile.departmentName ||
+                    profile.departmentId ||
+                    'Not available'
+                  "
+                  disabled
+                />
+
+              </div>
+
+              <small>
+                <i class="bi bi-lock-fill"></i>
+                Department is managed by administration.
+              </small>
+
+            </div>
+
+
+            <!-- Joining Date -->
+            <div class="form-group">
+
+              <label for="joiningDate">
+                Joining Date
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-calendar-event"></i>
+
+                <input
+                  id="joiningDate"
+                  type="text"
+                  class="form-control"
+                  [value]="
+                    profile.joiningDate
+                      ? profile.joiningDate
+                      : 'Not available'
+                  "
+                  disabled
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Profile Image -->
+            <div class="form-group full-width">
+
+              <label for="profileImage">
+                Profile Image URL
+              </label>
+
+              <div class="input-container">
+
+                <i class="bi bi-image"></i>
+
+                <input
+                  id="profileImage"
+                  name="profileImage"
+                  type="url"
+                  class="form-control"
+                  [(ngModel)]="editProfile.profileImage"
+                  placeholder="Enter profile image URL"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =====================
+               ACTION BUTTONS
+          ====================== -->
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="btn btn-light cancel-btn"
+              (click)="cancelEditing()"
+              [disabled]="isSaving"
+            >
+              <i class="bi bi-x-lg"></i>
+              Cancel
+            </button>
+
+
+            <button
+              type="submit"
+              class="btn btn-primary save-btn"
+              [disabled]="isSaving"
+            >
+
+              @if (isSaving) {
+
+                <span
+                  class="spinner-border spinner-border-sm"
+                  aria-hidden="true"
+                ></span>
+
+                Saving...
+
+              } @else {
+
+                <i class="bi bi-check-lg"></i>
+
+                Save Changes
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      }
+
+    </div>
+
+
+    <!-- =========================
+         ACCOUNT INFORMATION
+    ========================== -->
+    <div class="profile-card">
+
+      <div class="card-header-custom">
+
+        <div class="header-icon green">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+
+        <div>
+          <h4>Account Information</h4>
+
+          <p>
+            Information related to your CampusIQ AI account.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="account-grid">
+
+        <div class="account-item">
+
+          <div class="account-icon green">
+            <i class="bi bi-shield-check"></i>
+          </div>
+
+          <div>
+            <label>Account Status</label>
+
+            <strong
+              [class.inactive-text]="!isActive"
+            >
+              {{ isActive ? 'Active' : 'Inactive' }}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="account-item">
+
+          <div class="account-icon blue">
+            <i class="bi bi-person-badge-fill"></i>
+          </div>
+
+          <div>
+            <label>Role</label>
+
+            <strong>
+              Faculty
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

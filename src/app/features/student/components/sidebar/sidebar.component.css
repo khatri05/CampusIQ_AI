@@ -1,0 +1,158 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  background: #111827;
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid #263244;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.logo h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.logo small {
+  color: #9ca3af;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 15px 12px;
+}
+
+.nav-section {
+  margin: 22px 10px 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  color: #6b7280;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 11px 13px;
+
+  margin-bottom: 4px;
+
+  color: #cbd5e1;
+  text-decoration: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.nav-item:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.nav-item.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.nav-item span:first-child {
+  width: 22px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid #263244;
+}
+
+.logout-btn {
+  width: 100%;
+
+  padding: 11px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #cbd5e1;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  color: #ffffff;
+  background: #1e293b;
+}
+
+.sidebar-link.active {
+  color: #ffffff;
+  background: #1e293b;
+}
+
+.sidebar-icon {
+  width: 28px;
+  min-width: 28px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.sidebar-text {
+  font-size: 17px;
+}

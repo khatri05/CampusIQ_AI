@@ -1,0 +1,552 @@
+<div class="certifications-page">
+
+  <div class="certifications-content">
+
+    <!-- Header -->
+    <div class="page-header">
+
+      <div>
+        <h1>My Certifications</h1>
+
+        <p>
+          Manage your professional certifications
+          and credentials
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="add-btn"
+        (click)="openAddForm()"
+      >
+        <span>+</span>
+        Add Certification
+      </button>
+
+    </div>
+
+
+    <!-- Success -->
+    <div
+      *ngIf="successMessage"
+      class="alert-message success"
+    >
+      <span>✓</span>
+      {{ successMessage }}
+    </div>
+
+
+    <!-- Error -->
+    <div
+      *ngIf="errorMessage"
+      class="alert-message error"
+    >
+      <span>!</span>
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-icon blue">
+          🎓
+        </div>
+
+        <div>
+          <span>Total Certifications</span>
+
+          <strong>
+            {{ getTotalCertifications() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon green">
+          ✓
+        </div>
+
+        <div>
+          <span>Active</span>
+
+          <strong>
+            {{ getActiveCertifications() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon red">
+          !
+        </div>
+
+        <div>
+          <span>Expired</span>
+
+          <strong>
+            {{ getExpiredCertifications() }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      *ngIf="loading"
+      class="loading-container"
+    >
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading certifications...
+      </p>
+
+    </div>
+
+
+    <!-- Empty -->
+    <div
+      *ngIf="
+        !loading &&
+        certifications.length === 0
+      "
+      class="empty-state"
+    >
+
+      <div class="empty-icon">
+        🎓
+      </div>
+
+      <h2>
+        No Certifications Added
+      </h2>
+
+      <p>
+        Add your professional certifications
+        to strengthen your student profile.
+      </p>
+
+      <button
+        type="button"
+        class="add-btn"
+        (click)="openAddForm()"
+      >
+        + Add Your First Certification
+      </button>
+
+    </div>
+
+
+    <!-- Certification Grid -->
+    <div
+      *ngIf="
+        !loading &&
+        certifications.length > 0
+      "
+      class="certifications-grid"
+    >
+
+      <div
+        class="certification-card"
+        *ngFor="
+          let certification of certifications
+        "
+      >
+
+        <!-- Card Header -->
+        <div class="card-header">
+
+          <div class="certificate-icon">
+            🎓
+          </div>
+
+          <div class="card-actions">
+
+            <button
+              type="button"
+              class="icon-btn"
+              title="Edit"
+              (click)="
+                openEditForm(certification)
+              "
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="icon-btn delete"
+              title="Delete"
+              (click)="
+                deleteCertification(certification)
+              "
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Certification Name -->
+        <div class="certification-info">
+
+          <h2>
+            {{ certification.name }}
+          </h2>
+
+          <p class="organization">
+            {{ certification.issuingOrganization }}
+          </p>
+
+        </div>
+
+
+        <!-- Status -->
+        <div class="status-row">
+
+          <span
+            class="status-badge"
+            [ngClass]="
+              getStatusClass(certification)
+            "
+          >
+            {{ getStatus(certification) }}
+          </span>
+
+        </div>
+
+
+        <!-- Dates -->
+        <div class="date-section">
+
+          <div class="date-item">
+
+            <span>Issued</span>
+
+            <strong>
+              {{
+                formatDate(
+                  certification.issueDate
+                )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="date-item">
+
+            <span>Expiry</span>
+
+            <strong>
+              {{
+                certification.expiryDate
+                  ? formatDate(
+                      certification.expiryDate
+                    )
+                  : 'No Expiry'
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Credential -->
+        <div
+          *ngIf="
+            certification.credentialId
+          "
+          class="credential"
+        >
+
+          <span>
+            Credential ID
+          </span>
+
+          <strong>
+            {{ certification.credentialId }}
+          </strong>
+
+        </div>
+
+
+        <!-- Description -->
+        <p
+          *ngIf="
+            certification.description
+          "
+          class="description"
+        >
+          {{ certification.description }}
+        </p>
+
+
+        <!-- View Certificate -->
+        <a
+          *ngIf="
+            certification.credentialUrl
+          "
+          [href]="
+            certification.credentialUrl
+          "
+          target="_blank"
+          rel="noopener noreferrer"
+          class="view-btn"
+        >
+          View Certificate
+          <span>↗</span>
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Modal -->
+  <div
+    *ngIf="showForm"
+    class="modal-overlay"
+    (click)="closeForm()"
+  >
+
+    <div
+      class="certification-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            {{
+              isEditMode
+                ? 'Edit Certification'
+                : 'Add Certification'
+            }}
+          </h2>
+
+          <p>
+            {{
+              isEditMode
+                ? 'Update certification details'
+                : 'Add a new certification'
+            }}
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeForm()"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- Form -->
+      <form
+        class="certification-form"
+        (ngSubmit)="saveCertification()"
+      >
+
+        <!-- Name -->
+        <div class="form-group">
+
+          <label>
+            Certification Name
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="
+              certificationForm.name
+            "
+            placeholder="e.g. AWS Certified Cloud Practitioner"
+            required
+          />
+
+        </div>
+
+
+        <!-- Organization -->
+        <div class="form-group">
+
+          <label>
+            Issuing Organization
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="issuingOrganization"
+            [(ngModel)]="
+              certificationForm
+                .issuingOrganization
+            "
+            placeholder="e.g. Amazon Web Services"
+            required
+          />
+
+        </div>
+
+
+        <!-- Dates -->
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Issue Date
+            </label>
+
+            <input
+              type="date"
+              name="issueDate"
+              [(ngModel)]="
+                certificationForm.issueDate
+              "
+            />
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Expiry Date
+            </label>
+
+            <input
+              type="date"
+              name="expiryDate"
+              [(ngModel)]="
+                certificationForm.expiryDate
+              "
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Credential ID -->
+        <div class="form-group">
+
+          <label>
+            Credential ID
+          </label>
+
+          <input
+            type="text"
+            name="credentialId"
+            [(ngModel)]="
+              certificationForm.credentialId
+            "
+            placeholder="e.g. ABC123456"
+          />
+
+        </div>
+
+
+        <!-- Credential URL -->
+        <div class="form-group">
+
+          <label>
+            Credential URL
+          </label>
+
+          <input
+            type="url"
+            name="credentialUrl"
+            [(ngModel)]="
+              certificationForm.credentialUrl
+            "
+            placeholder="https://..."
+          />
+
+        </div>
+
+
+        <!-- Description -->
+        <div class="form-group">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            name="description"
+            rows="4"
+            [(ngModel)]="
+              certificationForm.description
+            "
+            placeholder="Describe this certification..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="saving"
+          >
+
+            {{
+              saving
+                ? 'Saving...'
+                : (
+                    isEditMode
+                      ? 'Update Certification'
+                      : 'Add Certification'
+                  )
+            }}
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

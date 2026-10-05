@@ -1,0 +1,135 @@
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  width: 100%;
+  height: 75px;
+  min-height: 75px;
+
+  padding: 0 30px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+}
+
+/* Navbar Heading */
+.top-navbar h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #111827;
+}
+
+/* Navbar Subtitle */
+.top-navbar p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Right Side Actions */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* Notification Button */
+.notification-btn {
+  position: relative;
+
+  border: none;
+  background: transparent;
+
+  font-size: 20px;
+  cursor: pointer;
+
+  padding: 5px;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+
+  top: -5px;
+  right: -6px;
+
+  width: 17px;
+  height: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ef4444;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* User Profile */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Avatar */
+.avatar {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* User Information */
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* User Name */
+.user-info strong {
+  font-size: 14px;
+  color: #111827;
+}
+
+/* User Role */
+.user-info small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .top-navbar {
+    padding: 0 20px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .navbar-actions {
+    gap: 15px;
+  }
+}

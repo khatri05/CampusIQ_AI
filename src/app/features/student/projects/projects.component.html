@@ -1,0 +1,745 @@
+<div class="projects-page">
+
+  <div class="projects-content">
+
+    <!-- Header -->
+    <div class="page-header">
+
+      <div>
+        <h1>My Projects</h1>
+
+        <p>
+          Showcase your academic and personal projects
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="add-btn"
+        (click)="openAddForm()"
+      >
+        <span>+</span>
+        Add Project
+      </button>
+
+    </div>
+
+
+    <!-- Success -->
+    <div
+      *ngIf="successMessage"
+      class="alert-message success"
+    >
+      <span>✓</span>
+      {{ successMessage }}
+    </div>
+
+
+    <!-- Error -->
+    <div
+      *ngIf="errorMessage"
+      class="alert-message error"
+    >
+      <span>!</span>
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-icon blue">
+          📁
+        </div>
+
+        <div>
+          <span>Total Projects</span>
+
+          <strong>
+            {{ getTotalProjects() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon green">
+          ✓
+        </div>
+
+        <div>
+          <span>Completed</span>
+
+          <strong>
+            {{ getCompletedProjects() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon purple">
+          🚀
+        </div>
+
+        <div>
+          <span>In Progress</span>
+
+          <strong>
+            {{ getInProgressProjects() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon orange">
+          📌
+        </div>
+
+        <div>
+          <span>Planned</span>
+
+          <strong>
+            {{ getPlannedProjects() }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      *ngIf="loading"
+      class="loading-container"
+    >
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading projects...
+      </p>
+
+    </div>
+
+
+    <!-- Empty -->
+    <div
+      *ngIf="
+        !loading &&
+        projects.length === 0
+      "
+      class="empty-state"
+    >
+
+      <div class="empty-icon">
+        📁
+      </div>
+
+      <h2>
+        No Projects Added
+      </h2>
+
+      <p>
+        Add your academic, personal or professional
+        projects to showcase your experience.
+      </p>
+
+      <button
+        type="button"
+        class="add-btn"
+        (click)="openAddForm()"
+      >
+        + Add Your First Project
+      </button>
+
+    </div>
+
+
+    <!-- Project Grid -->
+    <div
+      *ngIf="
+        !loading &&
+        projects.length > 0
+      "
+      class="projects-grid"
+    >
+
+      <div
+        class="project-card"
+        *ngFor="
+          let project of projects
+        "
+      >
+
+        <!-- Card Header -->
+        <div class="card-header">
+
+          <div class="project-icon">
+            📁
+          </div>
+
+          <div class="card-actions">
+
+            <button
+              type="button"
+              class="icon-btn"
+              title="Edit"
+              (click)="
+                openEditForm(project)
+              "
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="icon-btn delete"
+              title="Delete"
+              (click)="
+                deleteProject(project)
+              "
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Project Info -->
+        <div class="project-info">
+
+          <div class="title-row">
+
+            <h2>
+              {{ project.projectName }}
+            </h2>
+
+            <span
+              class="status-badge"
+              [ngClass]="
+                getStatusClass(project.status)
+              "
+            >
+              {{ project.status }}
+            </span>
+
+          </div>
+
+          <p
+            *ngIf="project.category"
+            class="category"
+          >
+            {{ project.category }}
+          </p>
+
+        </div>
+
+
+        <!-- Description -->
+        <p
+          *ngIf="project.description"
+          class="description"
+        >
+          {{ project.description }}
+        </p>
+
+
+        <!-- Technologies -->
+        <div
+          *ngIf="
+            project.technologies &&
+            project.technologies.length > 0
+          "
+          class="technologies"
+        >
+
+          <span
+            *ngFor="
+              let technology of project.technologies
+            "
+            class="technology"
+          >
+            {{ technology }}
+          </span>
+
+        </div>
+
+
+        <!-- Project Details -->
+        <div class="project-details">
+
+          <div
+            *ngIf="project.role"
+            class="detail-item"
+          >
+
+            <span>Role</span>
+
+            <strong>
+              {{ project.role }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>Team Size</span>
+
+            <strong>
+              {{ project.teamSize }}
+              {{
+                project.teamSize === 1
+                  ? 'member'
+                  : 'members'
+              }}
+            </strong>
+
+          </div>
+
+
+          <div
+            *ngIf="project.startDate"
+            class="detail-item"
+          >
+
+            <span>Start Date</span>
+
+            <strong>
+              {{
+                formatDate(
+                  project.startDate
+                )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div
+            *ngIf="project.endDate"
+            class="detail-item"
+          >
+
+            <span>End Date</span>
+
+            <strong>
+              {{
+                formatDate(
+                  project.endDate
+                )
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Links -->
+        <div
+          *ngIf="
+            project.projectUrl ||
+            project.githubUrl
+          "
+          class="project-links"
+        >
+
+          <a
+            *ngIf="project.projectUrl"
+            [href]="project.projectUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-link"
+          >
+            🔗 Live Project
+          </a>
+
+          <a
+            *ngIf="project.githubUrl"
+            [href]="project.githubUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-link github"
+          >
+            💻 GitHub
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Add/Edit Modal -->
+  <div
+    *ngIf="showForm"
+    class="modal-overlay"
+    (click)="closeForm()"
+  >
+
+    <div
+      class="project-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            {{
+              isEditMode
+                ? 'Edit Project'
+                : 'Add Project'
+            }}
+          </h2>
+
+          <p>
+            {{
+              isEditMode
+                ? 'Update your project details'
+                : 'Add a project to your profile'
+            }}
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeForm()"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- Form -->
+      <form
+        class="project-form"
+        (ngSubmit)="saveProject()"
+      >
+
+        <!-- Project Name -->
+        <div class="form-group">
+
+          <label>
+            Project Name
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="projectName"
+            [(ngModel)]="
+              projectForm.projectName
+            "
+            placeholder="e.g. CampusIQ AI"
+            required
+          />
+
+        </div>
+
+
+        <!-- Category -->
+        <div class="form-group">
+
+          <label>
+            Category
+          </label>
+
+          <input
+            type="text"
+            name="category"
+            [(ngModel)]="
+              projectForm.category
+            "
+            placeholder="e.g. AI / Web Development"
+          />
+
+        </div>
+
+
+        <!-- Role -->
+        <div class="form-group">
+
+          <label>
+            Your Role
+          </label>
+
+          <input
+            type="text"
+            name="role"
+            [(ngModel)]="
+              projectForm.role
+            "
+            placeholder="e.g. Full Stack Developer"
+          />
+
+        </div>
+
+
+        <!-- Technologies -->
+        <div class="form-group">
+
+          <label>
+            Technologies
+          </label>
+
+          <div class="technology-input">
+
+            <input
+              type="text"
+              name="technologyInput"
+              [(ngModel)]="technologyInput"
+              (keydown)="
+                handleTechnologyKey($event)
+              "
+              placeholder="e.g. Angular"
+            />
+
+            <button
+              type="button"
+              (click)="addTechnology()"
+            >
+              Add
+            </button>
+
+          </div>
+
+
+          <div
+            *ngIf="
+              projectForm.technologies.length > 0
+            "
+            class="technology-list"
+          >
+
+            <span
+              *ngFor="
+                let technology of
+                projectForm.technologies;
+                let i = index
+              "
+              class="technology-chip"
+            >
+
+              {{ technology }}
+
+              <button
+                type="button"
+                (click)="
+                  removeTechnology(i)
+                "
+              >
+                ×
+              </button>
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- Dates -->
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Start Date
+            </label>
+
+            <input
+              type="date"
+              name="startDate"
+              [(ngModel)]="
+                projectForm.startDate
+              "
+            />
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              End Date
+            </label>
+
+            <input
+              type="date"
+              name="endDate"
+              [(ngModel)]="
+                projectForm.endDate
+              "
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Team Size + Status -->
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Team Size
+            </label>
+
+            <input
+              type="number"
+              name="teamSize"
+              [(ngModel)]="
+                projectForm.teamSize
+              "
+              min="1"
+            />
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Status
+            </label>
+
+            <select
+              name="status"
+              [(ngModel)]="
+                projectForm.status
+              "
+            >
+
+              <option
+                *ngFor="
+                  let status of statuses
+                "
+                [value]="status"
+              >
+                {{ status }}
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- Project URL -->
+        <div class="form-group">
+
+          <label>
+            Project URL
+          </label>
+
+          <input
+            type="url"
+            name="projectUrl"
+            [(ngModel)]="
+              projectForm.projectUrl
+            "
+            placeholder="https://..."
+          />
+
+        </div>
+
+
+        <!-- GitHub -->
+        <div class="form-group">
+
+          <label>
+            GitHub URL
+          </label>
+
+          <input
+            type="url"
+            name="githubUrl"
+            [(ngModel)]="
+              projectForm.githubUrl
+            "
+            placeholder="https://github.com/..."
+          />
+
+        </div>
+
+
+        <!-- Description -->
+        <div class="form-group">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            name="description"
+            rows="4"
+            [(ngModel)]="
+              projectForm.description
+            "
+            placeholder="Describe your project..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="saving"
+          >
+            {{
+              saving
+                ? 'Saving...'
+                : (
+                    isEditMode
+                      ? 'Update Project'
+                      : 'Add Project'
+                  )
+            }}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

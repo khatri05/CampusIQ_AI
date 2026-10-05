@@ -1,0 +1,211 @@
+/* =========================
+   STAT CARD
+========================= */
+
+.stat-card {
+  min-height: 150px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 14px;
+
+  transition: all 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #dbeafe;
+
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+/* =========================
+   ICON
+========================= */
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  font-size: 19px;
+}
+
+
+/* Blue */
+
+.stat-icon.blue {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* Green */
+
+.stat-icon.green {
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+
+/* Orange */
+
+.stat-icon.orange {
+  background: #fff7ed;
+
+  color: #ea580c;
+}
+
+
+/* Purple */
+
+.stat-icon.purple {
+  background: #faf5ff;
+
+  color: #9333ea;
+}
+
+
+/* Red */
+
+.stat-icon.red {
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+
+/* Yellow */
+
+.stat-icon.yellow {
+  background: #fefce8;
+
+  color: #ca8a04;
+}
+
+
+/* =========================
+   TREND
+========================= */
+
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 4px 7px;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.trend-up {
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+.trend-down {
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.trend-neutral {
+  background: #f8fafc;
+
+  color: #64748b;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+.stat-card-content {
+  margin-top: 16px;
+}
+
+.stat-title {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stat-value {
+  margin: 5px 0 3px;
+
+  color: #111827;
+
+  font-size: 26px;
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+.stat-subtitle {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+  .stat-card {
+    padding: 16px;
+
+    min-height: 140px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+
+    font-size: 17px;
+  }
+
+  .stat-value {
+    font-size: 23px;
+  }
+
+}

@@ -1,0 +1,665 @@
+<div class="attendance-page">
+
+  <!-- =====================================
+       Loading
+  ====================================== -->
+
+  @if (loading) {
+
+    <div class="loading-card">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading attendance data...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================
+       Error
+  ====================================== -->
+
+  @if (!loading && errorMessage) {
+
+    <div class="error-card">
+
+      <h4>
+        Unable to load attendance
+      </h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="retry()"
+      >
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!loading && !errorMessage) {
+
+    <!-- =====================================
+         Page Header
+    ====================================== -->
+
+    <div class="page-header">
+
+      <div>
+
+        <h2>
+          Attendance
+        </h2>
+
+        <p>
+          Track your attendance and
+          subject-wise participation.
+        </p>
+
+      </div>
+
+
+      <!-- Semester -->
+      <div class="semester-selector">
+
+        <select
+          [value]="selectedSemester"
+          (change)="onSemesterChange($event)"
+        >
+
+          <option value="Current Semester">
+            Current Semester
+          </option>
+
+
+          @for (
+            semester of availableSemesters;
+            track semester
+          ) {
+
+            <option [value]="semester">
+              {{ semester }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================
+         Summary Cards
+    ====================================== -->
+
+    <div class="summary-grid">
+
+      <!-- Overall -->
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          📊
+        </div>
+
+        <div>
+
+          <span>
+            Overall Attendance
+          </span>
+
+          <h3>
+            {{ overallAttendanceDisplay }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Present -->
+      <div class="summary-card">
+
+        <div class="summary-icon green">
+          ✓
+        </div>
+
+        <div>
+
+          <span>
+            Present
+          </span>
+
+          <h3>
+            {{ presentClasses }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Absent -->
+      <div class="summary-card">
+
+        <div class="summary-icon red">
+          ✕
+        </div>
+
+        <div>
+
+          <span>
+            Absent
+          </span>
+
+          <h3>
+            {{ absentClasses }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Late -->
+      <div class="summary-card">
+
+        <div class="summary-icon yellow">
+          ⏰
+        </div>
+
+        <div>
+
+          <span>
+            Late
+          </span>
+
+          <h3>
+            {{ lateClasses }}
+          </h3>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================
+         Attendance Overview
+    ====================================== -->
+
+    <div class="attendance-overview">
+
+      <!-- Overview Card -->
+      <div class="overview-card">
+
+        <div class="overview-header">
+
+          <div>
+
+            <h3>
+              Attendance Overview
+            </h3>
+
+            <p>
+              {{ selectedSemester }} attendance status
+            </p>
+
+          </div>
+
+
+          <span
+            class="status-good"
+            [ngClass]="
+              getAttendanceClass(
+                overallAttendance || 0
+              )
+            "
+          >
+
+            {{
+              getAttendanceStatus(
+                overallAttendance
+              )
+            }}
+
+          </span>
+
+        </div>
+
+
+        <div class="overview-content">
+
+          <!-- Dynamic Circle -->
+          <div
+            class="attendance-circle"
+            [style.background]="
+              attendanceCircleBackground
+            "
+          >
+
+            <div>
+
+              <strong>
+                {{ overallAttendanceDisplay }}
+              </strong>
+
+              <span>
+                Overall
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Information -->
+          <div class="attendance-info">
+
+            <div class="info-row">
+
+              <span>
+                Total Classes
+              </span>
+
+              <strong>
+                {{ totalClasses }}
+              </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span>
+                Present
+              </span>
+
+              <strong class="text-green">
+                {{ presentClasses }}
+              </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span>
+                Absent
+              </span>
+
+              <strong class="text-red">
+                {{ absentClasses }}
+              </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+              <span>
+                Late
+              </span>
+
+              <strong class="text-yellow">
+                {{ lateClasses }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           Requirement
+      ====================================== -->
+
+      <div class="requirement-card">
+
+        <h3>
+          Attendance Requirement
+        </h3>
+
+        <p>
+
+          Maintain at least
+          <strong>75%</strong>
+          attendance to remain eligible
+          for examinations.
+
+        </p>
+
+
+        <div class="requirement-bar">
+
+          <div
+            class="requirement-value"
+            [style.width.%]="
+              overallAttendance || 0
+            "
+          ></div>
+
+        </div>
+
+
+        <div class="requirement-footer">
+
+          <span>
+            0%
+          </span>
+
+          <strong>
+            Required: 75%
+          </strong>
+
+          <span>
+            100%
+          </span>
+
+        </div>
+
+
+        @if (overallAttendance === null) {
+
+          <div class="requirement-success">
+
+            ℹ No attendance records available yet.
+
+          </div>
+
+        }
+
+        @else if (meetsRequirement) {
+
+          <div class="requirement-success">
+
+            ✓ You currently meet the minimum
+            attendance requirement.
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="requirement-danger">
+
+            ⚠ Your attendance is below the
+            minimum requirement.
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================
+         Subject Attendance
+    ====================================== -->
+
+    <div class="subjects-card">
+
+      <div class="section-header">
+
+        <div>
+
+          <h3>
+            Subject-wise Attendance
+          </h3>
+
+          <p>
+            Attendance details for each subject
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (subjects.length > 0) {
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Subject
+                </th>
+
+                <th>
+                  Total Classes
+                </th>
+
+                <th>
+                  Present
+                </th>
+
+                <th>
+                  Absent
+                </th>
+
+                <th>
+                  Late
+                </th>
+
+                <th>
+                  Attendance
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                subject of subjects;
+                track subject.subjectId
+              ) {
+
+                <tr>
+
+                  <!-- Subject -->
+                  <td>
+
+                    <div class="subject-name">
+
+                      <div class="subject-icon">
+
+                        {{
+                          subject.code
+                            .charAt(0)
+                            .toUpperCase()
+                        }}
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {{ subject.subject }}
+                        </strong>
+
+                        <small>
+                          {{ subject.code }}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- Total -->
+                  <td>
+                    {{ subject.total }}
+                  </td>
+
+
+                  <!-- Present -->
+                  <td class="text-green">
+
+                    {{ subject.present }}
+
+                  </td>
+
+
+                  <!-- Absent -->
+                  <td class="text-red">
+
+                    {{ subject.absent }}
+
+                  </td>
+
+
+                  <!-- Late -->
+                  <td class="text-yellow">
+
+                    {{ subject.late }}
+
+                  </td>
+
+
+                  <!-- Percentage -->
+                  <td>
+
+                    <div class="percentage-wrapper">
+
+                      <span>
+
+                        {{ subject.percentage }}%
+
+                      </span>
+
+
+                      <div class="mini-progress">
+
+                        <div
+                          class="mini-progress-value"
+                          [class.good]="
+                            subject.percentage >= 85
+                          "
+                          [class.warning]="
+                            subject.percentage >= 75 &&
+                            subject.percentage < 85
+                          "
+                          [class.danger]="
+                            subject.percentage < 75
+                          "
+                          [style.width.%]="
+                            subject.percentage
+                          "
+                        ></div>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- Status -->
+                  <td>
+
+                    <span
+                      class="attendance-status"
+                      [ngClass]="
+                        getAttendanceClass(
+                          subject.percentage
+                        )
+                      "
+                    >
+
+                      @if (
+                        subject.percentage >= 85
+                      ) {
+
+                        Good
+
+                      }
+
+                      @else if (
+                        subject.percentage >= 75
+                      ) {
+
+                        Warning
+
+                      }
+
+                      @else {
+
+                        Critical
+
+                      }
+
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            📅
+          </div>
+
+          <h4>
+            No Attendance Records
+          </h4>
+
+          <p>
+            Attendance data will appear here
+            once your classes are recorded.
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

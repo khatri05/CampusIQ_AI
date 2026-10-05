@@ -1,0 +1,609 @@
+<div class="recommendations-page">
+
+  <!-- ================= HEADER ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="eyebrow">
+        AI CAREER ASSISTANT
+      </div>
+
+      <h1>
+        AI Recommendations
+      </h1>
+
+      <p>
+        Personalized recommendations based on your
+        skill gaps and career goals.
+      </p>
+
+    </div>
+
+    <div class="header-icon">
+      <i class="bi bi-stars"></i>
+    </div>
+
+  </div>
+
+
+  <!-- ================= ALERTS ================= -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert-box success">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ successMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="successMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <div
+    *ngIf="errorMessage"
+    class="alert-box error">
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="errorMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- ================= TOP ACTION ================= -->
+
+  <section class="generate-card">
+
+    <div class="generate-content">
+
+      <div class="generate-icon">
+        <i class="bi bi-magic"></i>
+      </div>
+
+      <div>
+
+        <h2>
+          Generate Personalized Recommendations
+        </h2>
+
+        <p>
+          CampusIQ AI will analyze your latest
+          Skill Gap Analysis and recommend the
+          skills you should focus on.
+        </p>
+
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="generate-button"
+      [disabled]="generating"
+      (click)="generateRecommendations()">
+
+      <ng-container
+        *ngIf="!generating">
+
+        <i class="bi bi-stars"></i>
+
+        Generate Recommendations
+
+      </ng-container>
+
+      <ng-container
+        *ngIf="generating">
+
+        <span class="spinner"></span>
+
+        Generating...
+
+      </ng-container>
+
+    </button>
+
+  </section>
+
+
+  <!-- ================= LOADING ================= -->
+
+  <div
+    class="loading-state"
+    *ngIf="loading">
+
+    <div class="spinner dark"></div>
+
+    <h3>
+      Loading recommendations...
+    </h3>
+
+    <p>
+      Please wait while we retrieve your recommendations.
+    </p>
+
+  </div>
+
+
+  <!-- ================= EMPTY ================= -->
+
+  <div
+    class="empty-state"
+    *ngIf="
+      !loading &&
+      recommendations.length === 0
+    ">
+
+    <div class="empty-icon">
+      <i class="bi bi-stars"></i>
+    </div>
+
+    <h2>
+      No Recommendations Yet
+    </h2>
+
+    <p>
+      Complete your Skill Gap Analysis first,
+      then generate personalized recommendations.
+    </p>
+
+    <button
+      type="button"
+      class="empty-button"
+      [disabled]="generating"
+      (click)="generateRecommendations()">
+
+      <i class="bi bi-stars"></i>
+
+      Generate Recommendations
+
+    </button>
+
+  </div>
+
+
+  <!-- ================= CONTENT ================= -->
+
+  <ng-container
+    *ngIf="
+      !loading &&
+      recommendations.length > 0 &&
+      selectedRecommendation
+    ">
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+
+        <div class="summary-icon purple">
+          <i class="bi bi-stars"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Recommendations
+          </span>
+
+          <strong>
+            {{ selectedRecommendation.recommendations.length }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon red">
+          <i class="bi bi-exclamation-circle"></i>
+        </div>
+
+        <div>
+
+          <span>
+            High Priority
+          </span>
+
+          <strong>
+            {{ highPriorityCount }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon orange">
+          <i class="bi bi-dash-circle"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Medium Priority
+          </span>
+
+          <strong>
+            {{ mediumPriorityCount }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          <i class="bi bi-briefcase"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Target Role
+          </span>
+
+          <strong class="role-value">
+            {{ selectedRecommendation.targetRole }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= CURRENT RESULT ================= -->
+
+    <section class="result-card">
+
+      <div class="result-header">
+
+        <div class="result-title">
+
+          <div class="result-icon">
+            <i class="bi bi-stars"></i>
+          </div>
+
+          <div>
+
+            <div class="eyebrow">
+              AI GENERATED
+            </div>
+
+            <h2>
+              {{ selectedRecommendation.title }}
+            </h2>
+
+            <p>
+              {{ selectedRecommendation.message }}
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="priority-badge"
+          [ngClass]="
+            getPriorityClass(
+              selectedRecommendation.priority
+            )
+          ">
+
+          <i
+            [class]="
+              getPriorityIcon(
+                selectedRecommendation.priority
+              )
+            ">
+          </i>
+
+          {{ selectedRecommendation.priority }}
+
+        </div>
+
+      </div>
+
+
+      <!-- Recommendation Items -->
+
+      <div
+        class="recommendation-list"
+        *ngIf="
+          selectedRecommendation.recommendations.length > 0
+        ">
+
+        <div
+          class="recommendation-item"
+          *ngFor="
+            let recommendation of selectedRecommendation.recommendations;
+            let i = index;
+            trackBy: trackByItem
+          ">
+
+          <div class="item-number">
+            {{ i + 1 }}
+          </div>
+
+
+          <div class="item-content">
+
+            <div class="item-top">
+
+              <div>
+
+                <h3>
+                  Learn {{ recommendation.skill }}
+                </h3>
+
+                <span class="skill-label">
+                  <i class="bi bi-lightbulb"></i>
+                  Skill Development
+                </span>
+
+              </div>
+
+
+              <span
+                class="item-priority"
+                [ngClass]="
+                  getPriorityClass(
+                    recommendation.priority
+                  )
+                ">
+
+                <i
+                  [class]="
+                    getPriorityIcon(
+                      recommendation.priority
+                    )
+                  ">
+                </i>
+
+                {{ recommendation.priority }}
+
+              </span>
+
+            </div>
+
+
+            <!-- Reason -->
+
+            <div class="recommendation-block">
+
+              <div class="block-icon">
+                <i class="bi bi-question-circle"></i>
+              </div>
+
+              <div>
+
+                <strong>
+                  Why this is recommended
+                </strong>
+
+                <p>
+                  {{ recommendation.reason }}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- Suggested Action -->
+
+            <div class="recommendation-block action">
+
+              <div class="block-icon">
+                <i class="bi bi-arrow-right-circle"></i>
+              </div>
+
+              <div>
+
+                <strong>
+                  Suggested Action
+                </strong>
+
+                <p>
+                  {{ recommendation.suggestedAction }}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- Effort -->
+
+            <div class="effort">
+
+              <i class="bi bi-clock"></i>
+
+              <span>
+                Estimated effort:
+              </span>
+
+              <strong>
+                {{ recommendation.estimatedEffort }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Complete -->
+
+      <div
+        class="complete-message"
+        *ngIf="
+          selectedRecommendation.recommendations.length === 0
+        ">
+
+        <div class="complete-icon">
+          <i class="bi bi-trophy-fill"></i>
+        </div>
+
+        <div>
+
+          <h3>
+            Your Skill Profile is Complete
+          </h3>
+
+          <p>
+            You currently match all the required
+            skills for your selected role.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= HISTORY ================= -->
+
+    <section class="history-card">
+
+      <div class="section-title">
+
+        <div>
+
+          <div class="eyebrow">
+            HISTORY
+          </div>
+
+          <h2>
+            Previous Recommendations
+          </h2>
+
+          <p>
+            Review recommendations generated from
+            your previous skill gap analyses.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="refresh-button"
+          (click)="loadRecommendations()">
+
+          <i class="bi bi-arrow-clockwise"></i>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+
+      <div class="history-list">
+
+        <button
+          type="button"
+          class="history-item"
+          *ngFor="
+            let recommendation of recommendations;
+            trackBy: trackByRecommendation
+          "
+          [class.selected]="
+            selectedRecommendation === recommendation
+          "
+          (click)="
+            selectRecommendation(
+              recommendation
+            )
+          ">
+
+          <div class="history-icon">
+
+            <i class="bi bi-stars"></i>
+
+          </div>
+
+
+          <div class="history-content">
+
+            <strong>
+              {{ recommendation.targetRole }}
+            </strong>
+
+            <span>
+              {{ recommendation.title }}
+            </span>
+
+          </div>
+
+
+          <div class="history-meta">
+
+            <span
+              class="small-priority"
+              [ngClass]="
+                getPriorityClass(
+                  recommendation.priority
+                )
+              ">
+
+              {{ recommendation.priority }}
+
+            </span>
+
+            <span>
+              {{ formatDate(
+                recommendation.createdAt
+              ) }}
+            </span>
+
+          </div>
+
+
+          <i class="bi bi-chevron-right arrow"></i>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  </ng-container>
+
+</div>

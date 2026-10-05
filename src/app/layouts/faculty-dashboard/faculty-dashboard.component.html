@@ -1,0 +1,24 @@
+<div class="faculty-layout">
+
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Top Navbar -->
+    <app-top-navbar
+      (searchChange)="onSearch($event)"
+      [notificationCount]="notificationCount"
+    ></app-top-navbar>
+
+    <!-- Page Content -->
+    <main class="page-content">
+
+      <router-outlet></router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

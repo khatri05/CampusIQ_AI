@@ -1,0 +1,1278 @@
+<div class="assignments-page">
+
+  <!-- ======================================
+       PAGE HEADER
+  ======================================= -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>
+        Assignments
+      </h1>
+
+      <p>
+        Create, manage and track student assignments
+      </p>
+    </div>
+
+    <button type="button" class="btn btn-primary create-btn" (click)="openCreateForm()">
+      <i class="bi bi-plus-lg"></i>
+      Create Assignment
+    </button>
+
+  </div>
+
+
+  <!-- ======================================
+       SUCCESS MESSAGE
+  ======================================= -->
+
+  @if (successMessage) {
+
+  <div class="alert alert-success alert-dismissible">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ successMessage }}
+    </span>
+
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       ERROR MESSAGE
+  ======================================= -->
+
+  @if (errorMessage) {
+
+  <div class="alert alert-danger">
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       STATISTICS
+  ======================================= -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon total">
+        <i class="bi bi-journal-text"></i>
+      </div>
+
+      <div>
+        <span class="stat-label">
+          Total Assignments
+        </span>
+
+        <h3>
+          {{ totalAssignments }}
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon active">
+        <i class="bi bi-clock-history"></i>
+      </div>
+
+      <div>
+        <span class="stat-label">
+          Active
+        </span>
+
+        <h3>
+          {{ activeAssignments }}
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon completed">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+        <span class="stat-label">
+          Completed
+        </span>
+
+        <h3>
+          {{ completedAssignments }}
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon pending">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+
+      <div>
+        <span class="stat-label">
+          Pending
+        </span>
+
+        <h3>
+          {{ pendingAssignments }}
+        </h3>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================
+       CREATE / EDIT FORM
+  ======================================= -->
+
+  @if (showForm) {
+
+  <div class="form-card">
+
+    <div class="form-header">
+
+      <div>
+
+        <h2>
+
+          @if (isEditing) {
+          Edit Assignment
+          } @else {
+          Create Assignment
+          }
+
+        </h2>
+
+        <p>
+          Enter assignment details below
+        </p>
+
+      </div>
+
+      <button type="button" class="close-form-btn" (click)="closeForm()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+
+    <form (ngSubmit)="saveAssignment()">
+
+      <div class="form-grid">
+
+        <!-- TITLE -->
+
+        <div class="form-group full-width">
+
+          <label>
+            Assignment Title
+            <span>*</span>
+          </label>
+
+          <input type="text" class="form-control" name="title" [(ngModel)]="assignmentForm.title"
+            placeholder="Enter assignment title" />
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <div class="form-group full-width">
+
+          <label>
+            Description
+            <span>*</span>
+          </label>
+
+          <textarea class="form-control" name="description" rows="4" [(ngModel)]="assignmentForm.description"
+            placeholder="Enter assignment description"></textarea>
+
+        </div>
+
+
+        <!-- SUBJECT -->
+
+        <div class="form-group">
+
+          <label>
+            Subject
+            <span>*</span>
+          </label>
+
+          <select class="form-select" name="subjectId" [(ngModel)]="assignmentForm.subjectId"
+            (ngModelChange)="onSubjectChange($event)">
+
+            <option value="">
+              Select Subject
+            </option>
+
+            @for (
+            subject of subjects;
+            track subject.id
+            ) {
+
+            <option [value]="subject.id">
+
+              {{
+              subject.name ||
+              subject.subjectName ||
+              'Unnamed Subject'
+              }}
+
+              @if (
+              subject.code ||
+              subject.subjectCode
+              ) {
+
+              -
+              {{
+              subject.code ||
+              subject.subjectCode
+              }}
+
+              }
+
+            </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- SEMESTER -->
+
+        <div class="form-group">
+
+          <label>
+            Semester
+          </label>
+
+          <select class="form-select" name="semester" [(ngModel)]="assignmentForm.semester">
+
+            <option [ngValue]="undefined">
+              Select Semester
+            </option>
+
+            <option [ngValue]="1">
+              Semester 1
+            </option>
+
+            <option [ngValue]="2">
+              Semester 2
+            </option>
+
+            <option [ngValue]="3">
+              Semester 3
+            </option>
+
+            <option [ngValue]="4">
+              Semester 4
+            </option>
+
+            <option [ngValue]="5">
+              Semester 5
+            </option>
+
+            <option [ngValue]="6">
+              Semester 6
+            </option>
+
+            <option [ngValue]="7">
+              Semester 7
+            </option>
+
+            <option [ngValue]="8">
+              Semester 8
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- DIVISION -->
+
+        <div class="form-group">
+
+          <label>
+            Division
+          </label>
+
+          <select class="form-select" name="division" [(ngModel)]="assignmentForm.division">
+
+            <option value="">
+              Select Division
+            </option>
+
+            <option value="A">
+              A
+            </option>
+
+            <option value="B">
+              B
+            </option>
+
+            <option value="C">
+              C
+            </option>
+
+            <option value="D">
+              D
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- MAX MARKS -->
+
+        <div class="form-group">
+
+          <label>
+            Maximum Marks
+          </label>
+
+          <input type="number" class="form-control" name="maxMarks" [(ngModel)]="assignmentForm.maxMarks" min="1"
+            placeholder="100" />
+
+        </div>
+
+
+        <!-- START DATE -->
+
+        <div class="form-group">
+
+          <label>
+            Start Date
+          </label>
+
+          <input type="date" class="form-control" name="startDate" [(ngModel)]="assignmentForm.startDate" />
+
+        </div>
+
+
+        <!-- DUE DATE -->
+
+        <div class="form-group">
+
+          <label>
+            Due Date
+            <span>*</span>
+          </label>
+
+          <input type="date" class="form-control" name="dueDate" [(ngModel)]="assignmentForm.dueDate" />
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="form-group">
+
+          <label>
+            Status
+          </label>
+
+          <select class="form-select" name="status" [(ngModel)]="assignmentForm.status">
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="completed">
+              Completed
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- FORM ACTIONS -->
+
+      <div class="form-actions">
+
+        <button type="button" class="btn btn-light" (click)="closeForm()">
+          Cancel
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+
+          @if (isSaving) {
+
+          <span class="spinner-border spinner-border-sm"></span>
+
+          Saving...
+
+          } @else {
+
+          <i class="bi" [class.bi-check-lg]="isEditing" [class.bi-plus-lg]="!isEditing"></i>
+
+          @if (isEditing) {
+          Update Assignment
+          } @else {
+          Create Assignment
+          }
+
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       FILTER CARD
+  ======================================= -->
+
+  <div class="filter-card">
+
+    <div class="search-wrapper">
+
+      <i class="bi bi-search"></i>
+
+      <input type="text" class="form-control" [(ngModel)]="searchText" (input)="filterAssignments()"
+        placeholder="Search assignments..." />
+
+    </div>
+
+
+    <select class="form-select filter-select" [(ngModel)]="selectedSemester" (change)="filterAssignments()">
+
+      <option value="All">
+        All Semesters
+      </option>
+
+      @for (
+      semester of semesters;
+      track semester
+      ) {
+
+      <option [value]="semester">
+        Semester {{ semester }}
+      </option>
+
+      }
+
+    </select>
+
+
+    <select class="form-select filter-select" [(ngModel)]="selectedDivision" (change)="filterAssignments()">
+
+      <option value="All">
+        All Divisions
+      </option>
+
+      @for (
+      division of divisions;
+      track division
+      ) {
+
+      <option [value]="division">
+        Division {{ division }}
+      </option>
+
+      }
+
+    </select>
+
+
+    <select class="form-select filter-select" [(ngModel)]="selectedStatus" (change)="filterAssignments()">
+
+      <option value="All">
+        All Status
+      </option>
+
+      <option value="Active">
+        Active
+      </option>
+
+      <option value="Pending">
+        Pending
+      </option>
+
+      <option value="Completed">
+        Completed
+      </option>
+
+    </select>
+
+
+    <button type="button" class="clear-filter-btn" (click)="clearFilters()" title="Clear filters">
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- ======================================
+       LOADING
+  ======================================= -->
+
+  @if (isLoading) {
+
+  <div class="loading-container">
+
+    <div class="spinner-border text-primary"></div>
+
+    <p>
+      Loading assignments...
+    </p>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       EMPTY STATE
+  ======================================= -->
+
+  @if (
+  !isLoading &&
+  filteredAssignments.length === 0
+  ) {
+
+  <div class="empty-state">
+
+    <div class="empty-icon">
+
+      <i class="bi bi-journal-x"></i>
+
+    </div>
+
+    <h3>
+      No Assignments Found
+    </h3>
+
+    <p>
+      No assignments match your current filters.
+    </p>
+
+    <button type="button" class="btn btn-primary" (click)="openCreateForm()">
+
+      <i class="bi bi-plus-lg"></i>
+
+      Create Assignment
+
+    </button>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       ASSIGNMENT TABLE
+  ======================================= -->
+
+  @if (
+  !isLoading &&
+  filteredAssignments.length > 0
+  ) {
+
+  <div class="table-card">
+
+    <div class="table-responsive">
+
+      <table class="table assignment-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Assignment
+            </th>
+
+            <th>
+              Subject
+            </th>
+
+            <th>
+              Semester
+            </th>
+
+            <th>
+              Division
+            </th>
+
+            <th>
+              Start Date
+            </th>
+
+            <th>
+              Due Date
+            </th>
+
+            <th>
+              Marks
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (
+          assignment of filteredAssignments;
+          track assignment.id
+          ) {
+
+          <tr>
+
+            <!-- ASSIGNMENT -->
+
+            <td>
+
+              <div class="assignment-info">
+
+                <div class="assignment-icon">
+
+                  <i class="bi bi-journal-text"></i>
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ assignment.title }}
+                  </strong>
+
+                  <small>
+
+                    {{
+                    assignment.description ||
+                    'No description'
+                    }}
+
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- SUBJECT -->
+
+            <td>
+
+              {{
+              assignment.subjectName ||
+              assignment.subjectId ||
+              '-'
+              }}
+
+            </td>
+
+
+            <!-- SEMESTER -->
+
+            <td>
+
+              @if (
+              assignment.semester
+              ) {
+
+              Sem
+              {{ assignment.semester }}
+
+              } @else {
+
+              -
+
+              }
+
+            </td>
+
+
+            <!-- DIVISION -->
+
+            <td>
+
+              {{
+              assignment.division ||
+              '-'
+              }}
+
+            </td>
+
+
+            <!-- START DATE -->
+
+            <td>
+
+              {{
+              formatDate(
+              assignment.startDate
+              )
+              }}
+
+            </td>
+
+
+            <!-- DUE DATE -->
+
+            <td>
+
+              <span class="due-date">
+
+                <i class="bi bi-calendar-event"></i>
+
+                {{
+                formatDate(
+                assignment.dueDate
+                )
+                }}
+
+              </span>
+
+            </td>
+
+
+            <!-- MARKS -->
+
+            <td>
+
+              <span class="marks-badge">
+
+                {{
+                assignment.maxMarks ??
+                0
+                }}
+
+              </span>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+              <span class="status-badge" [class.active-status]="
+                      getAssignmentStatus(
+                        assignment
+                      ) === 'Active'
+                    " [class.pending-status]="
+                      getAssignmentStatus(
+                        assignment
+                      ) === 'Pending'
+                    " [class.completed-status]="
+                      getAssignmentStatus(
+                        assignment
+                      ) === 'Completed'
+                    ">
+
+                {{
+                getAssignmentStatus(
+                assignment
+                )
+                }}
+
+              </span>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button type="button" class="action-btn view" title="View submissions" (click)="
+                        viewSubmissions(
+                          assignment
+                        )
+                      ">
+
+                  <i class="bi bi-eye"></i>
+
+                </button>
+
+
+                <button type="button" class="action-btn edit" title="Edit assignment" (click)="
+                        openEditForm(
+                          assignment
+                        )
+                      ">
+
+                  <i class="bi bi-pencil"></i>
+
+                </button>
+
+
+                <button type="button" class="action-btn delete" title="Delete assignment" (click)="
+                        deleteAssignment(
+                          assignment
+                        )
+                      ">
+
+                  <i class="bi bi-trash"></i>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================
+       SUBMISSIONS MODAL
+  ======================================= -->
+
+  @if (showSubmissions) {
+
+  <div class="modal-backdrop-custom" (click)="closeSubmissions()">
+
+    <div class="submissions-modal" (click)="$event.stopPropagation()">
+
+      <!-- HEADER -->
+
+      <div class="modal-header-custom">
+
+        <div>
+
+          <h2>
+            Assignment Submissions
+          </h2>
+
+          <p>
+            {{ selectedAssignment?.title }}
+          </p>
+
+        </div>
+
+        <button type="button" class="close-form-btn" (click)="closeSubmissions()">
+
+          <i class="bi bi-x-lg"></i>
+
+        </button>
+
+      </div>
+
+
+      <!-- STATISTICS -->
+
+      @if (!isLoadingSubmissions) {
+
+      <div class="submission-stats">
+
+        <div class="submission-stat">
+
+          <div class="submission-stat-icon total">
+            <i class="bi bi-people"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              {{ totalSubmissions }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="submission-stat">
+
+          <div class="submission-stat-icon submitted">
+            <i class="bi bi-check-circle"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Submitted
+            </span>
+
+            <strong>
+              {{ submittedSubmissions }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="submission-stat">
+
+          <div class="submission-stat-icon pending">
+            <i class="bi bi-clock"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Pending
+            </span>
+
+            <strong>
+              {{ pendingSubmissions }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      }
+
+
+      <!-- SEARCH -->
+
+      @if (
+      !isLoadingSubmissions &&
+      submissions.length > 0
+      ) {
+
+      <div class="submission-search">
+
+        <i class="bi bi-search"></i>
+
+        <input type="text" class="form-control" [(ngModel)]="submissionSearchText" (input)="filterSubmissions()"
+          placeholder="Search student or enrollment number..." />
+
+      </div>
+
+      }
+
+
+      <!-- LOADING -->
+
+      @if (isLoadingSubmissions) {
+
+      <div class="modal-loading">
+
+        <div class="spinner-border text-primary"></div>
+
+        <p>
+          Loading submissions...
+        </p>
+
+      </div>
+
+      }
+
+
+      <!-- EMPTY -->
+
+      @if (
+      !isLoadingSubmissions &&
+      submissions.length === 0
+      ) {
+
+      <div class="modal-empty">
+
+        <i class="bi bi-inbox"></i>
+
+        <h4>
+          No Submissions
+        </h4>
+
+        <p>
+          No students have submitted this assignment yet.
+        </p>
+
+      </div>
+
+      }
+
+
+      <!-- NO SEARCH RESULTS -->
+
+      @if (
+      !isLoadingSubmissions &&
+      submissions.length > 0 &&
+      filteredSubmissions.length === 0
+      ) {
+
+      <div class="modal-empty">
+
+        <i class="bi bi-search"></i>
+
+        <h4>
+          No Students Found
+        </h4>
+
+        <p>
+          No submissions match your search.
+        </p>
+
+      </div>
+
+      }
+
+
+      <!-- SUBMISSIONS TABLE -->
+
+      @if (
+      !isLoadingSubmissions &&
+      filteredSubmissions.length > 0
+      ) {
+
+      <div class="submissions-table-wrapper">
+
+        <table class="table submissions-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Student
+              </th>
+
+              <th>
+                Enrollment
+              </th>
+
+              <th>
+                Submitted At
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Marks
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+            submission of filteredSubmissions;
+            track submission.id
+            ) {
+
+            <tr>
+
+              <!-- STUDENT -->
+
+              <td>
+
+                <div class="submission-student">
+
+                  <div class="student-avatar">
+
+                    {{
+                    getSubmissionStudentName(
+                    submission
+                    ).charAt(0)
+                    }}
+
+                  </div>
+
+                  <div>
+
+                    <strong>
+                      {{
+                      getSubmissionStudentName(
+                      submission
+                      )
+                      }}
+                    </strong>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+
+              <!-- ENROLLMENT -->
+
+              <td>
+
+                {{
+                submission.enrollmentNo ||
+                submission.enrollmentNumber ||
+                '-'
+                }}
+
+              </td>
+
+
+              <!-- DATE -->
+
+              <td>
+
+                {{
+                formatDate(
+                submission.submittedAt
+                )
+                }}
+
+              </td>
+
+
+              <!-- STATUS -->
+
+              <td>
+
+                <span class="status-badge" [class.active-status]="
+                        getSubmissionStatus(
+                          submission
+                        ).toLowerCase() ===
+                        'submitted'
+                      " [class.completed-status]="
+                        getSubmissionStatus(
+                          submission
+                        ).toLowerCase() ===
+                        'evaluated' ||
+                        getSubmissionStatus(
+                          submission
+                        ).toLowerCase() ===
+                        'graded'
+                      " [class.pending-status]="
+                        getSubmissionStatus(
+                          submission
+                        ).toLowerCase() ===
+                        'pending'
+                      ">
+
+                  {{
+                  getSubmissionStatus(
+                  submission
+                  )
+                  }}
+
+                </span>
+
+              </td>
+
+
+              <!-- MARKS -->
+
+              <td>
+
+                @if (
+                submission.marks !== undefined &&
+                submission.marks !== null
+                ) {
+
+                <span class="submission-marks">
+
+                  {{
+                  submission.marks
+                  }}
+
+                  @if (getSelectedAssignmentMaxMarks() !== null) {
+
+                  /
+                  {{ getSelectedAssignmentMaxMarks() }}
+
+                  }
+
+                </span>
+
+                } @else {
+
+                <span class="not-graded">
+                  Not graded
+                </span>
+
+                }
+
+              </td>
+
+            </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      }
+
+    </div>
+
+  </div>
+
+  }
+
+</div>

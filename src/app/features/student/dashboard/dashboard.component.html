@@ -1,0 +1,700 @@
+<div class="student-dashboard">
+
+  <!-- Sidebar -->
+  <app-student-sidebar></app-student-sidebar>
+
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <div class="dashboard-content">
+
+
+      <!-- =========================================
+           LOADING
+      ========================================== -->
+
+      @if (loading) {
+
+        <div class="dashboard-state">
+
+          <div class="dashboard-spinner"></div>
+
+          <h4>Loading your dashboard...</h4>
+
+          <p>
+            Fetching your academic and career information.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- =========================================
+           ERROR
+      ========================================== -->
+
+      @else if (errorMessage) {
+
+        <div class="dashboard-state error-state">
+
+          <div class="error-icon">
+            ⚠️
+          </div>
+
+          <h4>
+            Unable to load dashboard
+          </h4>
+
+          <p>
+            {{ errorMessage }}
+          </p>
+
+          <button
+            type="button"
+            class="profile-btn"
+            (click)="retry()"
+          >
+            Try Again
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- =========================================
+           DASHBOARD
+      ========================================== -->
+
+      @else {
+
+
+        <!-- =======================================
+             WELCOME
+        ======================================== -->
+
+        <div class="welcome-section">
+
+          <div>
+
+            <h2>
+              Good Morning,
+              {{ studentName }}! 👋
+            </h2>
+
+            <p>
+              Here's an overview of your academic
+              and career progress.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="profile-btn"
+            (click)="viewProfile()"
+          >
+            View Profile
+          </button>
+
+        </div>
+
+
+
+        <!-- =======================================
+             STATISTICS
+        ======================================== -->
+
+        <div class="stats-grid">
+
+          @for (
+            stat of stats;
+            track stat.title
+          ) {
+
+            <div class="stat-card">
+
+              <div class="stat-icon">
+
+                {{ stat.icon }}
+
+              </div>
+
+
+              <div class="stat-details">
+
+                <span class="stat-title">
+
+                  {{ stat.title }}
+
+                </span>
+
+
+                <h3>
+
+                  {{ stat.value }}
+
+                </h3>
+
+
+                <small>
+
+                  {{ stat.description }}
+
+                </small>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+
+        <!-- =======================================
+             MAIN GRID
+        ======================================== -->
+
+        <div class="dashboard-grid">
+
+
+          <!-- =====================================
+               ACADEMIC PERFORMANCE
+          ====================================== -->
+
+          <div class="dashboard-card performance-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h4>
+                  Academic Performance
+                </h4>
+
+                <p>
+                  Your academic progress
+                </p>
+
+              </div>
+
+
+              <button
+                type="button"
+                (click)="openPerformance()"
+              >
+                View Details
+              </button>
+
+            </div>
+
+
+            <div class="performance-content">
+
+
+              <div class="cgpa-circle">
+
+                <strong>
+                  {{ cgpaDisplay }}
+                </strong>
+
+                <span>
+                  CGPA
+                </span>
+
+              </div>
+
+
+              <div class="performance-info">
+
+
+                @if (recentMarks.length > 0) {
+
+                  @for (
+                    mark of recentMarks;
+                    track mark.id
+                  ) {
+
+                    <div class="performance-item">
+
+                      <span>
+
+                        {{
+                          mark.subjectName ||
+                          mark.subject ||
+                          'Subject'
+                        }}
+
+                      </span>
+
+
+                      <strong>
+
+                        {{
+                          mark.grade ||
+                          mark.gradePoint ||
+                          (
+                            mark.marksObtained !== undefined
+                              ? mark.marksObtained
+                              : '—'
+                          )
+                        }}
+
+                      </strong>
+
+                    </div>
+
+                  }
+
+                }
+
+
+                @else {
+
+                  <div class="empty-data">
+
+                    No academic records yet.
+
+                  </div>
+
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- =====================================
+               ATTENDANCE
+          ====================================== -->
+
+          <div class="dashboard-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h4>
+                  Attendance
+                </h4>
+
+                <p>
+                  Current academic records
+                </p>
+
+              </div>
+
+
+              <span
+                class="status-good"
+                [class.status-warning]="
+                  attendanceStatus === 'Low'
+                "
+              >
+
+                {{ attendanceStatus }}
+
+              </span>
+
+            </div>
+
+
+            <div class="attendance">
+
+
+              <div class="attendance-circle">
+
+                <strong>
+
+                  {{ attendanceDisplay }}
+
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <p>
+
+                  {{ attendanceMessage }}
+
+                </p>
+
+
+                <small>
+
+                  {{ attendanceRequirement }}
+
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =======================================
+             AI DIGITAL TWIN
+        ======================================== -->
+
+        <div class="ai-section">
+
+          <div class="ai-header">
+
+            <div>
+
+              <span class="ai-label">
+                AI POWERED
+              </span>
+
+
+              <h3>
+                CampusIQ AI Digital Twin
+              </h3>
+
+
+              <p>
+                Get intelligent insights about your
+                academic performance, skills and
+                career readiness.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              (click)="openDigitalTwin()"
+            >
+              Explore Digital Twin
+            </button>
+
+          </div>
+
+
+          <div class="ai-features">
+
+
+            <div>
+
+              <span>📊</span>
+
+              <strong>
+                Performance Analysis
+              </strong>
+
+              <small>
+                Understand your academic trends.
+              </small>
+
+            </div>
+
+
+            <div>
+
+              <span>🎯</span>
+
+              <strong>
+                Skill Gap Analysis
+              </strong>
+
+              <small>
+                Identify skills you need for your career.
+              </small>
+
+            </div>
+
+
+            <div>
+
+              <span>💡</span>
+
+              <strong>
+                AI Recommendations
+              </strong>
+
+              <small>
+                Get personalized recommendations.
+              </small>
+
+            </div>
+
+
+            <div>
+
+              <span>🚀</span>
+
+              <strong>
+                Placement Readiness
+              </strong>
+
+              <small>
+                Track your career preparation.
+              </small>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =======================================
+             BOTTOM GRID
+        ======================================== -->
+
+        <div class="dashboard-grid">
+
+
+          <!-- =====================================
+               PROJECTS
+          ====================================== -->
+
+          <div class="dashboard-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h4>
+                  Recent Projects
+                </h4>
+
+                <p>
+                  Your latest projects
+                </p>
+
+              </div>
+
+
+              <button
+                type="button"
+                (click)="openDigitalTwin()"
+              >
+                View All
+              </button>
+
+            </div>
+
+
+            @if (recentProjects.length > 0) {
+
+              @for (
+                project of recentProjects;
+                track project.id
+              ) {
+
+                <div class="assignment">
+
+                  <div class="assignment-icon">
+                    🚀
+                  </div>
+
+
+                  <div class="assignment-info">
+
+                    <strong>
+
+                      {{
+                        project.title ||
+                        project.name ||
+                        'Untitled Project'
+                      }}
+
+                    </strong>
+
+
+                    <small>
+
+                      {{
+                        project.status ||
+                        'Project'
+                      }}
+
+                    </small>
+
+                  </div>
+
+
+                  <span
+                    class="priority-medium"
+                  >
+
+                    {{
+                      project.status ||
+                      'Active'
+                    }}
+
+                  </span>
+
+                </div>
+
+              }
+
+            }
+
+
+            @else {
+
+              <div class="empty-data">
+
+                No projects added yet.
+
+              </div>
+
+            }
+
+          </div>
+
+
+
+          <!-- =====================================
+               CAREER SNAPSHOT
+          ====================================== -->
+
+          <div class="dashboard-card">
+
+            <div class="card-header">
+
+              <div>
+
+                <h4>
+                  Career Snapshot
+                </h4>
+
+                <p>
+                  Your current profile progress
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="career-progress">
+
+
+              <!-- Skills -->
+
+              <div class="progress-item">
+
+                <div>
+
+                  <span>
+                    Skills
+                  </span>
+
+                  <strong>
+                    {{ skillProgress }}%
+                  </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                  <div
+                    class="progress-value"
+                    [style.width.%]="skillProgress"
+                  ></div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Projects -->
+
+              <div class="progress-item">
+
+                <div>
+
+                  <span>
+                    Projects
+                  </span>
+
+                  <strong>
+                    {{ projectProgress }}%
+                  </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                  <div
+                    class="progress-value"
+                    [style.width.%]="projectProgress"
+                  ></div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Attendance -->
+
+              <div class="progress-item">
+
+                <div>
+
+                  <span>
+                    Attendance
+                  </span>
+
+                  <strong>
+
+                    {{
+                      metrics.attendancePercentage !== null
+                        ? metrics.attendancePercentage + '%'
+                        : '—'
+                    }}
+
+                  </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                  <div
+                    class="progress-value"
+                    [style.width.%]="
+                      metrics.attendancePercentage || 0
+                    "
+                  ></div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </main>
+
+</div>

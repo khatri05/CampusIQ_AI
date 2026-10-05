@@ -1,0 +1,684 @@
+<div class="applications-page">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+
+      <span class="page-label">
+        CAREER CENTER
+      </span>
+
+      <h1>
+        My Applications
+      </h1>
+
+      <p>
+        Track and manage all your job applications.
+      </p>
+
+    </div>
+
+    <div class="header-icon">
+      <i class="bi bi-file-earmark-text-fill"></i>
+    </div>
+
+  </div>
+
+
+  <!-- Success Message -->
+  <div
+    class="success-alert"
+    *ngIf="successMessage">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    {{ successMessage }}
+
+  </div>
+
+
+  <!-- Error Message -->
+  <div
+    class="error-alert"
+    *ngIf="errorMessage">
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="errorMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- Statistics -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-send"></i>
+      </div>
+
+      <div>
+
+        <span>Total Applications</span>
+
+        <strong>
+          {{ getTotalApplications() }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon yellow">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+
+      <div>
+
+        <span>Applied</span>
+
+        <strong>
+          {{ getAppliedCount() }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        <i class="bi bi-star"></i>
+      </div>
+
+      <div>
+
+        <span>Shortlisted</span>
+
+        <strong>
+          {{ getShortlistedCount() }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon orange">
+        <i class="bi bi-camera-video"></i>
+      </div>
+
+      <div>
+
+        <span>Interviews</span>
+
+        <strong>
+          {{ getInterviewCount() }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-trophy"></i>
+      </div>
+
+      <div>
+
+        <span>Selected</span>
+
+        <strong>
+          {{ getSelectedCount() }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Filters -->
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        placeholder="Search applications..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()">
+
+    </div>
+
+
+    <select
+      [(ngModel)]="selectedStatus"
+      (change)="onStatusChange()">
+
+      <option value="All">
+        All Status
+      </option>
+
+      <option value="Applied">
+        Applied
+      </option>
+
+      <option value="Shortlisted">
+        Shortlisted
+      </option>
+
+      <option value="Interview">
+        Interview
+      </option>
+
+      <option value="Selected">
+        Selected
+      </option>
+
+      <option value="Rejected">
+        Rejected
+      </option>
+
+      <option value="Withdrawn">
+        Withdrawn
+      </option>
+
+    </select>
+
+
+    <button
+      type="button"
+      class="reset-btn"
+      (click)="clearFilters()">
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+      Reset
+
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+  <div
+    class="state-box"
+    *ngIf="isLoading">
+
+    <div class="spinner"></div>
+
+    <p>
+      Loading your applications...
+    </p>
+
+  </div>
+
+
+  <!-- Empty -->
+  <div
+    class="empty-box"
+    *ngIf="
+      !isLoading &&
+      !errorMessage &&
+      filteredApplications.length === 0
+    ">
+
+    <div class="empty-icon">
+
+      <i class="bi bi-file-earmark-x"></i>
+
+    </div>
+
+    <h3>
+      No Applications Found
+    </h3>
+
+    <p>
+      You haven't submitted any applications matching the selected filters.
+    </p>
+
+    <a
+      routerLink="/student/job-opportunities"
+      class="browse-btn">
+
+      <i class="bi bi-briefcase"></i>
+
+      Browse Jobs
+
+    </a>
+
+  </div>
+
+
+  <!-- Applications -->
+  <div
+    class="applications-list"
+    *ngIf="
+      !isLoading &&
+      filteredApplications.length > 0
+    ">
+
+    <div
+      class="application-card"
+      *ngFor="
+        let application of filteredApplications
+      ">
+
+      <div class="application-main">
+
+        <!-- Company icon -->
+        <div class="company-logo">
+
+          <i class="bi bi-building"></i>
+
+        </div>
+
+
+        <!-- Details -->
+        <div class="application-info">
+
+          <div class="title-row">
+
+            <h3>
+              Application
+            </h3>
+
+            <span
+              class="status-badge"
+              [ngClass]="
+                getStatusClass(application.status)
+              ">
+
+              {{ application.status }}
+
+            </span>
+
+          </div>
+
+
+          <p class="job-id">
+            Job ID:
+            {{ application.jobId }}
+          </p>
+
+
+          <div class="application-meta">
+
+            <span>
+
+              <i class="bi bi-calendar3"></i>
+
+              Applied
+              {{ formatDate(application.appliedAt) }}
+
+            </span>
+
+
+            <span
+              *ngIf="application.reviewedAt">
+
+              <i class="bi bi-clock-history"></i>
+
+              Reviewed
+              {{ formatDate(application.reviewedAt) }}
+
+            </span>
+
+          </div>
+
+
+          <p
+            class="remarks"
+            *ngIf="application.remarks">
+
+            <strong>
+              Remarks:
+            </strong>
+
+            {{ application.remarks }}
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Actions -->
+      <div class="application-actions">
+
+        <button
+          type="button"
+          class="view-btn"
+          (click)="viewApplication(application.id)">
+
+          <i class="bi bi-eye"></i>
+
+          View Details
+
+        </button>
+
+
+        <button
+          type="button"
+          class="withdraw-btn"
+          *ngIf="
+            canWithdraw(application)
+          "
+          [disabled]="isWithdrawing"
+          (click)="withdrawApplication(application)">
+
+          <i class="bi bi-x-circle"></i>
+
+          Withdraw
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Application Details Modal -->
+
+<div
+  class="modal-backdrop-custom"
+  *ngIf="selectedApplication"
+  (click)="closeApplicationDetails()">
+
+  <div
+    class="application-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- Modal Header -->
+    <div class="modal-header-custom">
+
+      <div class="modal-title-area">
+
+        <div class="modal-icon">
+
+          <i class="bi bi-file-earmark-text"></i>
+
+        </div>
+
+        <div>
+
+          <span class="modal-label">
+            APPLICATION DETAILS
+          </span>
+
+          <h2>
+            Job Application
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeApplicationDetails()">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <!-- Modal Body -->
+    <div class="modal-body-custom">
+
+      <div class="modal-status-row">
+
+        <span
+          class="status-badge large"
+          [ngClass]="
+            getStatusClass(
+              selectedApplication.status
+            )
+          ">
+
+          {{ selectedApplication.status }}
+
+        </span>
+
+      </div>
+
+
+      <!-- Application information -->
+      <div class="detail-grid">
+
+        <div class="detail-item">
+
+          <span>
+            Application ID
+          </span>
+
+          <strong>
+            {{ selectedApplication.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span>
+            Job ID
+          </span>
+
+          <strong>
+            {{ selectedApplication.jobId }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span>
+            Applied On
+          </span>
+
+          <strong>
+            {{ formatDateTime(
+              selectedApplication.appliedAt
+            ) }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span>
+            Last Reviewed
+          </span>
+
+          <strong>
+            {{ formatDateTime(
+              selectedApplication.reviewedAt
+            ) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Cover Letter -->
+      <div class="detail-section">
+
+        <h4>
+          Cover Letter
+        </h4>
+
+        <div class="content-box">
+
+          <p
+            *ngIf="selectedApplication.coverLetter">
+
+            {{ selectedApplication.coverLetter }}
+
+          </p>
+
+          <p
+            class="muted"
+            *ngIf="
+              !selectedApplication.coverLetter
+            ">
+
+            No cover letter was provided.
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Resume -->
+      <div class="detail-section">
+
+        <h4>
+          Resume
+        </h4>
+
+        <div class="resume-box">
+
+          <i class="bi bi-file-earmark-pdf"></i>
+
+          <span>
+            Submitted Resume
+          </span>
+
+          <a
+            *ngIf="selectedApplication.resumeUrl"
+            [href]="selectedApplication.resumeUrl"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            View Resume
+
+            <i class="bi bi-box-arrow-up-right"></i>
+
+          </a>
+
+          <span
+            class="muted"
+            *ngIf="
+              !selectedApplication.resumeUrl
+            ">
+
+            No resume link provided.
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Remarks -->
+      <div class="detail-section">
+
+        <h4>
+          Recruiter Remarks
+        </h4>
+
+        <div class="content-box">
+
+          <p
+            *ngIf="selectedApplication.remarks">
+
+            {{ selectedApplication.remarks }}
+
+          </p>
+
+          <p
+            class="muted"
+            *ngIf="!selectedApplication.remarks">
+
+            No remarks have been added yet.
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Modal Footer -->
+    <div class="modal-footer-custom">
+
+      <button
+        type="button"
+        class="secondary-btn"
+        (click)="closeApplicationDetails()">
+
+        Close
+
+      </button>
+
+
+      <button
+        type="button"
+        class="withdraw-modal-btn"
+        *ngIf="
+          canWithdraw(selectedApplication)
+        "
+        [disabled]="isWithdrawing"
+        (click)="withdrawApplication(
+          selectedApplication
+        )">
+
+        <i class="bi bi-x-circle"></i>
+
+        {{
+          isWithdrawing
+            ? 'Withdrawing...'
+            : 'Withdraw Application'
+        }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

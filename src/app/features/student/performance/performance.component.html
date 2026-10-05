@@ -1,0 +1,605 @@
+<div class="performance-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+
+      <h2>Academic Performance</h2>
+
+      <p>
+        Track your academic progress and performance trends.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- Loading -->
+  @if (loading) {
+
+    <div class="loading-card">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading performance data...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- Error -->
+  @if (!loading && errorMessage) {
+
+    <div class="error-card">
+
+      <h4>
+        Unable to load performance
+      </h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="loadPerformance()"
+      >
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!loading && !errorMessage) {
+
+    <!-- Summary -->
+    <div class="summary-grid">
+
+      <!-- CGPA -->
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          🎓
+        </div>
+
+        <div>
+
+          <span>Current CGPA</span>
+
+          <h3>
+            {{ cgpaDisplay }}
+          </h3>
+
+          <small>
+            Overall academic score
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- Percentage -->
+      <div class="summary-card">
+
+        <div class="summary-icon green">
+          📊
+        </div>
+
+        <div>
+
+          <span>Percentage</span>
+
+          <h3>
+            {{ percentageDisplay }}
+          </h3>
+
+          <small>
+            Overall percentage
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- Academic Score -->
+      <div class="summary-card">
+
+        <div class="summary-icon purple">
+          📚
+        </div>
+
+        <div>
+
+          <span>Academic Score</span>
+
+          <h3>
+            {{ academicScoreDisplay }}
+          </h3>
+
+          <small>
+            Academic performance
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- Attendance -->
+      <div class="summary-card">
+
+        <div class="summary-icon orange">
+          📅
+        </div>
+
+        <div>
+
+          <span>Attendance</span>
+
+          <h3>
+            {{ attendanceScoreDisplay }}
+          </h3>
+
+          <small>
+            Overall attendance
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Performance Overview -->
+    <div class="performance-grid">
+
+      <!-- Performance Overview -->
+      <div class="performance-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Performance Overview
+            </h3>
+
+            <p>
+              Your current academic performance
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="score-overview">
+
+          <!-- Dynamic Circle -->
+          <div
+            class="score-circle"
+            [style.background]="scoreCircleBackground"
+          >
+
+            <div>
+
+              <strong>
+                {{ percentageDisplay }}
+              </strong>
+
+              <span>
+                Overall
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="score-details">
+
+            <!-- Academic -->
+            <div class="score-row">
+
+              <div>
+
+                <span>
+                  Academic Performance
+                </span>
+
+                <strong>
+                  {{ academicScoreDisplay }}
+                </strong>
+
+              </div>
+
+              <div class="progress-bar">
+
+                <div
+                  class="progress-value"
+                  [style.width.%]="academicScore || 0"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <!-- Attendance -->
+            <div class="score-row">
+
+              <div>
+
+                <span>
+                  Attendance
+                </span>
+
+                <strong>
+                  {{ attendanceScoreDisplay }}
+                </strong>
+
+              </div>
+
+              <div class="progress-bar">
+
+                <div
+                  class="progress-value"
+                  [style.width.%]="attendanceScore || 0"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <!-- Assignments -->
+            <div class="score-row">
+
+              <div>
+
+                <span>
+                  Assignments
+                </span>
+
+                <strong>
+                  {{ assignmentScoreDisplay }}
+                </strong>
+
+              </div>
+
+              <div class="progress-bar">
+
+                <div
+                  class="progress-value"
+                  [style.width.%]="assignmentScore || 0"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <!-- Skills -->
+            <div class="score-row">
+
+              <div>
+
+                <span>
+                  Skills
+                </span>
+
+                <strong>
+                  {{ skillScoreDisplay }}
+                </strong>
+
+              </div>
+
+              <div class="progress-bar">
+
+                <div
+                  class="progress-value"
+                  [style.width.%]="skillScore || 0"
+                ></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Performance Status -->
+      <div class="performance-card status-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Performance Status
+            </h3>
+
+            <p>
+              Current academic standing
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="status-circle"
+          [ngClass]="
+            getPerformanceClass(percentage)
+          "
+        >
+
+          <strong>
+            {{ performanceStatus }}
+          </strong>
+
+        </div>
+
+
+        <p class="status-description">
+          {{ performanceDescription }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Semester Performance -->
+    <div class="performance-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h3>
+            Semester Performance
+          </h3>
+
+          <p>
+            Your semester-wise academic progress
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (hasSemesterData) {
+
+        <div class="semester-grid">
+
+          @for (
+            semester of semesters;
+            track semester.semester
+          ) {
+
+            <div class="semester-card">
+
+              <div class="semester-header">
+
+                <span>
+                  {{ semester.semester }}
+                </span>
+
+                <strong>
+                  {{ semester.sgpa }}
+                </strong>
+
+              </div>
+
+
+              <div class="semester-progress">
+
+                <div
+                  class="semester-progress-value"
+                  [style.width.%]="
+                    semester.percentage
+                  "
+                ></div>
+
+              </div>
+
+
+              <div class="semester-footer">
+
+                <span>
+                  SGPA
+                </span>
+
+                <strong>
+                  {{ semester.percentage }}%
+                </strong>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+          No semester-wise academic records available yet.
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- Subject Performance -->
+    <div class="performance-card subject-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h3>
+            Subject Performance
+          </h3>
+
+          <p>
+            Current subject-wise performance
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (hasSubjectData) {
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Subject
+                </th>
+
+                <th>
+                  Marks
+                </th>
+
+                <th>
+                  Grade
+                </th>
+
+                <th>
+                  Performance
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                subject of subjects;
+                track $index
+              ) {
+
+                <tr>
+
+                  <td>
+
+                    <div class="subject-name">
+
+                      <div class="subject-icon">
+
+                        {{
+                          subject.code
+                            .charAt(0)
+                            .toUpperCase()
+                        }}
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {{ subject.subject }}
+                        </strong>
+
+                        <small>
+                          {{ subject.code }}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <strong>
+                      {{ subject.marks }}%
+                    </strong>
+
+                  </td>
+
+
+                  <td>
+
+                    <span class="grade-badge">
+
+                      {{ subject.grade }}
+
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="mini-progress">
+
+                      <div
+                        class="mini-progress-value"
+                        [style.width.%]="
+                          subject.marks
+                        "
+                      ></div>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+          No subject marks available yet.
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

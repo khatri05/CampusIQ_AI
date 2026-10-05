@@ -1,0 +1,1009 @@
+<div class="marks-page">
+
+  <!-- ========================================
+       PAGE HEADER
+  ========================================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb-text">
+        Faculty / Marks
+      </div>
+
+      <h2>
+        <i class="bi bi-bar-chart-fill"></i>
+        Marks
+      </h2>
+
+      <p>
+        Manage and record student academic marks
+      </p>
+
+    </div>
+
+
+    <div class="header-info">
+
+      <div class="department-info">
+
+        <span class="department-icon">
+          <i class="bi bi-building"></i>
+        </span>
+
+        <div>
+
+          <span class="department-label">
+            Department
+          </span>
+
+          <strong>
+            {{ departmentName || 'Loading...' }}
+          </strong>
+
+          @if (departmentCode) {
+
+            <small>
+              {{ departmentCode }}
+            </small>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       LOADING
+  ========================================= -->
+
+  @if (isLoading) {
+
+    <div class="state-card loading-card">
+
+      <div
+        class="spinner-border"
+        role="status"
+      >
+        <span class="visually-hidden">
+          Loading...
+        </span>
+      </div>
+
+      <h5>
+        Loading marks...
+      </h5>
+
+      <p>
+        Please wait while marks data is being loaded.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- ========================================
+       ERROR
+  ========================================= -->
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="state-card error-card">
+
+      <div class="state-icon">
+
+        <i class="bi bi-exclamation-triangle-fill"></i>
+
+      </div>
+
+      <div class="error-content">
+
+        <h5>
+          Unable to load marks
+        </h5>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-outline-danger"
+        (click)="loadMarks()"
+      >
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Retry
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ========================================
+       MAIN CONTENT
+  ========================================= -->
+
+  @if (!isLoading && !errorMessage) {
+
+
+    <!-- ======================================
+         STATISTICS
+    ======================================= -->
+
+    <div class="stats-grid">
+
+
+      <!-- Total -->
+      <div class="stat-card">
+
+        <div class="stat-icon total">
+
+          <i class="bi bi-people-fill"></i>
+
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Total Students
+          </span>
+
+          <strong>
+            {{ filteredStudents.length }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Entered -->
+      <div class="stat-card">
+
+        <div class="stat-icon entered">
+
+          <i class="bi bi-pencil-square"></i>
+
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Marks Entered
+          </span>
+
+          <strong>
+            {{ getEnteredCount() }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Average -->
+      <div class="stat-card">
+
+        <div class="stat-icon average">
+
+          <i class="bi bi-graph-up"></i>
+
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Average
+          </span>
+
+          <strong>
+            {{ getAveragePercentage() }}%
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- A+ -->
+      <div class="stat-card">
+
+        <div class="stat-icon grade">
+
+          <i class="bi bi-award-fill"></i>
+
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            A+ Students
+          </span>
+
+          <strong>
+            {{ getGradeCount('A+') }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================
+         CONTROLS
+    ======================================= -->
+
+    <div class="filter-card">
+
+      <div class="filter-header">
+
+        <div>
+
+          <h5>
+
+            <i class="bi bi-sliders"></i>
+
+            Marks Controls
+
+          </h5>
+
+          <p>
+            Select subject, exam type and filter students.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="clearFilters()"
+        >
+
+          <i class="bi bi-arrow-counterclockwise"></i>
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+
+      <div class="filter-grid">
+
+
+        <!-- SUBJECT -->
+
+        <div class="filter-group">
+
+          <label for="subject">
+
+            <i class="bi bi-book-fill"></i>
+
+            Subject
+
+          </label>
+
+
+          <select
+            id="subject"
+            class="form-select"
+            [(ngModel)]="selectedSubjectId"
+            (change)="onSubjectChange()"
+          >
+
+            <option
+              value=""
+              disabled
+            >
+              Select Subject
+            </option>
+
+
+            @for (
+              subject of subjects;
+              track subject.id
+            ) {
+
+              <option
+                [value]="subject.id"
+              >
+
+                {{
+                  subject.subjectName ||
+                  subject.name ||
+                  subject.subjectCode ||
+                  subject.code ||
+                  'Subject'
+                }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- EXAM TYPE -->
+
+        <div class="filter-group">
+
+          <label for="examType">
+
+            <i class="bi bi-file-earmark-text-fill"></i>
+
+            Exam Type
+
+          </label>
+
+
+          <select
+            id="examType"
+            class="form-select"
+            [(ngModel)]="selectedExamType"
+            (change)="onExamTypeChange()"
+          >
+
+            @for (
+              exam of examTypes;
+              track exam
+            ) {
+
+              <option
+                [value]="exam"
+              >
+                {{ exam }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- MAX MARKS -->
+
+        <div class="filter-group">
+
+          <label for="maxMarks">
+
+            <i class="bi bi-123"></i>
+
+            Maximum Marks
+
+          </label>
+
+
+          <input
+            id="maxMarks"
+            type="number"
+            class="form-control"
+            [(ngModel)]="maxMarks"
+            min="1"
+            max="1000"
+          />
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="filter-group">
+
+          <label for="studentSearch">
+
+            <i class="bi bi-search"></i>
+
+            Search Student
+
+          </label>
+
+
+          <div class="search-input">
+
+            <i class="bi bi-search"></i>
+
+            <input
+              id="studentSearch"
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchText"
+              (input)="filterStudents()"
+              placeholder="Search by name or enrollment..."
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- SEMESTER -->
+
+        <div class="filter-group">
+
+          <label for="semester">
+
+            <i class="bi bi-mortarboard-fill"></i>
+
+            Semester
+
+          </label>
+
+
+          <select
+            id="semester"
+            class="form-select"
+            [(ngModel)]="selectedSemester"
+            (change)="filterStudents()"
+          >
+
+            <option value="All">
+              All Semesters
+            </option>
+
+
+            @for (
+              semester of semesters;
+              track semester
+            ) {
+
+              <option
+                [value]="semester"
+              >
+
+                Semester {{ semester }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- DIVISION -->
+
+        <div class="filter-group">
+
+          <label for="division">
+
+            <i class="bi bi-diagram-3-fill"></i>
+
+            Division
+
+          </label>
+
+
+          <select
+            id="division"
+            class="form-select"
+            [(ngModel)]="selectedDivision"
+            (change)="filterStudents()"
+          >
+
+            <option value="All">
+              All Divisions
+            </option>
+
+
+            @for (
+              division of divisions;
+              track division
+            ) {
+
+              <option
+                [value]="division"
+              >
+
+                Division {{ division }}
+
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================
+         SUCCESS
+    ======================================= -->
+
+    @if (successMessage) {
+
+      <div class="alert alert-success custom-alert">
+
+        <i class="bi bi-check-circle-fill"></i>
+
+        <span>
+          {{ successMessage }}
+        </span>
+
+      </div>
+
+    }
+
+
+    <!-- ======================================
+         MARKS TABLE
+    ======================================= -->
+
+    <div class="marks-card">
+
+
+      <!-- TABLE HEADER -->
+
+      <div class="table-header">
+
+        <div>
+
+          <h5>
+
+            <i class="bi bi-table"></i>
+
+            Student Marks
+
+          </h5>
+
+          <p>
+
+            {{ filteredStudents.length }}
+
+            student{{ filteredStudents.length !== 1 ? 's' : '' }}
+            displayed
+
+          </p>
+
+        </div>
+
+
+        <div class="exam-info">
+
+          <span>
+            {{ selectedExamType }}
+          </span>
+
+          <strong>
+            Max: {{ maxMarks }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- ====================================
+           EMPTY
+      ===================================== -->
+
+      @if (filteredStudents.length === 0) {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <i class="bi bi-people"></i>
+
+          </div>
+
+          <h5>
+            No students found
+          </h5>
+
+          <p>
+            No students match the selected filters.
+          </p>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="clearFilters()"
+          >
+
+            <i class="bi bi-arrow-counterclockwise"></i>
+
+            Clear Filters
+
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- ====================================
+           TABLE
+      ===================================== -->
+
+      @if (filteredStudents.length > 0) {
+
+        <div class="table-responsive">
+
+          <table class="marks-table">
+
+            <thead>
+
+              <tr>
+
+                <th class="student-column">
+                  Student
+                </th>
+
+                <th>
+                  Enrollment No.
+                </th>
+
+                <th>
+                  Semester
+                </th>
+
+                <th>
+                  Division
+                </th>
+
+                <th class="marks-column">
+                  Marks
+                </th>
+
+                <th>
+                  Percentage
+                </th>
+
+                <th>
+                  Grade
+                </th>
+
+                <th class="action-column">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                student of filteredStudents;
+                track student.id || student.uid
+              ) {
+
+                <tr>
+
+
+                  <!-- STUDENT -->
+
+                  <td>
+
+                    <div class="student-info">
+
+                      <div class="student-avatar">
+
+                        @if (
+                          student.profileImage
+                        ) {
+
+                          <img
+                            [src]="student.profileImage"
+                            [alt]="
+                              student.firstName +
+                              ' ' +
+                              student.lastName
+                            "
+                          />
+
+                        } @else {
+
+                          <span>
+
+                            {{
+                              student.firstName.charAt(0) +
+                              student.lastName.charAt(0)
+                            }}
+
+                          </span>
+
+                        }
+
+                      </div>
+
+
+                      <div class="student-details">
+
+                        <strong>
+
+                          {{ student.firstName }}
+                          {{ student.lastName }}
+
+                        </strong>
+
+
+                        @if (student.phone) {
+
+                          <small>
+
+                            <i class="bi bi-telephone"></i>
+
+                            {{ student.phone }}
+
+                          </small>
+
+                        }
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- ENROLLMENT -->
+
+                  <td>
+
+                    <span class="enrollment-number">
+
+                      {{
+                        student.enrollmentNo ||
+                        'N/A'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- SEMESTER -->
+
+                  <td>
+
+                    @if (
+                      student.semester !== undefined &&
+                      student.semester !== null
+                    ) {
+
+                      <span class="info-badge">
+
+                        Semester
+                        {{ student.semester }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="muted-text">
+                        N/A
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- DIVISION -->
+
+                  <td>
+
+                    @if (student.division) {
+
+                      <span class="division-badge">
+
+                        {{ student.division }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="muted-text">
+                        N/A
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- MARKS INPUT -->
+
+                  <td>
+
+                    <div class="marks-input-wrapper">
+
+                      <input
+                        type="number"
+                        class="marks-input"
+                        [value]="
+                          getMarksValue(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )
+                        "
+                        (input)="
+                          setMarks(
+                            student.id ||
+                            student.uid ||
+                            '',
+                            $any($event.target).value
+                          )
+                        "
+                        min="0"
+                        [max]="maxMarks"
+                        placeholder="0"
+                      />
+
+                      <span>
+                        / {{ maxMarks }}
+                      </span>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- PERCENTAGE -->
+
+                  <td>
+
+                    <span class="percentage-value">
+
+                      {{
+                        calculatePercentage(
+                          student.id ||
+                          student.uid ||
+                          ''
+                        )
+                      }}%
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- GRADE -->
+
+                  <td>
+
+                    @if (
+                      getStudentMarks(
+                        student.id ||
+                        student.uid ||
+                        ''
+                      )?.grade
+                    ) {
+
+                      <span
+                        class="grade-badge"
+                        [class.grade-a-plus]="
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'A+'
+                        "
+                        [class.grade-a]="
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'A'
+                        "
+                        [class.grade-b]="
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'B+' ||
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'B'
+                        "
+                        [class.grade-c]="
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'C'
+                        "
+                        [class.grade-f]="
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade === 'F'
+                        "
+                      >
+
+                        {{
+                          getStudentMarks(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          )?.grade
+                        }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="muted-text">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- SAVE -->
+
+                  <td>
+
+                    <button
+                      type="button"
+                      class="save-btn"
+                      [disabled]="
+                        isSaving ||
+                        getMarksValue(
+                          student.id ||
+                          student.uid ||
+                          ''
+                        ) === null
+                      "
+                      (click)="
+                        saveStudentMarks(student)
+                      "
+                    >
+
+                      <i class="bi bi-save"></i>
+
+                      Save
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,663 @@
+<div class="marks-page">
+
+  <!-- =====================================
+       Page Header
+  ====================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Marks & Grades
+      </h2>
+
+      <p>
+        View your subject-wise marks and academic grades.
+      </p>
+
+    </div>
+
+
+    <div class="semester-selector">
+
+      <select
+        [value]="selectedSemester"
+        (change)="onSemesterChange($event)"
+      >
+
+        <option value="Current Semester">
+          Current Semester
+        </option>
+
+
+        @for (
+          semester of availableSemesters;
+          track semester
+        ) {
+
+          <option [value]="semester">
+            {{ semester }}
+          </option>
+
+        }
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================
+       Loading
+  ====================================== -->
+
+  @if (loading) {
+
+    <div class="loading-card">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading marks...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================
+       Error
+  ====================================== -->
+
+  @if (!loading && errorMessage) {
+
+    <div class="error-card">
+
+      <h4>
+        Unable to load marks
+      </h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="retry()"
+      >
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!loading && !errorMessage) {
+
+    <!-- =====================================
+         Summary
+    ====================================== -->
+
+    <div class="summary-grid">
+
+      <!-- Overall Percentage -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          📊
+        </div>
+
+        <div>
+
+          <span>
+            Overall Percentage
+          </span>
+
+          <h3>
+            {{ overallPercentageDisplay }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Overall Grade -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon green">
+          🎓
+        </div>
+
+        <div>
+
+          <span>
+            Overall Grade
+          </span>
+
+          <h3>
+            {{ overallGrade }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Subjects -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon purple">
+          📚
+        </div>
+
+        <div>
+
+          <span>
+            Subjects
+          </span>
+
+          <h3>
+            {{ totalSubjects }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- Passed -->
+
+      <div class="summary-card">
+
+        <div class="summary-icon orange">
+          ✓
+        </div>
+
+        <div>
+
+          <span>
+            Passed
+          </span>
+
+          <h3>
+            {{ passedSubjects }}/{{ totalSubjects }}
+          </h3>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================
+         Performance Overview
+    ====================================== -->
+
+    <div class="marks-overview">
+
+      <!-- Marks Overview -->
+
+      <div class="overview-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Marks Overview
+            </h3>
+
+            <p>
+              {{ selectedSemester }}
+              academic performance
+            </p>
+
+          </div>
+
+
+          <span
+            class="grade-badge large"
+            [ngClass]="
+              getGradeClass(overallGrade)
+            "
+          >
+            {{ overallGrade }}
+          </span>
+
+        </div>
+
+
+        <!-- Statistics -->
+
+        <div class="marks-stats">
+
+          <div class="mark-stat">
+
+            <span>
+              Highest Marks
+            </span>
+
+            <strong>
+              {{ highestMarksDisplay }}
+            </strong>
+
+          </div>
+
+
+          <div class="mark-stat">
+
+            <span>
+              Lowest Marks
+            </span>
+
+            <strong>
+              {{ lowestMarksDisplay }}
+            </strong>
+
+          </div>
+
+
+          <div class="mark-stat">
+
+            <span>
+              Average
+            </span>
+
+            <strong>
+              {{ overallPercentageDisplay }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Overall Progress -->
+
+        <div class="overall-progress">
+
+          <div class="progress-header">
+
+            <span>
+              Overall Performance
+            </span>
+
+            <strong>
+              {{ overallPercentageDisplay }}
+            </strong>
+
+          </div>
+
+
+          <div class="progress-bar">
+
+            <div
+              class="progress-value"
+              [style.width.%]="
+                overallPercentage || 0
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           Grading Scale
+      ====================================== -->
+
+      <div class="overview-card grade-info">
+
+        <h3>
+          Grading Scale
+        </h3>
+
+
+        <div class="grading-row">
+
+          <span class="grade-a">
+            A+
+          </span>
+
+          <span>
+            90 - 100
+          </span>
+
+          <strong>
+            Excellent
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-a">
+            A
+          </span>
+
+          <span>
+            80 - 89
+          </span>
+
+          <strong>
+            Very Good
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-b">
+            B+
+          </span>
+
+          <span>
+            70 - 79
+          </span>
+
+          <strong>
+            Good
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-b">
+            B
+          </span>
+
+          <span>
+            60 - 69
+          </span>
+
+          <strong>
+            Average
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-c">
+            C
+          </span>
+
+          <span>
+            50 - 59
+          </span>
+
+          <strong>
+            Pass
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-c">
+            D
+          </span>
+
+          <span>
+            40 - 49
+          </span>
+
+          <strong>
+            Pass
+          </strong>
+
+        </div>
+
+
+        <div class="grading-row">
+
+          <span class="grade-f">
+            F
+          </span>
+
+          <span>
+            Below 40
+          </span>
+
+          <strong>
+            Fail
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================
+         Subject Marks
+    ====================================== -->
+
+    <div class="marks-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h3>
+            Subject-wise Marks
+          </h3>
+
+          <p>
+            Detailed marks for each subject
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (subjects.length > 0) {
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Subject
+                </th>
+
+                <th>
+                  Internal
+                </th>
+
+                <th>
+                  External
+                </th>
+
+                <th>
+                  Total
+                </th>
+
+                <th>
+                  Grade
+                </th>
+
+                <th>
+                  Performance
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                subject of subjects;
+                track subject.subjectId
+              ) {
+
+                <tr>
+
+                  <!-- Subject -->
+
+                  <td>
+
+                    <div class="subject-name">
+
+                      <div class="subject-icon">
+
+                        {{
+                          subject.code
+                            .charAt(0)
+                            .toUpperCase()
+                        }}
+
+                      </div>
+
+
+                      <div>
+
+                        <strong>
+                          {{ subject.subject }}
+                        </strong>
+
+                        <small>
+                          {{ subject.code }}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- Internal -->
+
+                  <td>
+                    {{ subject.internal }}
+                  </td>
+
+
+                  <!-- External -->
+
+                  <td>
+                    {{ subject.external }}
+                  </td>
+
+
+                  <!-- Total -->
+
+                  <td>
+
+                    <strong>
+                      {{ subject.total }}%
+                    </strong>
+
+                  </td>
+
+
+                  <!-- Grade -->
+
+                  <td>
+
+                    <span
+                      class="grade-badge"
+                      [ngClass]="
+                        getGradeClass(
+                          subject.grade
+                        )
+                      "
+                    >
+
+                      {{ subject.grade }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- Progress -->
+
+                  <td>
+
+                    <div class="performance-cell">
+
+                      <span>
+                        {{ subject.percentage }}%
+                      </span>
+
+                      <div class="mini-progress">
+
+                        <div
+                          class="mini-progress-value"
+                          [style.width.%]="
+                            subject.percentage
+                          "
+                        ></div>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            📚
+          </div>
+
+          <h4>
+            No Marks Available
+          </h4>
+
+          <p>
+            Your marks will appear here once
+            they are entered by the faculty.
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

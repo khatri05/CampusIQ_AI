@@ -1,0 +1,468 @@
+<div class="skills-page">
+
+  <div class="skills-content">
+
+    <!-- Header -->
+    <div class="page-header">
+
+      <div>
+        <h1>My Skills</h1>
+
+        <p>
+          Manage your technical and professional skills
+        </p>
+      </div>
+
+      <button
+        class="add-skill-btn"
+        type="button"
+        (click)="openAddForm()"
+      >
+        <span>+</span>
+        Add Skill
+      </button>
+
+    </div>
+
+
+    <!-- Success Message -->
+    <div
+      *ngIf="successMessage"
+      class="alert-message success"
+    >
+      <span>✓</span>
+      {{ successMessage }}
+    </div>
+
+
+    <!-- Error Message -->
+    <div
+      *ngIf="errorMessage"
+      class="alert-message error"
+    >
+      <span>!</span>
+      {{ errorMessage }}
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-icon blue">
+          💡
+        </div>
+
+        <div>
+          <span class="stat-label">
+            Total Skills
+          </span>
+
+          <strong>
+            {{ getSkillCount() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon green">
+          ⭐
+        </div>
+
+        <div>
+          <span class="stat-label">
+            Expert
+          </span>
+
+          <strong>
+            {{ getExpertCount() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon purple">
+          🚀
+        </div>
+
+        <div>
+          <span class="stat-label">
+            Advanced
+          </span>
+
+          <strong>
+            {{ getAdvancedCount() }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon orange">
+          🌱
+        </div>
+
+        <div>
+          <span class="stat-label">
+            Beginner
+          </span>
+
+          <strong>
+            {{ getBeginnerCount() }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Loading -->
+    <div
+      *ngIf="loading"
+      class="loading-container"
+    >
+
+      <div class="spinner"></div>
+
+      <p>Loading your skills...</p>
+
+    </div>
+
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!loading && skills.length === 0"
+      class="empty-state"
+    >
+
+      <div class="empty-icon">
+        💡
+      </div>
+
+      <h2>No Skills Added Yet</h2>
+
+      <p>
+        Add your technical and professional skills
+        to improve your digital profile.
+      </p>
+
+      <button
+        type="button"
+        class="add-skill-btn"
+        (click)="openAddForm()"
+      >
+        + Add Your First Skill
+      </button>
+
+    </div>
+
+
+    <!-- Skills Grid -->
+    <div
+      *ngIf="!loading && skills.length > 0"
+      class="skills-grid"
+    >
+
+      <div
+        class="skill-card"
+        *ngFor="let skill of skills"
+      >
+
+        <!-- Card Header -->
+        <div class="skill-card-header">
+
+          <div class="skill-icon">
+            💡
+          </div>
+
+          <div class="skill-actions">
+
+            <button
+              type="button"
+              class="icon-btn edit"
+              title="Edit"
+              (click)="openEditForm(skill)"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="icon-btn delete"
+              title="Delete"
+              (click)="deleteSkill(skill)"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Skill Information -->
+        <div class="skill-info">
+
+          <h3>
+            {{ skill.skillName }}
+          </h3>
+
+          <span
+            *ngIf="skill.category"
+            class="category"
+          >
+            {{ skill.category }}
+          </span>
+
+        </div>
+
+
+        <!-- Level -->
+        <div class="skill-level">
+
+          <span class="level-label">
+            Level
+          </span>
+
+          <span
+            class="level-badge"
+            [ngClass]="getLevelClass(skill.level)"
+          >
+            {{ skill.level }}
+          </span>
+
+        </div>
+
+
+        <!-- Experience -->
+        <div class="experience">
+
+          <span>Experience</span>
+
+          <strong>
+            {{ skill.yearsOfExperience }}
+            {{
+              skill.yearsOfExperience === 1
+                ? 'year'
+                : 'years'
+            }}
+          </strong>
+
+        </div>
+
+
+        <!-- Description -->
+        <p
+          *ngIf="skill.description"
+          class="skill-description"
+        >
+          {{ skill.description }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Add/Edit Modal -->
+  <div
+    *ngIf="showForm"
+    class="modal-overlay"
+    (click)="closeForm()"
+  >
+
+    <div
+      class="skill-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            {{
+              isEditMode
+                ? 'Edit Skill'
+                : 'Add New Skill'
+            }}
+          </h2>
+
+          <p>
+            {{
+              isEditMode
+                ? 'Update your skill details'
+                : 'Add a skill to your profile'
+            }}
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeForm()"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- Form -->
+      <form
+        class="skill-form"
+        (ngSubmit)="saveSkill()"
+      >
+
+        <!-- Skill Name -->
+        <div class="form-group">
+
+          <label>
+            Skill Name
+            <span>*</span>
+          </label>
+
+          <input
+            type="text"
+            name="skillName"
+            [(ngModel)]="skillForm.skillName"
+            placeholder="e.g. Angular"
+            required
+          />
+
+        </div>
+
+
+        <!-- Category -->
+        <div class="form-group">
+
+          <label>
+            Category
+          </label>
+
+          <input
+            type="text"
+            name="category"
+            [(ngModel)]="skillForm.category"
+            placeholder="e.g. Frontend Development"
+          />
+
+        </div>
+
+
+        <!-- Level + Experience -->
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Skill Level
+            </label>
+
+            <select
+              name="level"
+              [(ngModel)]="skillForm.level"
+            >
+
+              <option
+                *ngFor="let level of levels"
+                [value]="level"
+              >
+                {{ level }}
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Years of Experience
+            </label>
+
+            <input
+              type="number"
+              name="yearsOfExperience"
+              [(ngModel)]="skillForm.yearsOfExperience"
+              min="0"
+              step="0.5"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Description -->
+        <div class="form-group">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            name="description"
+            [(ngModel)]="skillForm.description"
+            rows="4"
+            placeholder="Describe your experience with this skill..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            (click)="closeForm()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="saving"
+          >
+
+            <span *ngIf="!saving">
+              {{
+                isEditMode
+                  ? 'Update Skill'
+                  : 'Add Skill'
+              }}
+            </span>
+
+            <span *ngIf="saving">
+              Saving...
+            </span>
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

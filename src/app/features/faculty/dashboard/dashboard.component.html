@@ -1,0 +1,790 @@
+<div class="dashboard-page">
+
+  <!-- =========================
+       LOADING
+  ========================== -->
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+
+      <div class="spinner"></div>
+
+      <p>Loading dashboard...</p>
+
+    </div>
+
+  }
+
+  <!-- =========================
+       ERROR
+  ========================== -->
+
+  @else if (errorMessage) {
+
+    <div class="error-state">
+
+      <div class="error-icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+
+      <h3>Unable to load dashboard</h3>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        class="retry-btn"
+        (click)="loadDashboard()"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+  <!-- =========================
+       DASHBOARD
+  ========================== -->
+
+  @else {
+
+    <!-- =========================
+         WELCOME SECTION
+    ========================== -->
+
+    <section class="welcome-card">
+
+      <div class="welcome-content">
+
+        <span class="welcome-label">
+          FACULTY DASHBOARD
+        </span>
+
+        <h1>
+          {{ welcome.title }},
+          {{ faculty.name }}
+        </h1>
+
+        <p class="welcome-subtitle">
+          {{ welcome.subtitle }}
+        </p>
+
+        <div class="welcome-date">
+
+          <i class="bi bi-calendar3"></i>
+
+          <span>
+            {{ welcome.date }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Quote -->
+
+      <div class="welcome-quote">
+
+        <i class="bi bi-quote quote-icon"></i>
+
+        <p>
+          {{ welcome.quote.line1 }}
+          <br>
+          {{ welcome.quote.line2 }}
+        </p>
+
+        <span>
+          {{ welcome.quote.author }}
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
+
+    <section class="stats-grid">
+
+      @for (
+        stat of statistics;
+        track stat.title
+      ) {
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div
+              class="stat-icon"
+              [class.purple]="stat.type === 'purple'"
+              [class.green]="stat.type === 'green'"
+              [class.orange]="stat.type === 'orange'"
+              [class.blue]="stat.type === 'blue'"
+            >
+
+              <i
+                class="bi"
+                [class]="stat.icon"
+              ></i>
+
+            </div>
+
+            @if (stat.change) {
+
+              <span class="stat-change">
+                {{ stat.change }}
+              </span>
+
+            }
+
+          </div>
+
+          <div class="stat-content">
+
+            <h2>
+              {{ stat.value }}
+            </h2>
+
+            <h4>
+              {{ stat.title }}
+            </h4>
+
+            <p>
+              {{ stat.description }}
+            </p>
+
+          </div>
+
+        </div>
+
+      }
+
+    </section>
+
+
+    <!-- =========================
+         MAIN DASHBOARD GRID
+    ========================== -->
+
+    <div class="dashboard-grid">
+
+
+      <!-- =========================
+           TODAY'S SCHEDULE
+      ========================== -->
+
+      <section class="dashboard-card schedule-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Today's Schedule
+            </h3>
+
+            <p>
+              Your teaching schedule for today
+            </p>
+
+          </div>
+
+          <i class="bi bi-calendar-week"></i>
+
+        </div>
+
+
+        @if (schedule.length > 0) {
+
+          <div class="schedule-list">
+
+            @for (
+              item of schedule;
+              track $index
+            ) {
+
+              <div class="schedule-item">
+
+                <div class="schedule-time">
+
+                  {{ item.time }}
+
+                </div>
+
+                <div class="schedule-line"></div>
+
+                <div class="schedule-details">
+
+                  <h4>
+                    {{ item.subject }}
+                  </h4>
+
+                  <p>
+                    <i class="bi bi-people"></i>
+                    {{ item.class || item.division || '' }}
+                  </p>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="empty-card">
+
+            <div class="empty-icon">
+              <i class="bi bi-calendar-x"></i>
+            </div>
+
+            <h4>
+              No schedule available
+            </h4>
+
+            <p>
+              Your timetable will appear here when schedule data is available.
+            </p>
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- =========================
+           ATTENDANCE
+      ========================== -->
+
+      <section class="dashboard-card attendance-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Attendance Overview
+            </h3>
+
+            <p>
+              Student attendance this week
+            </p>
+
+          </div>
+
+          <div class="attendance-period">
+
+            <select
+              [(ngModel)]="attendance.selectedPeriod"
+            >
+
+              @for (
+                period of attendance.periods;
+                track period
+              ) {
+
+                <option [value]="period">
+                  {{ period }}
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="attendance-summary">
+
+          <div>
+
+            <span>
+              Average Attendance
+            </span>
+
+            <strong>
+              {{ statistics[1].value }}
+            </strong>
+
+          </div>
+
+          <div class="attendance-status">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            Current
+
+          </div>
+
+        </div>
+
+
+        <div class="attendance-chart">
+
+          @for (
+            item of attendance.data;
+            track item.day
+          ) {
+
+            <div class="attendance-column">
+
+              <div class="attendance-value">
+                {{ item.percentage }}%
+              </div>
+
+              <div class="bar-container">
+
+                <div
+                  class="attendance-bar"
+                  [style.height.%]="item.percentage"
+                ></div>
+
+              </div>
+
+              <span>
+                {{ item.day }}
+              </span>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <div class="chart-legend">
+
+          <span>
+            <i class="legend-dot"></i>
+            Attendance %
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           UPCOMING DEADLINES
+      ========================== -->
+
+      <section class="dashboard-card deadlines-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Upcoming Deadlines
+            </h3>
+
+            <p>
+              Assignment deadlines
+            </p>
+
+          </div>
+
+          <i class="bi bi-clock-history"></i>
+
+        </div>
+
+
+        @if (deadlines.length > 0) {
+
+          <div class="deadline-list">
+
+            @for (
+              deadline of deadlines;
+              track $index
+            ) {
+
+              <div class="deadline-item">
+
+                <div class="deadline-date">
+
+                  <span>
+                    {{ deadline.month }}
+                  </span>
+
+                  <strong>
+                    {{ deadline.date }}
+                  </strong>
+
+                </div>
+
+                <div class="deadline-info">
+
+                  <h4>
+                    {{ deadline.title }}
+                  </h4>
+
+                  <p>
+                    {{ deadline.subject }}
+                  </p>
+
+                </div>
+
+                <i class="bi bi-chevron-right"></i>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="empty-card">
+
+            <div class="empty-icon green">
+              <i class="bi bi-check-circle"></i>
+            </div>
+
+            <h4>
+              No upcoming deadlines
+            </h4>
+
+            <p>
+              There are no assignment deadlines available.
+            </p>
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- =========================
+           RECENT ACTIVITIES
+      ========================== -->
+
+      <section class="dashboard-card activities-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Recent Activities
+            </h3>
+
+            <p>
+              Latest updates
+            </p>
+
+          </div>
+
+          <i class="bi bi-activity"></i>
+
+        </div>
+
+
+        @if (activities.length > 0) {
+
+          <div class="activity-list">
+
+            @for (
+              activity of activities;
+              track $index
+            ) {
+
+              <div class="activity-item">
+
+                <div
+                  class="activity-icon"
+                  [class.blue]="activity.type === 'blue'"
+                  [class.purple]="activity.type === 'purple'"
+                  [class.green]="activity.type === 'green'"
+                  [class.orange]="activity.type === 'orange'"
+                >
+
+                  <i
+                    class="bi"
+                    [class]="activity.icon"
+                  ></i>
+
+                </div>
+
+                <div class="activity-content">
+
+                  <p>
+                    {{ activity.text }}
+                  </p>
+
+                  <span>
+                    {{ activity.time }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="empty-card">
+
+            <div class="empty-icon">
+              <i class="bi bi-activity"></i>
+            </div>
+
+            <h4>
+              No recent activities
+            </h4>
+
+            <p>
+              Recent faculty activities will appear here.
+            </p>
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- =========================
+           STUDENT PERFORMANCE
+      ========================== -->
+
+      <section class="dashboard-card performance-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Student Performance
+            </h3>
+
+            <p>
+              Overall academic performance
+            </p>
+
+          </div>
+
+          <div class="class-filter">
+
+            <select
+              [(ngModel)]="performance.selectedClass"
+            >
+
+              @for (
+                className of performance.classes;
+                track className
+              ) {
+
+                <option [value]="className">
+                  {{ className }}
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="performance-content">
+
+          <!-- Donut -->
+
+          <div class="performance-donut-wrapper">
+
+            <div class="performance-donut">
+
+              <div class="donut-center">
+
+                <strong>
+                  {{ performance.overallPercentage }}%
+                </strong>
+
+                <span>
+                  Overall
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Categories -->
+
+          <div class="performance-categories">
+
+            @for (
+              category of performance.categories;
+              track category.label
+            ) {
+
+              <div class="performance-row">
+
+                <div class="performance-row-label">
+
+                  <span
+                    class="performance-dot"
+                    [class.green]="category.type === 'green'"
+                    [class.blue]="category.type === 'blue'"
+                    [class.yellow]="category.type === 'yellow'"
+                    [class.red]="category.type === 'red'"
+                  ></span>
+
+                  <span>
+                    {{ category.label }}
+                  </span>
+
+                </div>
+
+                <strong>
+                  {{ category.students }}
+                </strong>
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           QUICK ACTIONS
+      ========================== -->
+
+      <section class="dashboard-card quick-actions-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h3>
+              Quick Actions
+            </h3>
+
+            <p>
+              Frequently used actions
+            </p>
+
+          </div>
+
+          <i class="bi bi-lightning-charge-fill"></i>
+
+        </div>
+
+
+        <div class="quick-actions">
+
+          @for (
+            action of quickActions;
+            track action.title
+          ) {
+
+            <button
+              type="button"
+              class="quick-action"
+              (click)="openQuickAction(action.route)"
+            >
+
+              <div
+                class="quick-action-icon"
+                [class.green]="action.type === 'green'"
+                [class.red]="action.type === 'red'"
+                [class.purple]="action.type === 'purple'"
+                [class.orange]="action.type === 'orange'"
+              >
+
+                <i
+                  class="bi"
+                  [class]="action.icon"
+                ></i>
+
+              </div>
+
+              <span>
+                {{ action.title }}
+              </span>
+
+            </button>
+
+          }
+
+        </div>
+
+      </section>
+
+
+    </div>
+
+
+    <!-- =========================
+         BOTTOM BANNER
+    ========================== -->
+
+    <section class="bottom-banner">
+
+      <div class="banner-icon">
+
+        <i class="bi bi-stars"></i>
+
+      </div>
+
+      <div class="banner-content">
+
+        <h3>
+          {{ bottomBanner.title }}
+        </h3>
+
+        <p>
+          {{ bottomBanner.description }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="banner-btn"
+        (click)="viewStudentPerformance()"
+      >
+
+        {{ bottomBanner.buttonText }}
+
+        <i class="bi bi-arrow-right"></i>
+
+      </button>
+
+    </section>
+
+  }
+
+</div>

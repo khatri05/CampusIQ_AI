@@ -1,0 +1,542 @@
+<div class="jobs-page">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <span class="page-label">
+        CAREER CENTER
+      </span>
+
+      <h1>
+        Job Opportunities
+      </h1>
+
+      <p>
+        Discover career opportunities matching your skills and goals.
+      </p>
+    </div>
+
+    <div class="header-icon">
+      <i class="bi bi-briefcase-fill"></i>
+    </div>
+
+  </div>
+
+
+  <!-- Statistics -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-briefcase"></i>
+      </div>
+
+      <div>
+        <span>Available Jobs</span>
+
+        <strong>
+          {{ jobs.length }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+        <span>Open Positions</span>
+
+        <strong>
+          {{ getOpenJobsCount() }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        <i class="bi bi-buildings"></i>
+      </div>
+
+      <div>
+        <span>Companies</span>
+
+        <strong>
+          {{ getCompaniesCount() }}
+        </strong>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Filters -->
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        placeholder="Search jobs, companies or skills..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()">
+
+    </div>
+
+
+    <select
+      [(ngModel)]="selectedJobType"
+      (change)="onJobTypeChange()">
+
+      <option value="All">
+        All Job Types
+      </option>
+
+      <option value="Full Time">
+        Full Time
+      </option>
+
+      <option value="Part Time">
+        Part Time
+      </option>
+
+      <option value="Internship">
+        Internship
+      </option>
+
+      <option value="Contract">
+        Contract
+      </option>
+
+    </select>
+
+
+    <select
+      [(ngModel)]="selectedLocation"
+      (change)="onLocationChange()">
+
+      <option value="All">
+        All Locations
+      </option>
+
+      <option
+        *ngFor="let location of getUniqueLocations()"
+        [value]="location">
+
+        {{ location }}
+
+      </option>
+
+    </select>
+
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearFilters()">
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+      Reset
+
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+  <div
+    class="state-box"
+    *ngIf="isLoading">
+
+    <div class="spinner"></div>
+
+    <p>
+      Loading job opportunities...
+    </p>
+
+  </div>
+
+
+  <!-- Error -->
+  <div
+    class="error-box"
+    *ngIf="!isLoading && errorMessage">
+
+    <i class="bi bi-exclamation-triangle"></i>
+
+    <div>
+      <strong>
+        Unable to load jobs
+      </strong>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="loadJobs()">
+
+      Retry
+
+    </button>
+
+  </div>
+
+
+  <!-- Empty -->
+  <div
+    class="empty-box"
+    *ngIf="
+      !isLoading &&
+      !errorMessage &&
+      filteredJobs.length === 0
+    ">
+
+    <div class="empty-icon">
+      <i class="bi bi-briefcase"></i>
+    </div>
+
+    <h3>
+      No Jobs Found
+    </h3>
+
+    <p>
+      Try changing your search or filters.
+    </p>
+
+  </div>
+
+
+  <!-- Job List -->
+  <div
+    class="jobs-grid"
+    *ngIf="
+      !isLoading &&
+      !errorMessage &&
+      filteredJobs.length > 0
+    ">
+
+    <div
+      class="job-card"
+      *ngFor="let job of filteredJobs">
+
+      <div class="job-top">
+
+        <div class="company-logo">
+          {{ job.companyName.charAt(0) }}
+        </div>
+
+        <span
+          class="status-badge"
+          [class.closed]="job.status !== 'Open'">
+
+          {{ job.status }}
+
+        </span>
+
+      </div>
+
+
+      <div class="job-content">
+
+        <h3>
+          {{ job.jobTitle }}
+        </h3>
+
+        <p class="company-name">
+          {{ job.companyName }}
+        </p>
+
+
+        <div class="job-info">
+
+          <span>
+            <i class="bi bi-geo-alt"></i>
+            {{ job.location || 'Remote' }}
+          </span>
+
+          <span>
+            <i class="bi bi-clock"></i>
+            {{ job.jobType }}
+          </span>
+
+          <span>
+            <i class="bi bi-person-workspace"></i>
+            {{ job.experienceRequired }}
+          </span>
+
+        </div>
+
+
+        <div class="salary">
+
+          <i class="bi bi-cash-stack"></i>
+
+          {{ formatSalary(
+            job.salaryMin,
+            job.salaryMax
+          ) }}
+
+        </div>
+
+
+        <div class="skills">
+
+          <span
+            class="skill-tag"
+            *ngFor="
+              let skill of job.requiredSkills?.slice(0, 4)
+            ">
+
+            {{ skill }}
+
+          </span>
+
+          <span
+            class="skill-more"
+            *ngIf="
+              job.requiredSkills &&
+              job.requiredSkills.length > 4
+            ">
+
+            +{{ job.requiredSkills.length - 4 }}
+
+          </span>
+
+        </div>
+
+
+        <div
+          class="deadline"
+          *ngIf="job.applicationDeadline">
+
+          <i class="bi bi-calendar-event"></i>
+
+          Apply before
+          {{ job.applicationDeadline | date:'dd MMM yyyy' }}
+
+        </div>
+
+      </div>
+
+
+      <div class="job-footer">
+
+        <button
+          type="button"
+          class="details-btn"
+          (click)="viewJob(job.id)">
+
+          View Details
+
+          <i class="bi bi-arrow-right"></i>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Job Details Modal -->
+<div
+  class="modal-backdrop-custom"
+  *ngIf="selectedJob"
+  (click)="closeJobDetails()">
+
+  <div
+    class="job-modal"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-header-custom">
+
+      <div>
+
+        <div class="modal-company-logo">
+          {{ selectedJob.companyName.charAt(0) }}
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeJobDetails()">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body-custom">
+
+      <span class="modal-status">
+        {{ selectedJob.status }}
+      </span>
+
+      <h2>
+        {{ selectedJob.jobTitle }}
+      </h2>
+
+      <p class="modal-company">
+        {{ selectedJob.companyName }}
+      </p>
+
+
+      <div class="modal-meta">
+
+        <span>
+          <i class="bi bi-geo-alt"></i>
+          {{ selectedJob.location || 'Remote' }}
+        </span>
+
+        <span>
+          <i class="bi bi-clock"></i>
+          {{ selectedJob.jobType }}
+        </span>
+
+        <span>
+          <i class="bi bi-person-workspace"></i>
+          {{ selectedJob.experienceRequired }}
+        </span>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h4>
+          Job Description
+        </h4>
+
+        <p>
+          {{ selectedJob.description }}
+        </p>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h4>
+          Required Skills
+        </h4>
+
+        <div class="skills">
+
+          <span
+            class="skill-tag"
+            *ngFor="
+              let skill of selectedJob.requiredSkills
+            ">
+
+            {{ skill }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h4>
+          Eligibility Criteria
+        </h4>
+
+        <p>
+          {{ selectedJob.eligibilityCriteria || 'Not specified' }}
+        </p>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h4>
+          Salary
+        </h4>
+
+        <p class="modal-salary">
+
+          {{ formatSalary(
+            selectedJob.salaryMin,
+            selectedJob.salaryMax
+          ) }}
+
+        </p>
+
+      </div>
+
+
+      <div
+        class="detail-section"
+        *ngIf="selectedJob.applicationDeadline">
+
+        <h4>
+          Application Deadline
+        </h4>
+
+        <p>
+
+          {{ selectedJob.applicationDeadline
+            | date:'dd MMMM yyyy' }}
+
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer-custom">
+
+      <a
+        *ngIf="selectedJob.jobUrl"
+        [href]="selectedJob.jobUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="apply-btn">
+
+        Apply Now
+
+        <i class="bi bi-box-arrow-up-right"></i>
+
+      </a>
+
+      <button
+        type="button"
+        class="secondary-btn"
+        (click)="closeJobDetails()">
+
+        Close
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

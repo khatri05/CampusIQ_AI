@@ -1,0 +1,43 @@
+.faculty-layout {
+  min-height: 100vh;
+
+  background: #f8fafc;
+}
+
+/* Main Area */
+
+.main-area {
+  min-height: 100vh;
+
+  margin-left: 260px;
+}
+
+/* Content */
+
+.page-content {
+  min-height: calc(100vh - 76px);
+
+  padding: 30px;
+}
+
+/* Responsive */
+
+@media (max-width: 992px) {
+
+  .main-area {
+    margin-left: 220px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .main-area {
+    margin-left: 70px;
+  }
+
+  .page-content {
+    padding: 20px;
+  }
+
+}

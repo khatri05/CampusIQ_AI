@@ -1,0 +1,969 @@
+/* ========================================
+   Performance Page
+======================================== */
+
+.performance-page {
+  width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   Page Header
+======================================== */
+
+.page-header {
+  margin-bottom: 25px;
+}
+
+.page-header h2 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+/* ========================================
+   Summary Cards
+======================================== */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 20px;
+}
+
+.summary-icon.blue {
+  background: #eff6ff;
+}
+
+.summary-icon.green {
+  background: #dcfce7;
+}
+
+.summary-icon.purple {
+  background: #f3e8ff;
+}
+
+.summary-icon.orange {
+  background: #ffedd5;
+}
+
+.summary-card span {
+  display: block;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.summary-card h3 {
+  margin: 4px 0;
+
+  font-size: 24px;
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.summary-card small {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+
+/* ========================================
+   Main Performance Grid
+======================================== */
+
+.performance-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 2fr)
+    minmax(280px, 1fr);
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.performance-card {
+  min-width: 0;
+
+  padding: 22px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+
+  margin-bottom: 20px;
+}
+
+
+/* ========================================
+   Card Header
+======================================== */
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 25px;
+}
+
+.card-header h3 {
+  margin: 0 0 5px;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.card-header p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   Score Overview
+======================================== */
+
+.score-overview {
+  display: flex;
+
+  align-items: center;
+
+  gap: 40px;
+}
+
+
+/* Dynamic Score Circle */
+
+.score-circle {
+  width: 160px;
+  height: 160px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.4s ease;
+}
+
+.score-circle > div {
+  width: 122px;
+  height: 122px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.score-circle strong {
+  font-size: 27px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.score-circle span {
+  color: #6b7280;
+
+  font-size: 12px;
+
+  margin-top: 3px;
+}
+
+
+/* ========================================
+   Score Details
+======================================== */
+
+.score-details {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.score-row {
+  margin-bottom: 17px;
+}
+
+.score-row:last-child {
+  margin-bottom: 0;
+}
+
+.score-row > div:first-child {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 6px;
+
+  font-size: 13px;
+}
+
+.score-row span {
+  color: #6b7280;
+}
+
+.score-row strong {
+  color: #111827;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   Progress Bar
+======================================== */
+
+.progress-bar {
+  width: 100%;
+
+  height: 8px;
+
+  background: #e5e7eb;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.progress-value {
+  height: 100%;
+
+  min-width: 0;
+
+  background: #2563eb;
+
+  border-radius: 10px;
+
+  transition:
+    width 0.4s ease;
+}
+
+
+/* ========================================
+   Performance Status
+======================================== */
+
+.status-card {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.status-circle {
+  width: 140px;
+  height: 140px;
+
+  margin: 10px auto 20px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.status-circle.excellent {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+.status-circle.good {
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+.status-circle.average {
+  background: #fef3c7;
+
+  color: #d97706;
+}
+
+.status-circle.poor {
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.status-circle strong {
+  font-size: 16px;
+
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+.status-description {
+  text-align: center;
+
+  color: #6b7280;
+
+  line-height: 1.6;
+
+  font-size: 13px;
+
+  margin: 0;
+}
+
+
+/* ========================================
+   Semester Performance
+======================================== */
+
+.semester-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.semester-card {
+  padding: 17px;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+
+  box-sizing: border-box;
+}
+
+.semester-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+}
+
+.semester-header span {
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.semester-header strong {
+  font-size: 18px;
+
+  color: #111827;
+}
+
+.semester-progress {
+  height: 7px;
+
+  background: #e5e7eb;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.semester-progress-value {
+  height: 100%;
+
+  background: #2563eb;
+
+  border-radius: 10px;
+
+  transition:
+    width 0.4s ease;
+}
+
+.semester-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  font-size: 11px;
+}
+
+.semester-footer span {
+  color: #9ca3af;
+}
+
+.semester-footer strong {
+  color: #475569;
+}
+
+
+/* ========================================
+   Subject Performance Table
+======================================== */
+
+.subject-card {
+  margin-bottom: 0;
+}
+
+.table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+
+  min-width: 650px;
+
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+th {
+  padding: 13px 12px;
+
+  text-align: left;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+td {
+  padding: 15px 12px;
+
+  border-bottom:
+    1px solid #f1f5f9;
+
+  font-size: 13px;
+
+  color: #374151;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #fafbfc;
+}
+
+
+/* ========================================
+   Subject Name
+======================================== */
+
+.subject-name {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.subject-icon {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-weight: 700;
+
+  font-size: 13px;
+}
+
+.subject-name strong {
+  display: block;
+
+  color: #111827;
+
+  font-size: 13px;
+}
+
+.subject-name small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #9ca3af;
+
+  font-size: 11px;
+}
+
+
+/* ========================================
+   Grade Badge
+======================================== */
+
+.grade-badge {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  border-radius: 6px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-weight: 600;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   Mini Progress
+======================================== */
+
+.mini-progress {
+  width: 120px;
+
+  height: 6px;
+
+  background: #e5e7eb;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.mini-progress-value {
+  height: 100%;
+
+  background: #2563eb;
+
+  border-radius: 10px;
+
+  transition:
+    width 0.4s ease;
+}
+
+
+/* ========================================
+   Empty State
+======================================== */
+
+.empty-state {
+  padding: 35px 20px;
+
+  text-align: center;
+
+  color: #9ca3af;
+
+  font-size: 13px;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+}
+
+
+/* ========================================
+   Loading Card
+======================================== */
+
+.loading-card {
+  padding: 40px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.loading-card p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+/* ========================================
+   Loading Spinner
+======================================== */
+
+.spinner {
+  width: 35px;
+  height: 35px;
+
+  margin: 0 auto 15px;
+
+  border:
+    4px solid #e5e7eb;
+
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ========================================
+   Error Card
+======================================== */
+
+.error-card {
+  padding: 40px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  border:
+    1px solid #fee2e2;
+}
+
+.error-card h4 {
+  margin: 0 0 8px;
+
+  color: #dc2626;
+
+  font-size: 17px;
+}
+
+.error-card p {
+  margin: 0 0 20px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.error-card button {
+  padding: 9px 18px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  transition:
+    background 0.2s ease;
+}
+
+.error-card button:hover {
+  background: #1d4ed8;
+}
+
+
+/* ========================================
+   Responsive - 1100px
+======================================== */
+
+@media (max-width: 1100px) {
+
+  .summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .semester-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ========================================
+   Responsive - 800px
+======================================== */
+
+@media (max-width: 800px) {
+
+  .performance-page {
+    padding: 20px;
+  }
+
+  .score-overview {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 25px;
+  }
+
+  .score-circle {
+    width: 150px;
+    height: 150px;
+  }
+
+  .score-circle > div {
+    width: 114px;
+    height: 114px;
+  }
+
+  .semester-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ========================================
+   Responsive - 600px
+======================================== */
+
+@media (max-width: 600px) {
+
+  .performance-page {
+    padding: 15px;
+  }
+
+  .page-header h2 {
+    font-size: 21px;
+  }
+
+  .page-header p {
+    font-size: 13px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .summary-card {
+    padding: 17px;
+  }
+
+  .summary-card h3 {
+    font-size: 21px;
+  }
+
+  .performance-grid {
+    gap: 0;
+  }
+
+  .performance-card {
+    padding: 17px;
+
+    margin-bottom: 15px;
+  }
+
+  .card-header {
+    margin-bottom: 20px;
+  }
+
+  .score-overview {
+    align-items: center;
+  }
+
+  .score-circle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .score-circle > div {
+    width: 106px;
+    height: 106px;
+  }
+
+  .score-circle strong {
+    font-size: 23px;
+  }
+
+  .score-details {
+    width: 100%;
+  }
+
+  .semester-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-circle {
+    width: 125px;
+    height: 125px;
+  }
+
+  .status-circle strong {
+    font-size: 14px;
+  }
+
+  .mini-progress {
+    width: 90px;
+  }
+
+  th,
+  td {
+    padding: 12px 9px;
+  }
+
+}
+
+
+/* ========================================
+   Very Small Screens
+======================================== */
+
+@media (max-width: 400px) {
+
+  .performance-page {
+    padding: 10px;
+  }
+
+  .summary-card {
+    gap: 12px;
+  }
+
+  .summary-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 17px;
+  }
+
+  .summary-card h3 {
+    font-size: 19px;
+  }
+
+  .score-circle {
+    width: 125px;
+    height: 125px;
+  }
+
+  .score-circle > div {
+    width: 95px;
+    height: 95px;
+  }
+
+  .score-circle strong {
+    font-size: 20px;
+  }
+
+}

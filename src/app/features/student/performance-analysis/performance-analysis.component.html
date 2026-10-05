@@ -1,0 +1,777 @@
+<div class="performance-analysis-page">
+
+  <!-- Loading -->
+  <div
+    class="loading-container"
+    *ngIf="loading">
+
+    <div class="spinner-border"></div>
+
+    <h5>
+      Analyzing your performance...
+    </h5>
+
+    <p>
+      Please wait while we calculate your academic insights.
+    </p>
+
+  </div>
+
+
+  <!-- Error -->
+  <div
+    class="error-container"
+    *ngIf="!loading && errorMessage">
+
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+
+    <h5>
+      Unable to load performance analysis
+    </h5>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+    <button
+      class="btn btn-primary"
+      (click)="loadPerformance()">
+
+      <i class="bi bi-arrow-clockwise me-2"></i>
+
+      Try Again
+
+    </button>
+
+  </div>
+
+
+  <!-- Main -->
+  <div
+    *ngIf="!loading && performance"
+    class="analysis-content">
+
+
+    <!-- Header -->
+    <div class="page-header">
+
+      <div class="header-title">
+
+        <div class="header-icon">
+          <i class="bi bi-bar-chart-line"></i>
+        </div>
+
+        <div>
+
+          <h1>
+            Performance Analysis
+          </h1>
+
+          <p>
+            Track your academic performance and attendance
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="refresh-button"
+        (click)="loadPerformance()">
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+
+    <!-- Overall Performance -->
+    <section class="overall-card">
+
+      <div class="overall-left">
+
+        <span class="small-label">
+          OVERALL PERFORMANCE
+        </span>
+
+        <div class="overall-score">
+
+          {{ overall?.overallScore || 0 }}%
+
+        </div>
+
+        <p>
+          Combined academic and attendance score
+        </p>
+
+        <span
+          class="performance-badge"
+          [ngClass]="performanceLevelClass">
+
+          <i class="bi bi-stars"></i>
+
+          {{ performanceLevel }}
+
+        </span>
+
+      </div>
+
+
+      <div class="score-circle">
+
+        <div class="score-circle-inner">
+
+          <strong>
+            {{ overall?.overallScore || 0 }}
+          </strong>
+
+          <span>
+            / 100
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="overall-progress">
+
+        <div class="progress">
+
+          <div
+            class="progress-bar"
+            [ngClass]="performanceLevelClass"
+            [style.width.%]="
+              getWidth(
+                overall?.overallScore
+              )
+            ">
+          </div>
+
+        </div>
+
+        <div class="progress-scale">
+
+          <span>0</span>
+          <span>50</span>
+          <span>100</span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Statistics -->
+    <section class="stats-grid">
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon academic">
+          <i class="bi bi-mortarboard"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Average Percentage
+          </span>
+
+          <strong>
+            {{ academic?.averagePercentage || 0 }}%
+          </strong>
+
+          <small
+            [ngClass]="getAcademicClass()">
+
+            Academic Performance
+
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon attendance">
+          <i class="bi bi-calendar-check"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Attendance
+          </span>
+
+          <strong>
+            {{ attendance?.attendancePercentage || 0 }}%
+          </strong>
+
+          <small
+            [ngClass]="getAttendanceClass()">
+
+            Attendance Rate
+
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon exams">
+          <i class="bi bi-file-earmark-text"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Total Exams
+          </span>
+
+          <strong>
+            {{ academic?.totalExams || 0 }}
+          </strong>
+
+          <small>
+            Recorded exams
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon records">
+          <i class="bi bi-database"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Attendance Records
+          </span>
+
+          <strong>
+            {{ attendance?.totalRecords || 0 }}
+          </strong>
+
+          <small>
+            Total records
+          </small>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Academic Performance -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <h2>
+          <i class="bi bi-mortarboard"></i>
+          Academic Performance
+        </h2>
+
+        <p>
+          Analysis of your examination results
+        </p>
+
+      </div>
+
+
+      <div class="academic-grid">
+
+
+        <!-- Academic Score -->
+        <div class="card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <h3>
+                Academic Score
+              </h3>
+
+              <span>
+                Average examination percentage
+              </span>
+
+            </div>
+
+            <strong>
+              {{ academic?.averagePercentage || 0 }}%
+            </strong>
+
+          </div>
+
+
+          <div class="large-progress">
+
+            <div
+              class="large-progress-bar"
+              [ngClass]="getAcademicClass()"
+              [style.width.%]="
+                getWidth(
+                  academic?.averagePercentage
+                )
+              ">
+            </div>
+
+          </div>
+
+
+          <div class="score-details">
+
+            <div>
+
+              <span>
+                Lowest
+              </span>
+
+              <strong>
+                {{ academic?.lowestPercentage || 0 }}%
+              </strong>
+
+            </div>
+
+            <div>
+
+              <span>
+                Average
+              </span>
+
+              <strong>
+                {{ academic?.averagePercentage || 0 }}%
+              </strong>
+
+            </div>
+
+            <div>
+
+              <span>
+                Highest
+              </span>
+
+              <strong>
+                {{ academic?.highestPercentage || 0 }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Grade Distribution -->
+        <div class="card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <h3>
+                Grade Distribution
+              </h3>
+
+              <span>
+                Performance by grade
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="empty-state-small"
+            *ngIf="gradeEntries.length === 0">
+
+            <i class="bi bi-bar-chart"></i>
+
+            <span>
+              No grade data available
+            </span>
+
+          </div>
+
+
+          <div
+            class="grade-list"
+            *ngIf="gradeEntries.length > 0">
+
+            <div
+              class="grade-row"
+              *ngFor="let item of gradeEntries">
+
+              <div class="grade-label">
+                {{ item.grade }}
+              </div>
+
+              <div class="grade-progress">
+
+                <div class="progress">
+
+                  <div
+                    class="progress-bar"
+                    [style.width.%]="
+                      getWidth(
+                        item.percentage
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+              </div>
+
+              <strong>
+                {{ item.count }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Attendance -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <h2>
+          <i class="bi bi-calendar-check"></i>
+          Attendance Analysis
+        </h2>
+
+        <p>
+          Your attendance participation breakdown
+        </p>
+
+      </div>
+
+
+      <div class="attendance-grid">
+
+
+        <!-- Attendance Score -->
+        <div class="card attendance-card">
+
+          <div class="attendance-circle">
+
+            <div>
+
+              <strong>
+                {{ attendance?.attendancePercentage || 0 }}%
+              </strong>
+
+              <span>
+                Attendance
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <span
+            class="attendance-status"
+            [ngClass]="getAttendanceClass()">
+
+            <i class="bi bi-check-circle"></i>
+
+            {{ attendance?.attendancePercentage || 0 }}%
+            attendance rate
+
+          </span>
+
+        </div>
+
+
+        <!-- Breakdown -->
+        <div class="card attendance-breakdown">
+
+
+          <div class="attendance-row">
+
+            <div class="attendance-name">
+
+              <span class="dot present"></span>
+
+              Present
+
+            </div>
+
+            <strong>
+              {{ attendance?.present || 0 }}
+            </strong>
+
+            <span>
+              {{ presentPercentage }}%
+            </span>
+
+          </div>
+
+          <div class="attendance-progress">
+
+            <div class="progress">
+
+              <div
+                class="progress-bar present-bar"
+                [style.width.%]="
+                  presentPercentage
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="attendance-row">
+
+            <div class="attendance-name">
+
+              <span class="dot absent"></span>
+
+              Absent
+
+            </div>
+
+            <strong>
+              {{ attendance?.absent || 0 }}
+            </strong>
+
+            <span>
+              {{ absentPercentage }}%
+            </span>
+
+          </div>
+
+          <div class="attendance-progress">
+
+            <div class="progress">
+
+              <div
+                class="progress-bar absent-bar"
+                [style.width.%]="
+                  absentPercentage
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="attendance-row">
+
+            <div class="attendance-name">
+
+              <span class="dot late"></span>
+
+              Late
+
+            </div>
+
+            <strong>
+              {{ attendance?.late || 0 }}
+            </strong>
+
+            <span>
+              {{ latePercentage }}%
+            </span>
+
+          </div>
+
+          <div class="attendance-progress">
+
+            <div class="progress">
+
+              <div
+                class="progress-bar late-bar"
+                [style.width.%]="
+                  latePercentage
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Performance Summary -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <h2>
+          <i class="bi bi-stars"></i>
+          Performance Summary
+        </h2>
+
+        <p>
+          Key indicators from your academic profile
+        </p>
+
+      </div>
+
+
+      <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            <i class="bi bi-trophy"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Highest Score
+            </span>
+
+            <strong>
+              {{ academic?.highestPercentage || 0 }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            <i class="bi bi-arrow-down-circle"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Lowest Score
+            </span>
+
+            <strong>
+              {{ academic?.lowestPercentage || 0 }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Present
+            </span>
+
+            <strong>
+              {{ attendance?.present || 0 }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <div class="summary-icon">
+            <i class="bi bi-x-circle"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Absent
+            </span>
+
+            <strong>
+              {{ attendance?.absent || 0 }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Formula -->
+    <section class="formula-card">
+
+      <div class="formula-icon">
+        <i class="bi bi-info-circle"></i>
+      </div>
+
+      <div>
+
+        <h4>
+          Overall Score Calculation
+        </h4>
+
+        <p>
+          Your backend calculates the overall score using
+          academic performance and attendance.
+        </p>
+
+        <div class="formula">
+
+          Overall Score =
+          (Average Percentage × 70%)
+          +
+          (Attendance Percentage × 30%)
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </div>
+
+</div>

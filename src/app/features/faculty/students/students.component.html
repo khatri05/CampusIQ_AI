@@ -1,0 +1,647 @@
+<div class="students-page">
+
+  <!-- ========================================
+       PAGE HEADER
+  ======================================== -->
+
+  <div class="page-header">
+
+    <div class="page-title">
+
+      <div class="title-icon">
+        <i class="bi bi-people-fill"></i>
+      </div>
+
+      <div>
+        <h2>Students</h2>
+
+        <p>
+          View and manage students in your department.
+        </p>
+      </div>
+
+    </div>
+
+
+    @if (departmentName) {
+
+      <div class="department-info">
+
+        <div class="department-icon">
+          <i class="bi bi-building"></i>
+        </div>
+
+        <div>
+
+          <span class="department-label">
+            Department
+          </span>
+
+          <strong>
+            {{ departmentName }}
+          </strong>
+
+          @if (departmentCode) {
+
+            <small>
+              {{ departmentCode }}
+            </small>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+
+  <!-- ========================================
+       LOADING
+  ======================================== -->
+
+  @if (isLoading) {
+
+    <div class="state-card">
+
+      <div class="loading-spinner">
+        <div
+          class="spinner-border"
+          role="status"
+        ></div>
+      </div>
+
+      <h5>Loading Students</h5>
+
+      <p>
+        Please wait while we load the student records.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- ========================================
+       ERROR
+  ======================================== -->
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="error-card">
+
+      <div class="error-icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+
+      <div class="error-content">
+
+        <h5>
+          Unable to Load Students
+        </h5>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="retry-btn"
+        (click)="loadStudents()"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ========================================
+       MAIN CONTENT
+  ======================================== -->
+
+  @if (!isLoading && !errorMessage) {
+
+    <!-- ========================================
+         SUMMARY CARD
+    ======================================== -->
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div class="summary-content">
+
+          <span>
+            Total Students
+          </span>
+
+          <strong>
+            {{ totalStudents }}
+          </strong>
+
+          <small>
+            Students in your department
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon purple">
+          <i class="bi bi-funnel-fill"></i>
+        </div>
+
+        <div class="summary-content">
+
+          <span>
+            Showing
+          </span>
+
+          <strong>
+            {{ filteredStudents.length }}
+          </strong>
+
+          <small>
+            Matching students
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================
+         FILTER SECTION
+    ======================================== -->
+
+    <div class="filter-card">
+
+      <div class="filter-header">
+
+        <div>
+
+          <h4>
+            Student Directory
+          </h4>
+
+          <p>
+            Search and filter students
+          </p>
+
+        </div>
+
+        <span class="result-count">
+
+          {{ filteredStudents.length }}
+          result{{ filteredStudents.length !== 1 ? 's' : '' }}
+
+        </span>
+
+      </div>
+
+
+      <div class="filter-controls">
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+          <i class="bi bi-search"></i>
+
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            (input)="filterStudents()"
+            placeholder="Search by name or enrollment number..."
+          />
+
+          @if (searchText) {
+
+            <button
+              type="button"
+              class="clear-search"
+              (click)="searchText = ''; filterStudents()"
+              title="Clear search"
+            >
+              <i class="bi bi-x"></i>
+            </button>
+
+          }
+
+        </div>
+
+
+        <!-- SEMESTER -->
+
+        <div class="filter-field">
+
+          <label>
+            <i class="bi bi-mortarboard"></i>
+            Semester
+          </label>
+
+          <select
+            [(ngModel)]="selectedSemester"
+            (change)="filterStudents()"
+          >
+
+            <option value="All">
+              All Semesters
+            </option>
+
+            @for (
+              semester of semesters;
+              track semester
+            ) {
+
+              <option [value]="semester">
+                Semester {{ semester }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- DIVISION -->
+
+        <div class="filter-field">
+
+          <label>
+            <i class="bi bi-grid-3x3-gap"></i>
+            Division
+          </label>
+
+          <select
+            [(ngModel)]="selectedDivision"
+            (change)="filterStudents()"
+          >
+
+            <option value="All">
+              All Divisions
+            </option>
+
+            @for (
+              division of divisions;
+              track division
+            ) {
+
+              <option [value]="division">
+                Division {{ division }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+
+        <!-- CLEAR -->
+
+        <button
+          type="button"
+          class="clear-filter-btn"
+          (click)="clearFilters()"
+        >
+
+          <i class="bi bi-arrow-counterclockwise"></i>
+
+          Reset
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================
+         STUDENT TABLE
+    ======================================== -->
+
+    <div class="students-card">
+
+      <div class="students-card-header">
+
+        <div>
+
+          <h4>
+            Student List
+          </h4>
+
+          <p>
+            Students assigned to your department
+          </p>
+
+        </div>
+
+        <div class="table-count">
+
+          <i class="bi bi-people"></i>
+
+          {{ filteredStudents.length }}
+
+        </div>
+
+      </div>
+
+
+      @if (filteredStudents.length > 0) {
+
+        <div class="table-wrapper">
+
+          <table class="students-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Student
+                </th>
+
+                <th>
+                  Enrollment No.
+                </th>
+
+                <th>
+                  Semester
+                </th>
+
+                <th>
+                  Division
+                </th>
+
+                <th>
+                  Contact
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th class="action-column">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                student of filteredStudents;
+                track student.uid || student.id
+              ) {
+
+                <tr>
+
+                  <!-- STUDENT -->
+
+                  <td>
+
+                    <div class="student-profile">
+
+                      <div class="student-avatar">
+
+                        @if (student.profileImage) {
+
+                          <img
+                            [src]="student.profileImage"
+                            [alt]="getStudentName(student)"
+                          />
+
+                        } @else {
+
+                          <span>
+                            {{ getInitials(student) }}
+                          </span>
+
+                        }
+
+                      </div>
+
+
+                      <div class="student-details">
+
+                        <strong>
+                          {{ getStudentName(student) }}
+                        </strong>
+
+                        <span>
+                          {{ student.firstName }}
+                          {{ student.lastName }}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- ENROLLMENT -->
+
+                  <td>
+
+                    @if (student.enrollmentNo) {
+
+                      <span class="enrollment-number">
+                        {{ student.enrollmentNo }}
+                      </span>
+
+                    } @else {
+
+                      <span class="not-available">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- SEMESTER -->
+
+                  <td>
+
+                    @if (student.semester) {
+
+                      <span class="semester-badge">
+                        Semester {{ student.semester }}
+                      </span>
+
+                    } @else {
+
+                      <span class="not-available">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- DIVISION -->
+
+                  <td>
+
+                    @if (student.division) {
+
+                      <span class="division-badge">
+                        {{ student.division }}
+                      </span>
+
+                    } @else {
+
+                      <span class="not-available">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- CONTACT -->
+
+                  <td>
+
+                    @if (student.phone) {
+
+                      <div class="phone-info">
+
+                        <i class="bi bi-telephone"></i>
+
+                        <span>
+                          {{ student.phone }}
+                        </span>
+
+                      </div>
+
+                    } @else {
+
+                      <span class="not-available">
+                        Not available
+                      </span>
+
+                    }
+
+                  </td>
+
+
+                  <!-- STATUS -->
+
+                  <td>
+
+                    <span
+                      class="status-badge"
+                      [class.inactive]="
+                        student.status === 'inactive'
+                      "
+                    >
+
+                      <i class="bi bi-circle-fill"></i>
+
+                      {{
+                        student.status === 'inactive'
+                          ? 'Inactive'
+                          : 'Active'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- ACTION -->
+
+                  <td class="action-column">
+
+                    <button
+                      type="button"
+                      class="view-btn"
+                      (click)="viewStudent(student)"
+                      title="View Student Details"
+                    >
+
+                      <i class="bi bi-eye"></i>
+
+                      <span>
+                        View
+                      </span>
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      } @else {
+
+        <!-- EMPTY -->
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            <i class="bi bi-people"></i>
+          </div>
+
+          <h5>
+            No Students Found
+          </h5>
+
+          <p>
+            No students match your current search or filters.
+          </p>
+
+          <button
+            type="button"
+            class="reset-empty-btn"
+            (click)="clearFilters()"
+          >
+
+            <i class="bi bi-arrow-counterclockwise"></i>
+
+            Clear Filters
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,348 @@
+<div class="login-page">
+
+  <div class="login-container">
+
+    <!-- Left Branding Section -->
+    <div class="branding-section">
+
+      <div class="brand-content">
+
+        <div class="brand-logo">
+          <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <h1>
+          CampusIQ <span>AI</span>
+        </h1>
+
+        <p class="brand-subtitle">
+          AI-Assisted Campus Digital Twin
+        </p>
+
+        <p class="brand-description">
+          Connect, analyze, learn and prepare for your future
+          with intelligent campus insights.
+        </p>
+
+
+        <!-- Features -->
+
+        <div class="feature-list">
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+
+            <div>
+              <strong>
+                Smart Performance Analysis
+              </strong>
+
+              <span>
+                Track your academic performance and progress.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-stars"></i>
+            </div>
+
+            <div>
+              <strong>
+                AI Recommendations
+              </strong>
+
+              <span>
+                Discover personalized learning opportunities.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-briefcase"></i>
+            </div>
+
+            <div>
+              <strong>
+                Career Readiness
+              </strong>
+
+              <span>
+                Improve your skills and placement readiness.
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Login Section -->
+    <div class="login-section">
+
+      <div class="login-card">
+
+
+        <!-- Mobile Brand -->
+
+        <div class="mobile-brand">
+
+          <div class="mobile-logo">
+            <i class="bi bi-mortarboard-fill"></i>
+          </div>
+
+          <div>
+
+            <h1>
+              CampusIQ <span>AI</span>
+            </h1>
+
+            <p>
+              Campus Digital Intelligence
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- Heading -->
+
+        <div class="login-heading">
+
+          <span class="welcome-label">
+            WELCOME BACK
+          </span>
+
+          <h2>
+            Sign in to your account
+          </h2>
+
+          <p>
+            Enter your credentials to access your dashboard.
+          </p>
+
+        </div>
+
+
+        <!-- Error -->
+
+        <div
+          class="error-alert"
+          *ngIf="errorMessage">
+
+          <i class="bi bi-exclamation-circle-fill"></i>
+
+          <span>
+            {{ errorMessage }}
+          </span>
+
+          <button
+            type="button"
+            (click)="errorMessage = ''">
+
+            <i class="bi bi-x"></i>
+
+          </button>
+
+        </div>
+
+
+        <!-- Login Form -->
+
+        <form
+          (ngSubmit)="login()"
+          #loginForm="ngForm">
+
+
+          <!-- Email -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email Address
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-envelope"></i>
+
+              <input
+                id="email"
+                type="email"
+                name="email"
+                [(ngModel)]="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                required>
+
+            </div>
+
+          </div>
+
+
+          <!-- Password -->
+
+          <div class="form-group">
+
+            <div class="password-label-row">
+
+              <label for="password">
+                Password
+              </label>
+
+              <a
+                routerLink="/forgot-password">
+
+                Forgot Password?
+
+              </a>
+
+            </div>
+
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-lock"></i>
+
+              <input
+                id="password"
+                [type]="
+                  showPassword
+                    ? 'text'
+                    : 'password'
+                "
+                name="password"
+                [(ngModel)]="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required>
+
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()"
+                [attr.aria-label]="
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                ">
+
+                <i
+                  class="bi"
+                  [class.bi-eye]="!showPassword"
+                  [class.bi-eye-slash]="showPassword">
+                </i>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Submit -->
+
+          <button
+            type="submit"
+            class="login-btn"
+            [disabled]="
+              isLoading ||
+              !loginForm.form.valid
+            ">
+
+            <span
+              *ngIf="!isLoading">
+
+              Sign In
+
+              <i class="bi bi-arrow-right"></i>
+
+            </span>
+
+
+            <span
+              *ngIf="isLoading"
+              class="loading-content">
+
+              <span class="spinner"></span>
+
+              Signing In...
+
+            </span>
+
+          </button>
+
+        </form>
+
+
+        <!-- Register -->
+
+        <div class="register-section">
+
+          <span>
+            Don't have an account?
+          </span>
+
+          <a routerLink="/register">
+            Create Account
+          </a>
+
+        </div>
+
+
+        <!-- Security -->
+
+        <div class="security-note">
+
+          <i class="bi bi-shield-check"></i>
+
+          <span>
+            Your account is secured with Firebase Authentication.
+          </span>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <div class="login-footer">
+
+          <span>
+            © {{ currentYear }} CampusIQ AI
+          </span>
+
+          <span>
+            •
+          </span>
+
+          <span>
+            Campus Digital Intelligence
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

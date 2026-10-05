@@ -1,0 +1,925 @@
+<div class="digital-twin-page">
+
+  <!-- Loading -->
+  <div
+    class="loading-state"
+    *ngIf="loading">
+
+    <div class="spinner-border"></div>
+
+    <h5>
+      Building your Digital Twin...
+    </h5>
+
+    <p>
+      Fetching your academic, skill and project data.
+    </p>
+
+  </div>
+
+
+  <!-- Error -->
+  <div
+    class="error-state"
+    *ngIf="!loading && errorMessage">
+
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+
+    <h5>
+      Unable to load Digital Twin
+    </h5>
+
+    <p>
+      {{ errorMessage }}
+    </p>
+
+    <button
+      class="btn btn-primary"
+      (click)="loadDigitalTwin()">
+
+      <i class="bi bi-arrow-clockwise me-2"></i>
+
+      Try Again
+
+    </button>
+
+  </div>
+
+
+  <!-- Main Content -->
+  <div
+    *ngIf="!loading && digitalTwin"
+    class="twin-content">
+
+
+    <!-- Page Header -->
+    <div class="page-header">
+
+      <div>
+
+        <div class="title-wrapper">
+
+          <div class="title-icon">
+            <i class="bi bi-cpu"></i>
+          </div>
+
+          <div>
+
+            <h1>
+              AI Digital Twin
+            </h1>
+
+            <p>
+              Your intelligent academic and career profile
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <button
+        class="refresh-btn"
+        (click)="loadDigitalTwin()">
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+
+    <!-- Student Profile -->
+    <section class="profile-card">
+
+      <div class="profile-left">
+
+        <div
+          class="profile-image"
+          *ngIf="!student?.profileImage">
+
+          {{ initials }}
+
+        </div>
+
+        <img
+          *ngIf="student?.profileImage"
+          [src]="student?.profileImage"
+          class="profile-image"
+          alt="Student profile">
+
+        <div class="profile-info">
+
+          <h2>
+            {{ fullName }}
+          </h2>
+
+          <p class="enrollment">
+            {{ student?.enrollmentNo || 'Enrollment not available' }}
+          </p>
+
+          <div class="student-meta">
+
+            <span>
+              <i class="bi bi-building"></i>
+              {{ student?.departmentId || 'Department' }}
+            </span>
+
+            <span>
+              <i class="bi bi-mortarboard"></i>
+              Semester {{ student?.semester || '—' }}
+            </span>
+
+            <span>
+              <i class="bi bi-people"></i>
+              Division {{ student?.division || '—' }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="academic-years">
+
+        <div>
+
+          <span>
+            Admission
+          </span>
+
+          <strong>
+            {{ student?.admissionYear || '—' }}
+          </strong>
+
+        </div>
+
+        <div>
+
+          <span>
+            Graduation
+          </span>
+
+          <strong>
+            {{ student?.graduationYear || '—' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Summary Cards -->
+    <section class="summary-grid">
+
+      <div class="summary-card">
+
+        <div class="summary-icon skills-icon">
+          <i class="bi bi-lightbulb"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Total Skills
+          </span>
+
+          <h3>
+            {{ summary.totalSkills }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon certification-icon">
+          <i class="bi bi-award"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Certifications
+          </span>
+
+          <h3>
+            {{ summary.totalCertifications }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon project-icon">
+          <i class="bi bi-kanban"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Projects
+          </span>
+
+          <h3>
+            {{ summary.totalProjects }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon attendance-icon">
+          <i class="bi bi-calendar-check"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Attendance Records
+          </span>
+
+          <h3>
+            {{ summary.totalAttendanceRecords }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon marks-icon">
+          <i class="bi bi-bar-chart"></i>
+        </div>
+
+        <div>
+
+          <span>
+            Marks Records
+          </span>
+
+          <h3>
+            {{ summary.totalMarksRecords }}
+          </h3>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- AI Twin Overview -->
+    <section class="overview-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            <i class="bi bi-stars"></i>
+            Digital Twin Overview
+          </h2>
+
+          <p>
+            A unified view of your academic and professional development
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="overview-grid">
+
+
+        <!-- Skill Progress -->
+        <div class="overview-card">
+
+          <div class="overview-card-header">
+
+            <div class="overview-title">
+
+              <div class="mini-icon skill-mini">
+                <i class="bi bi-lightbulb"></i>
+              </div>
+
+              <div>
+
+                <h4>
+                  Skill Profile
+                </h4>
+
+                <span>
+                  {{ skillCount }} skills recorded
+                </span>
+
+              </div>
+
+            </div>
+
+            <strong>
+              {{ skillPercentage }}%
+            </strong>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="progress-bar skill-progress"
+              [style.width.%]="skillPercentage">
+            </div>
+
+          </div>
+
+          <p class="progress-description">
+            Overall skill development level
+          </p>
+
+        </div>
+
+
+        <!-- Projects -->
+        <div class="overview-card">
+
+          <div class="overview-card-header">
+
+            <div class="overview-title">
+
+              <div class="mini-icon project-mini">
+                <i class="bi bi-kanban"></i>
+              </div>
+
+              <div>
+
+                <h4>
+                  Projects
+                </h4>
+
+                <span>
+                  {{ projectCount }} projects
+                </span>
+
+              </div>
+
+            </div>
+
+            <strong>
+              {{ projectCompletion }}%
+            </strong>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="progress-bar project-progress-bar"
+              [style.width.%]="projectCompletion">
+            </div>
+
+          </div>
+
+          <p class="progress-description">
+
+            {{ completedProjects }}
+            completed ·
+            {{ activeProjects }}
+            in progress
+
+          </p>
+
+        </div>
+
+
+        <!-- Certifications -->
+        <div class="overview-card">
+
+          <div class="overview-card-header">
+
+            <div class="overview-title">
+
+              <div class="mini-icon certification-mini">
+                <i class="bi bi-award"></i>
+              </div>
+
+              <div>
+
+                <h4>
+                  Certifications
+                </h4>
+
+                <span>
+                  Professional credentials
+                </span>
+
+              </div>
+
+            </div>
+
+            <strong>
+              {{ certificationCount }}
+            </strong>
+
+          </div>
+
+          <div class="certification-display">
+
+            <i class="bi bi-patch-check-fill"></i>
+
+            <span>
+              Certifications earned
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- Academic -->
+        <div class="overview-card">
+
+          <div class="overview-card-header">
+
+            <div class="overview-title">
+
+              <div class="mini-icon academic-mini">
+                <i class="bi bi-mortarboard"></i>
+              </div>
+
+              <div>
+
+                <h4>
+                  Academic Records
+                </h4>
+
+                <span>
+                  Marks & attendance
+                </span>
+
+              </div>
+
+            </div>
+
+            <strong>
+              {{ marksRecordCount + attendanceRecordCount }}
+            </strong>
+
+          </div>
+
+          <div class="academic-records">
+
+            <div>
+              <span>Marks</span>
+              <strong>{{ marksRecordCount }}</strong>
+            </div>
+
+            <div>
+              <span>Attendance</span>
+              <strong>{{ attendanceRecordCount }}</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Skills -->
+    <section class="data-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            <i class="bi bi-lightbulb"></i>
+            Skills
+          </h2>
+
+          <p>
+            Skills contributing to your digital profile
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="skills.length === 0">
+
+        <i class="bi bi-lightbulb"></i>
+
+        <p>
+          No skills added yet.
+        </p>
+
+      </div>
+
+
+      <div
+        class="skills-grid"
+        *ngIf="skills.length > 0">
+
+        <div
+          class="skill-card"
+          *ngFor="
+            let skill of skills;
+            trackBy: trackById
+          ">
+
+          <div class="skill-card-top">
+
+            <div class="skill-name">
+              {{ skill.skillName }}
+            </div>
+
+            <span
+              class="skill-level"
+              [ngClass]="getSkillClass(skill.level)">
+
+              {{ skill.level || 'Beginner' }}
+
+            </span>
+
+          </div>
+
+          <div
+            class="skill-category"
+            *ngIf="skill.category">
+
+            {{ skill.category }}
+
+          </div>
+
+          <div
+            class="skill-experience"
+            *ngIf="skill.yearsOfExperience !== undefined">
+
+            <i class="bi bi-clock"></i>
+
+            {{ skill.yearsOfExperience }}
+            {{ skill.yearsOfExperience === 1 ? 'year' : 'years' }}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Certifications -->
+    <section class="data-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            <i class="bi bi-award"></i>
+            Certifications
+          </h2>
+
+          <p>
+            Your professional credentials
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="certifications.length === 0">
+
+        <i class="bi bi-award"></i>
+
+        <p>
+          No certifications added yet.
+        </p>
+
+      </div>
+
+
+      <div
+        class="certifications-grid"
+        *ngIf="certifications.length > 0">
+
+        <div
+          class="certification-card"
+          *ngFor="
+            let certification of certifications;
+            trackBy: trackById
+          ">
+
+          <div class="certification-icon">
+            <i class="bi bi-patch-check"></i>
+          </div>
+
+          <div class="certification-content">
+
+            <h4>
+              {{ certification.name }}
+            </h4>
+
+            <p>
+              {{ certification.issuingOrganization || 'Issuing organization not specified' }}
+            </p>
+
+            <span
+              *ngIf="certification.issueDate">
+
+              Issued:
+              {{ formatDate(certification.issueDate) }}
+
+            </span>
+
+            <a
+              *ngIf="certification.credentialUrl"
+              [href]="certification.credentialUrl"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              View Credential
+              <i class="bi bi-box-arrow-up-right"></i>
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Projects -->
+    <section class="data-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            <i class="bi bi-kanban"></i>
+            Projects
+          </h2>
+
+          <p>
+            Projects contributing to your experience
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="projects.length === 0">
+
+        <i class="bi bi-kanban"></i>
+
+        <p>
+          No projects added yet.
+        </p>
+
+      </div>
+
+
+      <div
+        class="projects-grid"
+        *ngIf="projects.length > 0">
+
+        <div
+          class="project-card"
+          *ngFor="
+            let project of projects;
+            trackBy: trackById
+          ">
+
+          <div class="project-card-header">
+
+            <div>
+
+              <h4>
+                {{ project.projectName }}
+              </h4>
+
+              <span
+                *ngIf="project.category"
+                class="project-category">
+
+                {{ project.category }}
+
+              </span>
+
+            </div>
+
+            <span
+              class="project-status"
+              [ngClass]="getProjectClass(project.status)">
+
+              {{ project.status || 'Planned' }}
+
+            </span>
+
+          </div>
+
+
+          <p
+            *ngIf="project.description"
+            class="project-description">
+
+            {{ project.description }}
+
+          </p>
+
+
+          <div
+            class="technology-list"
+            *ngIf="
+              project.technologies &&
+              project.technologies.length
+            ">
+
+            <span
+              *ngFor="
+                let technology of project.technologies
+              ">
+
+              {{ technology }}
+
+            </span>
+
+          </div>
+
+
+          <div class="project-meta">
+
+            <span *ngIf="project.role">
+
+              <i class="bi bi-person"></i>
+
+              {{ project.role }}
+
+            </span>
+
+            <span *ngIf="project.teamSize">
+
+              <i class="bi bi-people"></i>
+
+              Team:
+              {{ project.teamSize }}
+
+            </span>
+
+          </div>
+
+
+          <div class="project-footer">
+
+            <span *ngIf="project.startDate">
+
+              {{ formatDate(project.startDate) }}
+
+              <span *ngIf="project.endDate">
+                -
+                {{ formatDate(project.endDate) }}
+              </span>
+
+            </span>
+
+
+            <div class="project-links">
+
+              <a
+                *ngIf="project.projectUrl"
+                [href]="project.projectUrl"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <i class="bi bi-box-arrow-up-right"></i>
+
+              </a>
+
+              <a
+                *ngIf="project.githubUrl"
+                [href]="project.githubUrl"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <i class="bi bi-github"></i>
+
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Academic Data -->
+    <section class="data-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            <i class="bi bi-mortarboard"></i>
+            Academic Data
+          </h2>
+
+          <p>
+            Data used to build your academic digital twin
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="academic-data-grid">
+
+        <div class="academic-data-card">
+
+          <div class="academic-data-icon">
+            <i class="bi bi-bar-chart"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Marks Records
+            </span>
+
+            <strong>
+              {{ marksRecordCount }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="academic-data-card">
+
+          <div class="academic-data-icon">
+            <i class="bi bi-calendar-check"></i>
+          </div>
+
+          <div>
+
+            <span>
+              Attendance Records
+            </span>
+
+            <strong>
+              {{ attendanceRecordCount }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

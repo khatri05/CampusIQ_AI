@@ -1,0 +1,778 @@
+<div class="placement-page">
+
+  <!-- ================= HEADER ================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="eyebrow">
+        CAREER READINESS
+      </div>
+
+      <h1>
+        Placement Readiness
+      </h1>
+
+      <p>
+        Understand how prepared you are for campus
+        placements based on your academic and
+        professional profile.
+      </p>
+
+    </div>
+
+    <div class="header-icon">
+      <i class="bi bi-briefcase-fill"></i>
+    </div>
+
+  </div>
+
+
+  <!-- ================= ALERTS ================= -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert-box success">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ successMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="successMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <div
+    *ngIf="errorMessage && !readiness"
+    class="alert-box error">
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- ================= LOADING ================= -->
+
+  <div
+    *ngIf="loading"
+    class="loading-state">
+
+    <div class="spinner dark"></div>
+
+    <h3>
+      Loading placement readiness...
+    </h3>
+
+    <p>
+      Please wait while we retrieve your readiness score.
+    </p>
+
+  </div>
+
+
+  <!-- ================= EMPTY ================= -->
+
+  <section
+    *ngIf="
+      !loading &&
+      !readiness
+    "
+    class="empty-state">
+
+    <div class="empty-icon">
+      <i class="bi bi-briefcase"></i>
+    </div>
+
+    <h2>
+      Placement Readiness Not Calculated
+    </h2>
+
+    <p>
+      Generate your placement readiness score
+      using your academic performance, attendance,
+      skills, certifications and projects.
+    </p>
+
+    <button
+      type="button"
+      class="generate-button"
+      [disabled]="generating"
+      (click)="generatePlacementReadiness()">
+
+      <ng-container
+        *ngIf="!generating">
+
+        <i class="bi bi-stars"></i>
+
+        Calculate Readiness
+
+      </ng-container>
+
+      <ng-container
+        *ngIf="generating">
+
+        <span class="spinner"></span>
+
+        Calculating...
+
+      </ng-container>
+
+    </button>
+
+  </section>
+
+
+  <!-- ================= MAIN CONTENT ================= -->
+
+  <ng-container
+    *ngIf="
+      !loading &&
+      readiness
+    ">
+
+
+    <!-- ================= ACTION BAR ================= -->
+
+    <section class="action-card">
+
+      <div class="action-content">
+
+        <div class="action-icon">
+          <i class="bi bi-stars"></i>
+        </div>
+
+        <div>
+
+          <h2>
+            Update Your Readiness Score
+          </h2>
+
+          <p>
+            Recalculate your score whenever you add
+            new marks, skills, certifications or projects.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="generate-button"
+        [disabled]="generating"
+        (click)="generatePlacementReadiness()">
+
+        <ng-container
+          *ngIf="!generating">
+
+          <i class="bi bi-arrow-clockwise"></i>
+
+          Recalculate
+
+        </ng-container>
+
+        <ng-container
+          *ngIf="generating">
+
+          <span class="spinner"></span>
+
+          Calculating...
+
+        </ng-container>
+
+      </button>
+
+    </section>
+
+
+    <!-- ================= OVERALL SCORE ================= -->
+
+    <section class="overview-card">
+
+      <div class="score-area">
+
+        <div
+          class="score-circle"
+          [ngClass]="
+            getScoreClass(
+              readiness.overallScore
+            )
+          ">
+
+          <div class="score-value">
+            {{ readiness.overallScore }}
+          </div>
+
+          <div class="score-percent">
+            / 100
+          </div>
+
+        </div>
+
+        <div class="score-info">
+
+          <div class="eyebrow">
+            OVERALL READINESS
+          </div>
+
+          <h2>
+            {{ readiness.readinessLevel }}
+          </h2>
+
+          <p>
+            Your placement readiness score is based
+            on academics, attendance, skills,
+            certifications and projects.
+          </p>
+
+          <div class="score-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.overallScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.overallScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+            <strong>
+              {{ readiness.overallScore }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="calculated-date">
+
+        <i class="bi bi-calendar3"></i>
+
+        Last calculated:
+        {{ formatDate(readiness.createdAt) }}
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SCORE BREAKDOWN ================= -->
+
+    <section class="section-card">
+
+      <div class="section-heading">
+
+        <div>
+
+          <div class="eyebrow">
+            SCORE BREAKDOWN
+          </div>
+
+          <h2>
+            Placement Readiness Factors
+          </h2>
+
+          <p>
+            See how each area contributes to your
+            overall placement readiness.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="factor-grid">
+
+
+        <!-- Academic -->
+
+        <div class="factor-card">
+
+          <div class="factor-top">
+
+            <div class="factor-icon academic">
+              <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div class="factor-score">
+
+              <strong>
+                {{ readiness.academicScore }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+          <h3>
+            Academic Performance
+          </h3>
+
+          <p>
+            Your overall academic marks percentage.
+          </p>
+
+          <div class="factor-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.academicScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.academicScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="weight">
+            Weight: 30%
+          </span>
+
+        </div>
+
+
+        <!-- Attendance -->
+
+        <div class="factor-card">
+
+          <div class="factor-top">
+
+            <div class="factor-icon attendance">
+              <i class="bi bi-calendar-check-fill"></i>
+            </div>
+
+            <div class="factor-score">
+
+              <strong>
+                {{ readiness.attendanceScore }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+          <h3>
+            Attendance
+          </h3>
+
+          <p>
+            Your overall attendance percentage.
+          </p>
+
+          <div class="factor-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.attendanceScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.attendanceScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="weight">
+            Weight: 10%
+          </span>
+
+        </div>
+
+
+        <!-- Skills -->
+
+        <div class="factor-card">
+
+          <div class="factor-top">
+
+            <div class="factor-icon skills">
+              <i class="bi bi-code-slash"></i>
+            </div>
+
+            <div class="factor-score">
+
+              <strong>
+                {{ readiness.skillScore }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+          <h3>
+            Technical Skills
+          </h3>
+
+          <p>
+            Score based on your skill levels.
+          </p>
+
+          <div class="factor-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.skillScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.skillScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="weight">
+            Weight: 25%
+          </span>
+
+        </div>
+
+
+        <!-- Certifications -->
+
+        <div class="factor-card">
+
+          <div class="factor-top">
+
+            <div class="factor-icon certifications">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+
+            <div class="factor-score">
+
+              <strong>
+                {{ readiness.certificationScore }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+          <h3>
+            Certifications
+          </h3>
+
+          <p>
+            Score based on relevant certifications.
+          </p>
+
+          <div class="factor-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.certificationScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.certificationScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="weight">
+            Weight: 15%
+          </span>
+
+        </div>
+
+
+        <!-- Projects -->
+
+        <div class="factor-card">
+
+          <div class="factor-top">
+
+            <div class="factor-icon projects">
+              <i class="bi bi-kanban-fill"></i>
+            </div>
+
+            <div class="factor-score">
+
+              <strong>
+                {{ readiness.projectScore }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+          <h3>
+            Project Experience
+          </h3>
+
+          <p>
+            Score based on completed projects.
+          </p>
+
+          <div class="factor-progress">
+
+            <div class="progress-track">
+
+              <div
+                class="progress-bar"
+                [ngClass]="
+                  getScoreClass(
+                    readiness.projectScore
+                  )
+                "
+                [style.width.%]="
+                  getProgressWidth(
+                    readiness.projectScore
+                  )
+                ">
+              </div>
+
+            </div>
+
+          </div>
+
+          <span class="weight">
+            Weight: 20%
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= STRENGTHS & IMPROVEMENTS ================= -->
+
+    <div class="insights-grid">
+
+
+      <!-- Strengths -->
+
+      <section class="insight-card strengths">
+
+        <div class="insight-header">
+
+          <div class="insight-icon">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+
+          <div>
+
+            <h2>
+              Your Strengths
+            </h2>
+
+            <p>
+              Areas where you are performing well.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="insight-list"
+          *ngIf="
+            readiness.strengths.length > 0
+          ">
+
+          <div
+            class="insight-item"
+            *ngFor="
+              let strength of readiness.strengths
+            ">
+
+            <i class="bi bi-check-lg"></i>
+
+            <span>
+              {{ strength }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="no-insight"
+          *ngIf="
+            readiness.strengths.length === 0
+          ">
+
+          No strengths identified yet.
+
+        </div>
+
+      </section>
+
+
+      <!-- Improvements -->
+
+      <section class="insight-card improvements">
+
+        <div class="insight-header">
+
+          <div class="insight-icon">
+            <i class="bi bi-arrow-up-circle-fill"></i>
+          </div>
+
+          <div>
+
+            <h2>
+              Areas to Improve
+            </h2>
+
+            <p>
+              Focus on these areas to improve your readiness.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="insight-list"
+          *ngIf="
+            readiness.improvements.length > 0
+          ">
+
+          <div
+            class="insight-item"
+            *ngFor="
+              let improvement of readiness.improvements
+            ">
+
+            <i class="bi bi-arrow-right"></i>
+
+            <span>
+              {{ improvement }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="no-insight"
+          *ngIf="
+            readiness.improvements.length === 0
+          ">
+
+          No major improvements identified.
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- ================= FORMULA ================= -->
+
+    <section class="formula-card">
+
+      <div class="formula-icon">
+        <i class="bi bi-calculator"></i>
+      </div>
+
+      <div>
+
+        <h3>
+          How is the score calculated?
+        </h3>
+
+        <p>
+          Your placement readiness score combines
+          academic performance, attendance, technical
+          skills, certifications and project experience.
+        </p>
+
+        <div class="formula">
+
+          Academic
+          <strong>30%</strong>
+          +
+          Attendance
+          <strong>10%</strong>
+          +
+          Skills
+          <strong>25%</strong>
+          +
+          Certifications
+          <strong>15%</strong>
+          +
+          Projects
+          <strong>20%</strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </ng-container>
+
+</div>

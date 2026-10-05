@@ -1,0 +1,854 @@
+<div class="performance-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+
+    <div>
+      <div class="breadcrumb">
+        Faculty
+        <span>/</span>
+        Student Performance
+      </div>
+
+      <h1>
+        Student Performance
+      </h1>
+
+      <p>
+        Monitor and analyze academic performance of your students.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-btn"
+      (click)="refresh()"
+      [disabled]="loading"
+    >
+      <i class="bi bi-arrow-clockwise"></i>
+
+      {{ loading ? 'Refreshing...' : 'Refresh' }}
+    </button>
+
+  </div>
+
+
+  <!-- ERROR -->
+  @if (errorMessage) {
+
+    <div class="alert alert-danger error-alert">
+
+      <i class="bi bi-exclamation-triangle-fill"></i>
+
+      <span>{{ errorMessage }}</span>
+
+      <button
+        type="button"
+        class="retry-btn"
+        (click)="refresh()"
+      >
+        Retry
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon total">
+        <i class="bi bi-people-fill"></i>
+      </div>
+
+      <div class="stat-content">
+        <span>Total Students</span>
+
+        <strong>
+          {{ totalStudents }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon excellent">
+        <i class="bi bi-trophy-fill"></i>
+      </div>
+
+      <div class="stat-content">
+        <span>Excellent</span>
+
+        <strong>
+          {{ excellentStudents }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon good">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+
+      <div class="stat-content">
+        <span>Good</span>
+
+        <strong>
+          {{ goodStudents }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon average">
+        <i class="bi bi-bar-chart-fill"></i>
+      </div>
+
+      <div class="stat-content">
+        <span>Average</span>
+
+        <strong>
+          {{ averageStudents }}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon needs">
+        <i class="bi bi-exclamation-circle-fill"></i>
+      </div>
+
+      <div class="stat-content">
+        <span>Needs Improvement</span>
+
+        <strong>
+          {{ needsImprovementStudents }}
+        </strong>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTER CARD -->
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="onSearch()"
+        placeholder="Search by student name, enrollment or email..."
+      />
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <select
+        [(ngModel)]="selectedSemester"
+        (change)="filterStudents()"
+      >
+        <option value="">
+          All Semesters
+        </option>
+
+        @for (
+          semester of semesters;
+          track semester
+        ) {
+
+          <option
+            [value]="semester"
+          >
+            Semester {{ semester }}
+          </option>
+
+        }
+
+      </select>
+
+
+      <select
+        [(ngModel)]="selectedDivision"
+        (change)="filterStudents()"
+      >
+        <option value="">
+          All Divisions
+        </option>
+
+        @for (
+          division of divisions;
+          track division
+        ) {
+
+          <option
+            [value]="division"
+          >
+            Division {{ division }}
+          </option>
+
+        }
+
+      </select>
+
+
+      <select
+        [(ngModel)]="selectedStatus"
+        (change)="filterStudents()"
+      >
+
+        <option value="">
+          All Performance
+        </option>
+
+        <option value="Excellent">
+          Excellent
+        </option>
+
+        <option value="Good">
+          Good
+        </option>
+
+        <option value="Average">
+          Average
+        </option>
+
+        <option value="Needs Improvement">
+          Needs Improvement
+        </option>
+
+      </select>
+
+
+      <button
+        type="button"
+        class="clear-btn"
+        (click)="clearFilters()"
+      >
+        <i class="bi bi-x-circle"></i>
+
+        Clear
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- LOADING -->
+  @if (loading) {
+
+    <div class="loading-state">
+
+      <div
+        class="spinner-border"
+        role="status"
+      ></div>
+
+      <p>
+        Loading student performance...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- TABLE -->
+  @if (!loading) {
+
+    <div class="table-card">
+
+      <div class="table-header">
+
+        <div>
+          <h2>
+            Student Performance
+          </h2>
+
+          <p>
+            Showing
+            {{ filteredStudents.length }}
+            of
+            {{ students.length }}
+            students
+          </p>
+        </div>
+
+      </div>
+
+
+      @if (filteredStudents.length > 0) {
+
+        <div class="table-responsive">
+
+          <table class="performance-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Student
+                </th>
+
+                <th>
+                  Semester
+                </th>
+
+                <th>
+                  Division
+                </th>
+
+                <th>
+                  Attendance
+                </th>
+
+                <th>
+                  Avg. Marks
+                </th>
+
+                <th>
+                  Assignments
+                </th>
+
+                <th>
+                  Overall Score
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                student of filteredStudents;
+                track student.id
+              ) {
+
+                <tr>
+
+                  <!-- STUDENT -->
+                  <td>
+
+                    <div class="student-cell">
+
+                      <div class="student-avatar">
+                        {{ getInitials(student) }}
+                      </div>
+
+                      <div class="student-info">
+
+                        <strong>
+                          {{ getStudentName(student) }}
+                        </strong>
+
+                        <span>
+                          {{ student.enrollmentNo || 'N/A' }}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- SEMESTER -->
+                  <td>
+
+                    <span class="semester-badge">
+
+                      {{
+                        student.semester
+                          ? 'Sem ' + student.semester
+                          : 'N/A'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- DIVISION -->
+                  <td>
+
+                    {{ student.division || 'N/A' }}
+
+                  </td>
+
+
+                  <!-- ATTENDANCE -->
+                  <td>
+
+                    <div class="metric-cell">
+
+                      <span>
+                        {{ formatPercentage(student.attendancePercentage) }}
+                      </span>
+
+                      <div class="progress">
+
+                        <div
+                          class="progress-bar"
+                          [style.width.%]="student.attendancePercentage || 0"
+                        ></div>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- MARKS -->
+                  <td>
+
+                    <strong>
+                      {{ (student.averageMarks || 0).toFixed(1) }}%
+                    </strong>
+
+                  </td>
+
+
+                  <!-- ASSIGNMENTS -->
+                  <td>
+
+                    <div class="assignment-cell">
+
+                      <strong>
+                        {{ student.submittedAssignments || 0 }}
+                        /
+                        {{ student.totalAssignments || 0 }}
+                      </strong>
+
+                      <small>
+                        {{
+                          formatPercentage(
+                            student.assignmentPercentage
+                          )
+                        }}
+                      </small>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- SCORE -->
+                  <td>
+
+                    <span
+                      class="score-badge"
+                      [ngClass]="
+                        getScoreClass(
+                          student.overallScore
+                        )
+                      "
+                    >
+                      {{
+                        (student.overallScore || 0).toFixed(1)
+                      }}
+                    </span>
+
+                  </td>
+
+
+                  <!-- STATUS -->
+                  <td>
+
+                    <span
+                      class="status-badge"
+                      [ngClass]="
+                        getPerformanceClass(
+                          student.performanceStatus
+                        )
+                      "
+                    >
+
+                      {{ student.performanceStatus }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- ACTION -->
+                  <td>
+
+                    <button
+                      type="button"
+                      class="view-btn"
+                      (click)="viewStudent(student)"
+                    >
+
+                      <i class="bi bi-eye"></i>
+
+                      View
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+
+      <!-- EMPTY -->
+      @if (filteredStudents.length === 0) {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <i class="bi bi-people"></i>
+
+          </div>
+
+          <h3>
+            No students found
+          </h3>
+
+          <p>
+            No students match the selected filters.
+          </p>
+
+          <button
+            type="button"
+            class="clear-btn"
+            (click)="clearFilters()"
+          >
+            Clear Filters
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>
+
+
+<!-- DETAILS MODAL -->
+@if (showDetails && selectedStudent) {
+
+  <div
+    class="modal-backdrop-custom"
+    (click)="closeDetails()"
+  >
+
+    <div
+      class="details-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- MODAL HEADER -->
+      <div class="modal-header-custom">
+
+        <div class="modal-student">
+
+          <div class="large-avatar">
+            {{ getInitials(selectedStudent) }}
+          </div>
+
+          <div>
+
+            <h3>
+              {{ getStudentName(selectedStudent) }}
+            </h3>
+
+            <p>
+              {{ selectedStudent.enrollmentNo || 'N/A' }}
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close-modal"
+          (click)="closeDetails()"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+      </div>
+
+
+      <!-- MODAL BODY -->
+      <div class="modal-body-custom">
+
+        <!-- OVERALL -->
+        <div class="overall-performance">
+
+          <div class="overall-score">
+
+            <span>
+              Overall Score
+            </span>
+
+            <strong
+              [ngClass]="
+                getScoreClass(
+                  selectedStudent.overallScore
+                )
+              "
+            >
+              {{
+                (selectedStudent.overallScore || 0)
+                  .toFixed(1)
+              }}
+            </strong>
+
+          </div>
+
+
+          <span
+            class="status-badge"
+            [ngClass]="
+              getPerformanceClass(
+                selectedStudent.performanceStatus
+              )
+            "
+          >
+            {{ selectedStudent.performanceStatus }}
+          </span>
+
+        </div>
+
+
+        <!-- ACADEMIC -->
+        <h4>
+          <i class="bi bi-mortarboard-fill"></i>
+          Academic Performance
+        </h4>
+
+        <div class="detail-grid">
+
+          <div class="detail-item">
+
+            <span>
+              Attendance
+            </span>
+
+            <strong>
+              {{
+                formatPercentage(
+                  selectedStudent.attendancePercentage
+                )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Average Marks
+            </span>
+
+            <strong>
+              {{
+                (selectedStudent.averageMarks || 0)
+                  .toFixed(1)
+              }}%
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Assignments
+            </span>
+
+            <strong>
+              {{ selectedStudent.submittedAssignments || 0 }}
+              /
+              {{ selectedStudent.totalAssignments || 0 }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-item">
+
+            <span>
+              Assignment Completion
+            </span>
+
+            <strong>
+              {{
+                formatPercentage(
+                  selectedStudent.assignmentPercentage
+                )
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- DEVELOPMENT -->
+        <h4>
+          <i class="bi bi-person-workspace"></i>
+          Student Development
+        </h4>
+
+        <div class="development-grid">
+
+          <div class="development-card">
+
+            <i class="bi bi-lightbulb-fill"></i>
+
+            <strong>
+              {{ selectedStudent.skillsCount || 0 }}
+            </strong>
+
+            <span>
+              Skills
+            </span>
+
+          </div>
+
+
+          <div class="development-card">
+
+            <i class="bi bi-award-fill"></i>
+
+            <strong>
+              {{ selectedStudent.certificationsCount || 0 }}
+            </strong>
+
+            <span>
+              Certifications
+            </span>
+
+          </div>
+
+
+          <div class="development-card">
+
+            <i class="bi bi-folder-fill"></i>
+
+            <strong>
+              {{ selectedStudent.projectsCount || 0 }}
+            </strong>
+
+            <span>
+              Projects
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- STUDENT INFORMATION -->
+        <h4>
+          <i class="bi bi-person-fill"></i>
+          Student Information
+        </h4>
+
+        <div class="student-information">
+
+          <div>
+            <span>Email</span>
+
+            <strong>
+              {{ selectedStudent.email || 'N/A' }}
+            </strong>
+          </div>
+
+
+          <div>
+            <span>Semester</span>
+
+            <strong>
+              {{
+                selectedStudent.semester
+                  ? 'Semester ' + selectedStudent.semester
+                  : 'N/A'
+              }}
+            </strong>
+          </div>
+
+
+          <div>
+            <span>Division</span>
+
+            <strong>
+              {{ selectedStudent.division || 'N/A' }}
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer-custom">
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeDetails()"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

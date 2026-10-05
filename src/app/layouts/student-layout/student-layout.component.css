@@ -1,0 +1,25 @@
+.student-layout {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.student-main {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  min-height: 100vh;
+
+  /* Important for sticky navbar */
+  overflow-x: visible;
+}
+
+.student-page-content {
+  min-height: calc(100vh - 75px);
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  .student-main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+}

@@ -1,0 +1,951 @@
+<div class="assignments-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+       ===================================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Assignments
+      </h2>
+
+      <p>
+        View and manage your academic assignments.
+      </p>
+
+    </div>
+
+
+    <div class="filter-wrapper">
+
+      <select
+        [value]="selectedStatus"
+        (change)="onStatusChange($event)"
+      >
+
+        <option value="All">
+          All Assignments
+        </option>
+
+        <option value="Pending">
+          Pending
+        </option>
+
+        <option value="Submitted">
+          Submitted
+        </option>
+
+        <option value="Overdue">
+          Overdue
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+       ===================================================== -->
+
+  @if (loading) {
+
+    <div class="loading-card">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading assignments...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  @if (!loading && errorMessage) {
+
+    <div class="error-card">
+
+      <h4>
+        Unable to load assignments
+      </h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="retry()"
+      >
+
+        Try Again
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  @if (!loading && !errorMessage) {
+
+
+    <!-- ===================================================
+         SUMMARY CARDS
+         =================================================== -->
+
+    <div class="summary-grid">
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon blue">
+          📚
+        </div>
+
+        <div>
+
+          <span>
+            Total Assignments
+          </span>
+
+          <h3>
+            {{ totalAssignments }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon orange">
+          ⏳
+        </div>
+
+        <div>
+
+          <span>
+            Pending
+          </span>
+
+          <h3>
+            {{ pendingAssignments }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon green">
+          ✓
+        </div>
+
+        <div>
+
+          <span>
+            Submitted
+          </span>
+
+          <h3>
+            {{ submittedAssignments }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="summary-card">
+
+        <div class="summary-icon red">
+          ⚠
+        </div>
+
+        <div>
+
+          <span>
+            Overdue
+          </span>
+
+          <h3>
+            {{ overdueAssignments }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- ===================================================
+         ASSIGNMENTS CARD
+         =================================================== -->
+
+    <div class="assignments-card">
+
+
+      <div class="card-header">
+
+        <div>
+
+          <h3>
+            My Assignments
+          </h3>
+
+          <p>
+            Your current academic assignments
+          </p>
+
+        </div>
+
+
+        <span class="assignment-count">
+
+          {{ filteredAssignments.length }}
+
+        </span>
+
+      </div>
+
+
+      <div class="assignment-list">
+
+
+        @for (
+          assignment of filteredAssignments;
+          track $index
+        ) {
+
+
+          <div class="assignment-item">
+
+
+            <!-- ICON -->
+
+            <div class="assignment-icon">
+
+              📄
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="assignment-info">
+
+
+              <div class="assignment-title-row">
+
+                <h4>
+
+                  {{ assignment.title }}
+
+                </h4>
+
+
+                <span
+                  class="priority-badge"
+                  [ngClass]="
+                    getPriorityClass(
+                      assignment.priority
+                    )
+                  "
+                >
+
+                  {{ assignment.priority }}
+
+                </span>
+
+              </div>
+
+
+              <!-- SUBJECT -->
+
+              @if (
+                assignment.subject
+              ) {
+
+                <span class="subject-name">
+
+                  {{ assignment.subject }}
+
+                </span>
+
+              }
+
+
+              <!-- DESCRIPTION -->
+
+              <p>
+
+                {{ assignment.description }}
+
+              </p>
+
+
+              <!-- META -->
+
+              <div class="assignment-meta">
+
+
+                <span>
+
+                  📅 Due:
+
+                  {{ getDueDate(assignment) }}
+
+                </span>
+
+
+                <span
+                  class="status-badge"
+                  [ngClass]="
+                    getStatusClass(
+                      assignment.status
+                    )
+                  "
+                >
+
+                  {{ assignment.status }}
+
+                </span>
+
+
+              </div>
+
+
+            </div>
+
+
+            <!-- ACTION -->
+
+            <div class="assignment-action">
+
+
+              @if (
+                assignment.submitted
+              ) {
+
+
+                <button
+                  type="button"
+                  class="view-btn"
+                  (click)="
+                    viewSubmission(
+                      assignment
+                    )
+                  "
+                >
+
+                  View
+
+                </button>
+
+
+              }
+
+              @else {
+
+
+                <button
+                  type="button"
+                  class="submit-btn"
+                  (click)="
+                    openSubmitModal(
+                      assignment
+                    )
+                  "
+                >
+
+                  Submit
+
+                </button>
+
+
+              }
+
+
+            </div>
+
+
+          </div>
+
+
+        }
+
+
+        <!-- EMPTY -->
+
+        @if (
+          filteredAssignments.length === 0
+        ) {
+
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+              📭
+            </div>
+
+            <h4>
+              No assignments found
+            </h4>
+
+            <p>
+
+              @if (
+                assignments.length === 0
+              ) {
+
+                No assignments have been
+                assigned to you yet.
+
+              }
+
+              @else {
+
+                There are no assignments
+                matching this filter.
+
+              }
+
+            </p>
+
+          </div>
+
+
+        }
+
+
+      </div>
+
+
+    </div>
+
+
+  }
+
+
+  <!-- =====================================================
+       SUBMIT ASSIGNMENT MODAL
+       ===================================================== -->
+
+  @if (showSubmitModal) {
+
+
+    <div
+      class="submission-modal-backdrop"
+      (click)="closeSubmitModal()"
+    >
+
+
+      <div
+        class="submission-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+
+        <!-- HEADER -->
+
+        <div class="submission-modal-header">
+
+          <div>
+
+            <h3>
+              Submit Assignment
+            </h3>
+
+            <p>
+              {{ selectedAssignment?.title }}
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="modal-close-btn"
+            (click)="closeSubmitModal()"
+            [disabled]="submitting"
+          >
+
+            ×
+
+          </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="submission-modal-body">
+
+
+          <!-- ERROR -->
+
+          @if (submissionError) {
+
+            <div class="submission-error">
+
+              {{ submissionError }}
+
+            </div>
+
+          }
+
+
+          <!-- SUCCESS -->
+
+          @if (submissionSuccess) {
+
+            <div class="submission-success">
+
+              {{ submissionSuccess }}
+
+            </div>
+
+          }
+
+
+          <!-- ANSWER -->
+
+          <div class="form-group">
+
+            <label>
+
+              Your Answer
+
+              <span>*</span>
+
+            </label>
+
+
+            <textarea
+              [(ngModel)]="submissionText"
+              rows="8"
+              placeholder="Enter your assignment answer or submission details..."
+              [disabled]="submitting"
+            ></textarea>
+
+
+            <small>
+
+              Write your answer or describe
+              your completed work.
+
+            </small>
+
+          </div>
+
+
+          <!-- LINK -->
+
+          <div class="form-group">
+
+            <label>
+
+              Submission Link
+
+              <span class="optional">
+                Optional
+              </span>
+
+            </label>
+
+
+            <input
+              type="url"
+              [(ngModel)]="submissionUrl"
+              placeholder="https://github.com/your-project"
+              [disabled]="submitting"
+            />
+
+
+            <small>
+
+              You can provide a GitHub,
+              Google Drive, or project link.
+
+            </small>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="submission-modal-footer">
+
+
+          <button
+            type="button"
+            class="cancel-btn"
+            (click)="closeSubmitModal()"
+            [disabled]="submitting"
+          >
+
+            Cancel
+
+          </button>
+
+
+          <button
+            type="button"
+            class="confirm-submit-btn"
+            (click)="submitAssignment()"
+            [disabled]="submitting"
+          >
+
+
+            @if (submitting) {
+
+              <span
+                class="button-spinner"
+              ></span>
+
+              Submitting...
+
+            }
+
+            @else {
+
+              Submit Assignment
+
+            }
+
+
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+  }
+
+
+  <!-- =====================================================
+       VIEW SUBMISSION MODAL
+       ===================================================== -->
+
+  @if (showViewModal) {
+
+
+    <div
+      class="submission-modal-backdrop"
+      (click)="closeViewModal()"
+    >
+
+
+      <div
+        class="submission-modal view-submission-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+
+        <!-- HEADER -->
+
+        <div class="submission-modal-header">
+
+          <div>
+
+            <h3>
+              My Submission
+            </h3>
+
+            <p>
+
+              {{
+                viewingSubmission?.assignmentTitle ||
+                'Assignment Submission'
+              }}
+
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="modal-close-btn"
+            (click)="closeViewModal()"
+          >
+
+            ×
+
+          </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="submission-modal-body">
+
+
+          <!-- LOADING -->
+
+          @if (viewLoading) {
+
+            <div class="submission-view-loading">
+
+              <div
+                class="button-spinner blue-spinner"
+              ></div>
+
+              <p>
+                Loading your submission...
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- ERROR -->
+
+          @if (
+            !viewLoading &&
+            viewError
+          ) {
+
+            <div class="submission-error">
+
+              {{ viewError }}
+
+            </div>
+
+          }
+
+
+          <!-- DATA -->
+
+          @if (
+            !viewLoading &&
+            !viewError &&
+            viewingSubmission
+          ) {
+
+
+            <!-- STATUS -->
+
+            <div class="submission-detail-card">
+
+              <div class="detail-label">
+                Status
+              </div>
+
+              <span
+                class="status-badge status-submitted"
+              >
+
+                {{
+                  viewingSubmission.status ||
+                  'Submitted'
+                }}
+
+              </span>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="submission-detail-card">
+
+              <div class="detail-label">
+                Submitted On
+              </div>
+
+              <div class="detail-value">
+
+                {{
+                  getSubmissionDate(
+                    viewingSubmission.submittedAt
+                  )
+                }}
+
+              </div>
+
+            </div>
+
+
+            <!-- ANSWER -->
+
+            <div class="submission-view-section">
+
+              <h4>
+                Your Answer
+              </h4>
+
+
+              <div class="submitted-answer">
+
+                {{
+                  viewingSubmission.submissionText ||
+                  'No answer provided.'
+                }}
+
+              </div>
+
+            </div>
+
+
+            <!-- LINK -->
+
+            @if (
+              viewingSubmission.submissionUrl
+            ) {
+
+              <div class="submission-view-section">
+
+                <h4>
+                  Submission Link
+                </h4>
+
+
+                <a
+                  class="submission-link"
+                  [href]="
+                    viewingSubmission.submissionUrl
+                  "
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+
+                  Open Submission Link
+
+                </a>
+
+              </div>
+
+            }
+
+
+            <!-- MARKS -->
+
+            <div class="submission-detail-card">
+
+              <div class="detail-label">
+                Marks
+              </div>
+
+              <div class="detail-value">
+
+
+                @if (
+                  viewingSubmission.marks !== null &&
+                  viewingSubmission.marks !== undefined
+                ) {
+
+                  {{ viewingSubmission.marks }}
+
+                  @if (
+                    viewingSubmission.totalMarks
+                  ) {
+
+                    /
+                    {{ viewingSubmission.totalMarks }}
+
+                  }
+
+                }
+
+                @else {
+
+                  Not evaluated yet
+
+                }
+
+
+              </div>
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            @if (
+              viewingSubmission.feedback
+            ) {
+
+              <div class="submission-view-section">
+
+                <h4>
+                  Faculty Feedback
+                </h4>
+
+
+                <div class="submitted-feedback">
+
+                  {{ viewingSubmission.feedback }}
+
+                </div>
+
+              </div>
+
+            }
+
+
+          }
+
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="submission-modal-footer">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            (click)="closeViewModal()"
+          >
+
+            Close
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+  }
+
+</div>

@@ -1,0 +1,640 @@
+<div class="profile-page">
+
+  <!-- Loading -->
+  @if (loading) {
+
+    <div class="loading-card">
+
+      <div class="spinner"></div>
+
+      <p>
+        Loading profile...
+      </p>
+
+    </div>
+  }
+
+
+  <!-- Error -->
+  @if (!loading && errorMessage && !student) {
+
+    <div class="error-card">
+
+      <h4>
+        Unable to load profile
+      </h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="loadStudentProfile()"
+      >
+        Try Again
+      </button>
+
+    </div>
+  }
+
+
+  <!-- Profile -->
+  @if (!loading && student) {
+
+    <div class="profile-container">
+
+      <!-- Success Message -->
+      @if (successMessage) {
+
+        <div class="success-alert">
+
+          <i class="bi bi-check-circle-fill"></i>
+
+          <span>
+            {{ successMessage }}
+          </span>
+
+        </div>
+
+      }
+
+
+      <!-- Header -->
+      <div class="profile-header">
+
+        <div class="profile-avatar">
+
+          @if (isEditing && editProfile.profileImage) {
+
+            <img
+              [src]="editProfile.profileImage"
+              alt="Student profile"
+            >
+
+          } @else if (!isEditing && student.profileImage) {
+
+            <img
+              [src]="student.profileImage"
+              alt="Student profile"
+            >
+
+          } @else {
+
+            @if (isEditing) {
+              {{ editInitials }}
+            } @else {
+              {{ initials }}
+            }
+
+          }
+
+        </div>
+
+
+        <div class="profile-heading">
+
+          @if (isEditing) {
+
+            <h2>
+              Edit Profile
+            </h2>
+
+            <p>
+              Update your personal and academic information.
+            </p>
+
+          } @else {
+
+            <h2>
+
+              {{ student.firstName }}
+
+              {{ student.lastName }}
+
+            </h2>
+
+            <p>
+              {{ student.enrollmentNo || 'Enrollment number not available' }}
+            </p>
+
+          }
+
+
+          <span class="status-badge">
+            Active Student
+          </span>
+
+        </div>
+
+
+        <!-- Edit Button -->
+        @if (!isEditing) {
+
+          <button
+            type="button"
+            class="edit-button"
+            (click)="startEditing()"
+          >
+
+            <i class="bi bi-pencil"></i>
+
+            Edit Profile
+
+          </button>
+
+        }
+
+      </div>
+
+
+      <!-- EDIT MODE -->
+      @if (isEditing) {
+
+        <div class="profile-card edit-card">
+
+          <div class="card-title">
+
+            <div>
+
+              <h3>
+                Edit Personal Information
+              </h3>
+
+              <p>
+                Update the information you want to change.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="details-grid">
+
+            <!-- First Name -->
+            <div class="detail-item">
+
+              <label>
+                First Name
+              </label>
+
+              <input
+                type="text"
+                class="profile-input"
+                [(ngModel)]="editProfile.firstName"
+                placeholder="Enter first name"
+              >
+
+            </div>
+
+
+            <!-- Last Name -->
+            <div class="detail-item">
+
+              <label>
+                Last Name
+              </label>
+
+              <input
+                type="text"
+                class="profile-input"
+                [(ngModel)]="editProfile.lastName"
+                placeholder="Enter last name"
+              >
+
+            </div>
+
+
+            <!-- Phone -->
+            <div class="detail-item">
+
+              <label>
+                Phone
+              </label>
+
+              <input
+                type="text"
+                class="profile-input"
+                maxlength="10"
+                [(ngModel)]="editProfile.phone"
+                placeholder="Enter 10-digit phone number"
+              >
+
+            </div>
+
+
+            <!-- Email - Read Only -->
+            <div class="detail-item">
+
+              <label>
+                Email
+              </label>
+
+              <input
+                type="email"
+                class="profile-input readonly-input"
+                [value]="student.email || ''"
+                readonly
+              >
+
+              <small class="field-note">
+                Email cannot be changed here.
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Academic Information -->
+        <div class="profile-card edit-card">
+
+          <div class="card-title">
+
+            <div>
+
+              <h3>
+                Academic Information
+              </h3>
+
+              <p>
+                Update your academic details.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="details-grid">
+
+            <!-- Enrollment -->
+            <div class="detail-item">
+
+              <label>
+                Enrollment Number
+              </label>
+
+              <input
+                type="text"
+                class="profile-input readonly-input"
+                [value]="student.enrollmentNo || ''"
+                readonly
+              >
+
+              <small class="field-note">
+                Enrollment number is managed by the institution.
+              </small>
+
+            </div>
+
+
+            <!-- Department -->
+            <div class="detail-item">
+
+              <label>
+                Department
+              </label>
+
+              <input
+                type="text"
+                class="profile-input"
+                [(ngModel)]="editProfile.departmentId"
+                placeholder="Enter department"
+              >
+
+            </div>
+
+
+            <!-- Semester -->
+            <div class="detail-item">
+
+              <label>
+                Semester
+              </label>
+
+              <select
+                class="profile-input"
+                [(ngModel)]="editProfile.semester"
+              >
+
+                <option [ngValue]="null">
+                  Select semester
+                </option>
+
+                <option [ngValue]="1">
+                  1
+                </option>
+
+                <option [ngValue]="2">
+                  2
+                </option>
+
+                <option [ngValue]="3">
+                  3
+                </option>
+
+                <option [ngValue]="4">
+                  4
+                </option>
+
+                <option [ngValue]="5">
+                  5
+                </option>
+
+                <option [ngValue]="6">
+                  6
+                </option>
+
+                <option [ngValue]="7">
+                  7
+                </option>
+
+                <option [ngValue]="8">
+                  8
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- Division -->
+            <div class="detail-item">
+
+              <label>
+                Division
+              </label>
+
+              <input
+                type="text"
+                class="profile-input"
+                maxlength="5"
+                [(ngModel)]="editProfile.division"
+                placeholder="Example: A"
+              >
+
+            </div>
+
+
+            <!-- Admission Year -->
+            <div class="detail-item">
+
+              <label>
+                Admission Year
+              </label>
+
+              <input
+                type="number"
+                class="profile-input"
+                [(ngModel)]="editProfile.admissionYear"
+                placeholder="Example: 2023"
+              >
+
+            </div>
+
+
+            <!-- Graduation Year -->
+            <div class="detail-item">
+
+              <label>
+                Graduation Year
+              </label>
+
+              <input
+                type="number"
+                class="profile-input"
+                [(ngModel)]="editProfile.graduationYear"
+                placeholder="Example: 2027"
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- Buttons -->
+          <div class="edit-actions">
+
+            <button
+              type="button"
+              class="cancel-button"
+              [disabled]="saving"
+              (click)="cancelEditing()"
+            >
+
+              <i class="bi bi-x-lg"></i>
+
+              Cancel
+
+            </button>
+
+
+            <button
+              type="button"
+              class="save-button"
+              [disabled]="saving"
+              (click)="saveProfile()"
+            >
+
+              @if (saving) {
+
+                <span class="button-spinner"></span>
+
+                Saving...
+
+              } @else {
+
+                <i class="bi bi-check-lg"></i>
+
+                Save Changes
+
+              }
+
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- VIEW MODE -->
+      @if (!isEditing) {
+
+        <!-- Personal Information -->
+        <div class="profile-card">
+
+          <div class="card-title">
+
+            <h3>
+              Personal Information
+            </h3>
+
+          </div>
+
+
+          <div class="details-grid">
+
+            <div class="detail-item">
+
+              <span>
+                First Name
+              </span>
+
+              <strong>
+                {{ student.firstName || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Last Name
+              </span>
+
+              <strong>
+                {{ student.lastName || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Phone
+              </span>
+
+              <strong>
+                {{ student.phone || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Email
+              </span>
+
+              <strong>
+                {{ student.email || 'Not available' }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Academic Information -->
+        <div class="profile-card">
+
+          <div class="card-title">
+
+            <h3>
+              Academic Information
+            </h3>
+
+          </div>
+
+
+          <div class="details-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Enrollment Number
+              </span>
+
+              <strong>
+                {{ student.enrollmentNo || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Department
+              </span>
+
+              <strong>
+                {{ student.departmentId || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Semester
+              </span>
+
+              <strong>
+                {{ student.semester ?? 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Division
+              </span>
+
+              <strong>
+                {{ student.division || 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Admission Year
+              </span>
+
+              <strong>
+                {{ student.admissionYear ?? 'Not available' }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Graduation Year
+              </span>
+
+              <strong>
+                {{ student.graduationYear ?? 'Not available' }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,2022 @@
+/* ========================================
+   Assignments Page
+======================================== */
+
+.assignments-page {
+  width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   Header
+======================================== */
+
+.page-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.page-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 24px;
+
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.page-header p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+
+/* ========================================
+   Filter
+======================================== */
+
+.filter-wrapper select {
+  padding: 10px 14px;
+
+  min-width: 180px;
+
+  border:
+    1px solid #d1d5db;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #374151;
+
+  outline: none;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filter-wrapper select:hover {
+  border-color: #2563eb;
+}
+
+.filter-wrapper select:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* ========================================
+   Summary
+======================================== */
+
+.summary-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 20px;
+}
+
+.summary-icon.blue {
+  background: #eff6ff;
+}
+
+.summary-icon.orange {
+  background: #ffedd5;
+}
+
+.summary-icon.green {
+  background: #dcfce7;
+}
+
+.summary-icon.red {
+  background: #fee2e2;
+}
+
+.summary-card span {
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.summary-card h3 {
+  margin: 4px 0 0;
+
+  font-size: 24px;
+
+  font-weight: 600;
+
+  color: #111827;
+}
+
+
+/* ========================================
+   Assignments Card
+======================================== */
+
+.assignments-card {
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  padding: 22px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+}
+
+.card-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  margin: 0 0 5px;
+
+  font-size: 17px;
+
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.card-header p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.assignment-count {
+  min-width: 30px;
+
+  height: 30px;
+
+  padding: 0 8px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border-radius: 50%;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* ========================================
+   Assignment List
+======================================== */
+
+.assignment-list {
+  width: 100%;
+}
+
+
+/* ========================================
+   Assignment Item
+======================================== */
+
+.assignment-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 18px 0;
+
+  border-bottom:
+    1px solid #f1f5f9;
+}
+
+.assignment-item:last-child {
+  border-bottom: none;
+}
+
+.assignment-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 21px;
+}
+
+.assignment-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.assignment-title-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 4px;
+
+  flex-wrap: wrap;
+}
+
+.assignment-title-row h4 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+.subject-name {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #2563eb;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.assignment-info p {
+  margin: 0 0 10px;
+
+  color: #6b7280;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   Priority
+======================================== */
+
+.priority-badge {
+  padding: 4px 8px;
+
+  border-radius: 5px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.priority-high {
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.priority-medium {
+  background: #fef3c7;
+
+  color: #d97706;
+}
+
+.priority-low {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+
+/* ========================================
+   Metadata
+======================================== */
+
+.assignment-meta {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  flex-wrap: wrap;
+
+  color: #6b7280;
+
+  font-size: 11px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+
+  border-radius: 5px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.status-submitted {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+.status-pending {
+  background: #fef3c7;
+
+  color: #d97706;
+}
+
+.status-overdue {
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.status-closed {
+  background: #e5e7eb;
+
+  color: #4b5563;
+}
+
+.status-draft {
+  background: #f3e8ff;
+
+  color: #7e22ce;
+}
+
+
+/* ========================================
+   Action
+======================================== */
+
+.assignment-action {
+  flex-shrink: 0;
+}
+
+.submit-btn,
+.view-btn {
+  padding: 8px 15px;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.submit-btn {
+  border: none;
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+.submit-btn:hover {
+  background: #1d4ed8;
+}
+
+.view-btn {
+  border:
+    1px solid #d1d5db;
+
+  background: #ffffff;
+
+  color: #374151;
+}
+
+.view-btn:hover {
+  border-color: #2563eb;
+
+  color: #2563eb;
+}
+
+
+/* ========================================
+   Empty State
+======================================== */
+
+.empty-state {
+  padding: 50px 20px;
+
+  text-align: center;
+}
+
+.empty-icon {
+  margin-bottom: 10px;
+
+  font-size: 35px;
+}
+
+.empty-state h4 {
+  margin: 0 0 5px;
+
+  color: #111827;
+
+  font-size: 16px;
+}
+
+.empty-state p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   Loading
+======================================== */
+
+.loading-card {
+  padding: 40px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.loading-card p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+.spinner {
+  width: 35px;
+  height: 35px;
+
+  margin: 0 auto 15px;
+
+  border:
+    4px solid #e5e7eb;
+
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* ========================================
+   Error
+======================================== */
+
+.error-card {
+  padding: 40px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  border:
+    1px solid #fee2e2;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.error-card h4 {
+  margin: 0 0 8px;
+
+  color: #dc2626;
+
+  font-size: 17px;
+}
+
+.error-card p {
+  margin: 0 0 20px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+}
+
+.error-card button {
+  padding: 9px 18px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  transition:
+    background 0.2s ease;
+}
+
+.error-card button:hover {
+  background: #1d4ed8;
+}
+
+
+/* ========================================
+   Responsive - 1100px
+======================================== */
+
+@media (max-width: 1100px) {
+
+  .summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ========================================
+   Responsive - 700px
+======================================== */
+
+@media (max-width: 700px) {
+
+  .assignments-page {
+    padding: 15px;
+  }
+
+
+  .page-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+
+  .filter-wrapper {
+    width: 100%;
+  }
+
+
+  .filter-wrapper select {
+    width: 100%;
+  }
+
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .assignment-item {
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+
+  .assignment-info {
+    width: calc(100% - 63px);
+  }
+
+
+  .assignment-action {
+    width: 100%;
+
+    padding-left: 63px;
+  }
+
+
+  .submit-btn,
+  .view-btn {
+    width: 100%;
+  }
+
+}
+
+
+/* ========================================
+   Responsive - 450px
+======================================== */
+
+@media (max-width: 450px) {
+
+  .assignments-page {
+    padding: 10px;
+  }
+
+
+  .assignments-card {
+    padding: 17px;
+  }
+
+
+  .summary-card {
+    padding: 17px;
+  }
+
+
+  .summary-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 17px;
+  }
+
+
+  .summary-card h3 {
+    font-size: 21px;
+  }
+
+
+  .assignment-item {
+    gap: 12px;
+  }
+
+
+  .assignment-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 18px;
+  }
+
+
+  .assignment-info {
+    width: calc(100% - 54px);
+  }
+
+
+  .assignment-action {
+    padding-left: 54px;
+  }
+
+}
+
+/* =====================================================
+   SUBMISSION MODAL
+   ===================================================== */
+
+.submission-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(3px);
+}
+
+
+.submission-modal {
+  width: 100%;
+  max-width: 650px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.20);
+
+  animation:
+    submissionModalOpen 0.2s ease-out;
+}
+
+
+@keyframes submissionModalOpen {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(15px) scale(0.98);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0) scale(1);
+
+  }
+
+}
+
+
+/* =====================================================
+   MODAL HEADER
+   ===================================================== */
+
+.submission-modal-header {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 24px 26px;
+
+  border-bottom:
+    1px solid #e5e7eb;
+}
+
+
+.submission-modal-header h3 {
+
+  margin: 0;
+
+  font-size: 21px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+}
+
+
+.submission-modal-header p {
+
+  margin:
+    6px 0 0;
+
+  font-size: 14px;
+
+  color: #6b7280;
+
+}
+
+
+.modal-close-btn {
+
+  width: 36px;
+
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #f3f4f6;
+
+  color: #374151;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+}
+
+
+.modal-close-btn:hover {
+
+  background: #e5e7eb;
+
+}
+
+
+/* =====================================================
+   MODAL BODY
+   ===================================================== */
+
+.submission-modal-body {
+
+  padding: 26px;
+
+}
+
+
+.form-group {
+
+  margin-bottom: 22px;
+
+}
+
+
+.form-group:last-child {
+
+  margin-bottom: 0;
+
+}
+
+
+.form-group label {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+}
+
+
+.form-group label span {
+
+  color: #ef4444;
+
+}
+
+
+.form-group label .optional {
+
+  margin-left: 6px;
+
+  color: #9ca3af;
+
+  font-weight: 400;
+
+}
+
+
+.form-group textarea,
+
+.form-group input {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 9px;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  color: #111827;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+}
+
+
+.form-group textarea {
+
+  resize: vertical;
+
+  min-height: 160px;
+
+}
+
+
+.form-group textarea:focus,
+
+.form-group input:focus {
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.10);
+
+}
+
+
+.form-group textarea:disabled,
+
+.form-group input:disabled {
+
+  background: #f9fafb;
+
+  cursor: not-allowed;
+
+}
+
+
+.form-group small {
+
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 12px;
+
+  color: #9ca3af;
+
+}
+
+
+/* =====================================================
+   SUCCESS / ERROR
+   ===================================================== */
+
+.submission-error {
+
+  margin-bottom: 20px;
+
+  padding: 12px 14px;
+
+  border:
+    1px solid #fecaca;
+
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  font-size: 13px;
+
+}
+
+
+.submission-success {
+
+  margin-bottom: 20px;
+
+  padding: 12px 14px;
+
+  border:
+    1px solid #bbf7d0;
+
+  border-radius: 8px;
+
+  background: #f0fdf4;
+
+  color: #16a34a;
+
+  font-size: 13px;
+
+}
+
+
+/* =====================================================
+   MODAL FOOTER
+   ===================================================== */
+
+.submission-modal-footer {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  padding: 18px 26px;
+
+  border-top:
+    1px solid #e5e7eb;
+
+  background: #fafafa;
+
+  border-radius:
+    0 0 16px 16px;
+
+}
+
+
+.cancel-btn,
+
+.confirm-submit-btn {
+
+  min-height: 42px;
+
+  padding:
+    0 18px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+}
+
+
+.cancel-btn {
+
+  border:
+    1px solid #d1d5db;
+
+  background: #ffffff;
+
+  color: #374151;
+
+}
+
+
+.cancel-btn:hover {
+
+  background: #f3f4f6;
+
+}
+
+
+.confirm-submit-btn {
+
+  border: none;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+}
+
+
+.confirm-submit-btn:hover {
+
+  background: #1d4ed8;
+
+}
+
+
+.confirm-submit-btn:disabled,
+
+.cancel-btn:disabled {
+
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   BUTTON SPINNER
+   ===================================================== */
+
+.button-spinner {
+
+  width: 15px;
+
+  height: 15px;
+
+  border:
+    2px solid rgba(255, 255, 255, 0.4);
+
+  border-top-color:
+    #ffffff;
+
+  border-radius: 50%;
+
+  animation:
+    submissionSpin 0.7s linear infinite;
+
+}
+
+
+@keyframes submissionSpin {
+
+  to {
+
+    transform: rotate(360deg);
+
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .submission-modal-backdrop {
+
+    padding: 12px;
+
+  }
+
+
+  .submission-modal {
+
+    max-height: 95vh;
+
+    border-radius: 12px;
+
+  }
+
+
+  .submission-modal-header {
+
+    padding: 20px;
+
+  }
+
+
+  .submission-modal-body {
+
+    padding: 20px;
+
+  }
+
+
+  .submission-modal-footer {
+
+    padding: 16px 20px;
+
+    flex-direction: column-reverse;
+
+  }
+
+
+  .cancel-btn,
+
+  .confirm-submit-btn {
+
+    width: 100%;
+
+  }
+
+}
+
+/* =====================================================
+   SUBMISSION MODAL
+   ===================================================== */
+
+.submission-modal-backdrop {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 2000;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(3px);
+
+}
+
+
+.submission-modal {
+
+  width: 100%;
+
+  max-width: 650px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 20px 50px
+    rgba(0, 0, 0, 0.20);
+
+  animation:
+    submissionModalOpen
+    0.2s ease-out;
+
+}
+
+
+.view-submission-modal {
+
+  max-width: 700px;
+
+}
+
+
+@keyframes submissionModalOpen {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(15px)
+      scale(0.98);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+  }
+
+}
+
+
+/* =====================================================
+   MODAL HEADER
+   ===================================================== */
+
+.submission-modal-header {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 24px 26px;
+
+  border-bottom:
+    1px solid #e5e7eb;
+
+}
+
+
+.submission-modal-header h3 {
+
+  margin: 0;
+
+  font-size: 21px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+}
+
+
+.submission-modal-header p {
+
+  margin:
+    6px 0 0;
+
+  font-size: 14px;
+
+  color: #6b7280;
+
+}
+
+
+.modal-close-btn {
+
+  width: 36px;
+
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #f3f4f6;
+
+  color: #374151;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+}
+
+
+.modal-close-btn:hover {
+
+  background: #e5e7eb;
+
+}
+
+
+/* =====================================================
+   MODAL BODY
+   ===================================================== */
+
+.submission-modal-body {
+
+  padding: 26px;
+
+}
+
+
+.form-group {
+
+  margin-bottom: 22px;
+
+}
+
+
+.form-group:last-child {
+
+  margin-bottom: 0;
+
+}
+
+
+.form-group label {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+}
+
+
+.form-group label span {
+
+  color: #ef4444;
+
+}
+
+
+.form-group label .optional {
+
+  margin-left: 6px;
+
+  color: #9ca3af;
+
+  font-weight: 400;
+
+}
+
+
+.form-group textarea,
+
+.form-group input {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  border:
+    1px solid #d1d5db;
+
+  border-radius: 9px;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  color: #111827;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+}
+
+
+.form-group textarea {
+
+  resize: vertical;
+
+  min-height: 160px;
+
+}
+
+
+.form-group textarea:focus,
+
+.form-group input:focus {
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.10);
+
+}
+
+
+.form-group textarea:disabled,
+
+.form-group input:disabled {
+
+  background: #f9fafb;
+
+  cursor: not-allowed;
+
+}
+
+
+.form-group small {
+
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 12px;
+
+  color: #9ca3af;
+
+}
+
+
+/* =====================================================
+   ERROR / SUCCESS
+   ===================================================== */
+
+.submission-error {
+
+  margin-bottom: 20px;
+
+  padding: 12px 14px;
+
+  border:
+    1px solid #fecaca;
+
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  font-size: 13px;
+
+}
+
+
+.submission-success {
+
+  margin-bottom: 20px;
+
+  padding: 12px 14px;
+
+  border:
+    1px solid #bbf7d0;
+
+  border-radius: 8px;
+
+  background: #f0fdf4;
+
+  color: #16a34a;
+
+  font-size: 13px;
+
+}
+
+
+/* =====================================================
+   MODAL FOOTER
+   ===================================================== */
+
+.submission-modal-footer {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  padding: 18px 26px;
+
+  border-top:
+    1px solid #e5e7eb;
+
+  background: #fafafa;
+
+  border-radius:
+    0 0 16px 16px;
+
+}
+
+
+.cancel-btn,
+
+.confirm-submit-btn {
+
+  min-height: 42px;
+
+  padding:
+    0 18px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+}
+
+
+.cancel-btn {
+
+  border:
+    1px solid #d1d5db;
+
+  background: #ffffff;
+
+  color: #374151;
+
+}
+
+
+.cancel-btn:hover {
+
+  background: #f3f4f6;
+
+}
+
+
+.confirm-submit-btn {
+
+  border: none;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+}
+
+
+.confirm-submit-btn:hover {
+
+  background: #1d4ed8;
+
+}
+
+
+.confirm-submit-btn:disabled,
+
+.cancel-btn:disabled {
+
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   BUTTON SPINNER
+   ===================================================== */
+
+.button-spinner {
+
+  width: 15px;
+
+  height: 15px;
+
+  border:
+    2px solid
+    rgba(255, 255, 255, 0.4);
+
+  border-top-color:
+    #ffffff;
+
+  border-radius: 50%;
+
+  animation:
+    submissionSpin
+    0.7s linear infinite;
+
+}
+
+
+@keyframes submissionSpin {
+
+  to {
+
+    transform: rotate(360deg);
+
+  }
+
+}
+
+
+.blue-spinner {
+
+  border:
+    3px solid #dbeafe;
+
+  border-top-color:
+    #2563eb;
+
+}
+
+
+/* =====================================================
+   VIEW SUBMISSION
+   ===================================================== */
+
+.submission-view-loading {
+
+  min-height: 250px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 15px;
+
+  color: #6b7280;
+
+}
+
+
+.submission-detail-card {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 14px 16px;
+
+  margin-bottom: 12px;
+
+  border:
+    1px solid #e5e7eb;
+
+  border-radius: 9px;
+
+  background: #f9fafb;
+
+}
+
+
+.detail-label {
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #6b7280;
+
+}
+
+
+.detail-value {
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+  text-align: right;
+
+}
+
+
+.submission-view-section {
+
+  margin-top: 22px;
+
+}
+
+
+.submission-view-section h4 {
+
+  margin:
+    0 0 9px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #111827;
+
+}
+
+
+.submitted-answer {
+
+  min-height: 120px;
+
+  padding: 15px;
+
+  border:
+    1px solid #e5e7eb;
+
+  border-radius: 9px;
+
+  background: #f9fafb;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+
+  white-space: pre-wrap;
+
+  word-break: break-word;
+
+}
+
+
+.submission-link {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 10px 14px;
+
+  border-radius: 8px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  text-decoration: none;
+
+}
+
+
+.submission-link:hover {
+
+  background: #dbeafe;
+
+}
+
+
+.submitted-feedback {
+
+  padding: 14px 16px;
+
+  border-left:
+    4px solid #2563eb;
+
+  border-radius: 6px;
+
+  background: #eff6ff;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  white-space: pre-wrap;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .submission-modal-backdrop {
+
+    padding: 12px;
+
+  }
+
+
+  .submission-modal {
+
+    max-height: 95vh;
+
+    border-radius: 12px;
+
+  }
+
+
+  .submission-modal-header {
+
+    padding: 20px;
+
+  }
+
+
+  .submission-modal-body {
+
+    padding: 20px;
+
+  }
+
+
+  .submission-modal-footer {
+
+    padding: 16px 20px;
+
+    flex-direction: column-reverse;
+
+  }
+
+
+  .cancel-btn,
+
+  .confirm-submit-btn {
+
+    width: 100%;
+
+  }
+
+
+  .submission-detail-card {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+  }
+
+
+  .detail-value {
+
+    text-align: left;
+
+  }
+
+}

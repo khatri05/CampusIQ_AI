@@ -1,0 +1,881 @@
+<div class="skill-gap-page">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <div class="eyebrow">
+        AI CAREER INSIGHTS
+      </div>
+
+      <h1>
+        Skill Gap Analysis
+      </h1>
+
+      <p>
+        Compare your current skills with the skills
+        required for your target career role.
+      </p>
+    </div>
+
+    <div class="header-icon">
+      <i class="bi bi-bar-chart-steps"></i>
+    </div>
+
+  </div>
+
+
+  <!-- Alerts -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert-box success">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ successMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="successMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <div
+    *ngIf="errorMessage"
+    class="alert-box error">
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="errorMessage = ''">
+
+      <i class="bi bi-x"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- Main Grid -->
+
+  <div class="main-grid">
+
+    <!-- Analysis Form -->
+
+    <section class="analysis-card">
+
+      <div class="card-header">
+
+        <div class="card-title">
+
+          <div class="title-icon">
+            <i class="bi bi-search"></i>
+          </div>
+
+          <div>
+            <h2>
+              Analyze Your Skill Gap
+            </h2>
+
+            <p>
+              Enter your desired role and required skills.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-body">
+
+        <!-- Target Role -->
+
+        <div class="form-group">
+
+          <label>
+            Target Job Role
+            <span>*</span>
+          </label>
+
+          <div class="input-wrapper">
+
+            <i class="bi bi-briefcase"></i>
+
+            <input
+              type="text"
+              [(ngModel)]="targetRole"
+              placeholder="e.g. Full Stack Developer"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Required Skills -->
+
+        <div class="form-group">
+
+          <label>
+            Required Skills
+            <span>*</span>
+          </label>
+
+          <textarea
+            [(ngModel)]="requiredSkillsInput"
+            rows="5"
+            placeholder="Enter skills separated by commas&#10;&#10;e.g. Angular, Node.js, MongoDB, Git, REST API">
+          </textarea>
+
+          <small>
+            Separate multiple skills using commas.
+          </small>
+
+        </div>
+
+
+        <!-- Analyze -->
+
+        <button
+          type="button"
+          class="analyze-button"
+          [disabled]="analyzing"
+          (click)="analyzeSkillGap()">
+
+          <ng-container
+            *ngIf="!analyzing">
+
+            <i class="bi bi-stars"></i>
+
+            Analyze Skill Gap
+
+          </ng-container>
+
+          <ng-container
+            *ngIf="analyzing">
+
+            <span class="spinner"></span>
+
+            Analyzing...
+
+          </ng-container>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- Quick Information -->
+
+    <section class="info-card">
+
+      <div class="info-icon">
+        <i class="bi bi-lightbulb"></i>
+      </div>
+
+      <h3>
+        How it works
+      </h3>
+
+      <div class="steps">
+
+        <div class="step">
+
+          <div class="step-number">
+            1
+          </div>
+
+          <div>
+            <strong>
+              Select a target role
+            </strong>
+
+            <p>
+              Choose the career role you want to prepare for.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">
+            2
+          </div>
+
+          <div>
+            <strong>
+              Add required skills
+            </strong>
+
+            <p>
+              Enter the skills expected for that role.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">
+            3
+          </div>
+
+          <div>
+            <strong>
+              Analyze your gap
+            </strong>
+
+            <p>
+              CampusIQ AI compares them with your skills.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">
+            4
+          </div>
+
+          <div>
+            <strong>
+              Improve missing skills
+            </strong>
+
+            <p>
+              Focus on the skills that are missing.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <!-- Selected Analysis -->
+
+  <section
+    *ngIf="selectedAnalysis"
+    class="result-section">
+
+    <div class="result-header">
+
+      <div>
+
+        <div class="eyebrow">
+          ANALYSIS RESULT
+        </div>
+
+        <h2>
+          {{ selectedAnalysis.targetRole }}
+        </h2>
+
+        <p>
+          Skill gap analysis result
+        </p>
+
+      </div>
+
+
+      <div
+        class="gap-badge"
+        [ngClass]="
+          getGapClass(
+            selectedAnalysis.gapLevel
+          )
+        ">
+
+        <i class="bi bi-speedometer2"></i>
+
+        {{ selectedAnalysis.gapLevel }}
+        Gap
+
+      </div>
+
+    </div>
+
+
+    <!-- Score -->
+
+    <div class="score-card">
+
+      <div class="score-circle">
+
+        <div class="score-value">
+          {{ selectedAnalysis.skillMatchPercentage }}%
+        </div>
+
+        <div class="score-label">
+          Skill Match
+        </div>
+
+      </div>
+
+
+      <div class="score-content">
+
+        <h3>
+          Your Skill Match
+        </h3>
+
+        <p>
+          You currently match
+          <strong>
+            {{ selectedAnalysis.matchingSkills.length }}
+          </strong>
+          out of
+          <strong>
+            {{ selectedAnalysis.requiredSkills.length }}
+          </strong>
+          required skills for
+          <strong>
+            {{ selectedAnalysis.targetRole }}
+          </strong>.
+        </p>
+
+
+        <div class="progress-container">
+
+          <div class="progress-track">
+
+            <div
+              class="progress-bar"
+              [ngClass]="
+                getProgressClass(
+                  selectedAnalysis.skillMatchPercentage
+                )
+              "
+              [style.width.%]="
+                selectedAnalysis.skillMatchPercentage
+              ">
+            </div>
+
+          </div>
+
+          <span>
+            {{ selectedAnalysis.skillMatchPercentage }}%
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Skill Columns -->
+
+    <div class="skill-columns">
+
+      <!-- Current Skills -->
+
+      <div class="skill-panel">
+
+        <div class="panel-header">
+
+          <div class="panel-icon current">
+            <i class="bi bi-person-check"></i>
+          </div>
+
+          <div>
+
+            <h3>
+              Your Current Skills
+            </h3>
+
+            <span>
+              {{ selectedAnalysis.currentSkills.length }}
+              skills
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="skill-list"
+          *ngIf="
+            selectedAnalysis.currentSkills.length > 0
+          ">
+
+          <span
+            class="skill-chip current-chip"
+            *ngFor="
+              let skill of selectedAnalysis.currentSkills;
+              trackBy: trackBySkill
+            ">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            {{ skill }}
+
+          </span>
+
+        </div>
+
+
+        <div
+          class="empty-skills"
+          *ngIf="
+            selectedAnalysis.currentSkills.length === 0
+          ">
+
+          <i class="bi bi-info-circle"></i>
+
+          <span>
+            No skills have been added yet.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Matching Skills -->
+
+      <div class="skill-panel">
+
+        <div class="panel-header">
+
+          <div class="panel-icon matching">
+            <i class="bi bi-check2-all"></i>
+          </div>
+
+          <div>
+
+            <h3>
+              Matching Skills
+            </h3>
+
+            <span>
+              {{ selectedAnalysis.matchingSkills.length }}
+              matched
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="skill-list"
+          *ngIf="
+            selectedAnalysis.matchingSkills.length > 0
+          ">
+
+          <span
+            class="skill-chip matching-chip"
+            *ngFor="
+              let skill of selectedAnalysis.matchingSkills;
+              trackBy: trackBySkill
+            ">
+
+            <i class="bi bi-check-lg"></i>
+
+            {{ skill }}
+
+          </span>
+
+        </div>
+
+
+        <div
+          class="empty-skills"
+          *ngIf="
+            selectedAnalysis.matchingSkills.length === 0
+          ">
+
+          <i class="bi bi-exclamation-circle"></i>
+
+          <span>
+            No required skills matched yet.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Missing Skills -->
+
+      <div class="skill-panel">
+
+        <div class="panel-header">
+
+          <div class="panel-icon missing">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+
+          <div>
+
+            <h3>
+              Missing Skills
+            </h3>
+
+            <span>
+              {{ selectedAnalysis.missingSkills.length }}
+              to improve
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="skill-list"
+          *ngIf="
+            selectedAnalysis.missingSkills.length > 0
+          ">
+
+          <span
+            class="skill-chip missing-chip"
+            *ngFor="
+              let skill of selectedAnalysis.missingSkills;
+              trackBy: trackBySkill
+            ">
+
+            <i class="bi bi-plus-circle"></i>
+
+            {{ skill }}
+
+          </span>
+
+        </div>
+
+
+        <div
+          class="empty-skills"
+          *ngIf="
+            selectedAnalysis.missingSkills.length === 0
+          ">
+
+          <i class="bi bi-trophy"></i>
+
+          <span>
+            You have all required skills!
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Required Skills -->
+
+    <div class="required-section">
+
+      <div class="section-heading">
+
+        <div>
+
+          <h3>
+            Required Skills
+          </h3>
+
+          <p>
+            Skills considered for this analysis
+          </p>
+
+        </div>
+
+        <span class="count-badge">
+          {{ selectedAnalysis.requiredSkills.length }}
+        </span>
+
+      </div>
+
+
+      <div class="required-list">
+
+        <span
+          class="required-chip"
+          *ngFor="
+            let skill of selectedAnalysis.requiredSkills;
+            trackBy: trackBySkill
+          ">
+
+          {{ skill }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Previous Analyses -->
+
+  <section class="history-section">
+
+    <div class="section-title">
+
+      <div>
+
+        <div class="eyebrow">
+          HISTORY
+        </div>
+
+        <h2>
+          Previous Analyses
+        </h2>
+
+        <p>
+          Review your previous skill gap analyses.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="refresh-button"
+        (click)="loadAnalyses()">
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+
+    <!-- Loading -->
+
+    <div
+      class="loading-state"
+      *ngIf="loading">
+
+      <div class="spinner dark"></div>
+
+      <p>
+        Loading your analyses...
+      </p>
+
+    </div>
+
+
+    <!-- Empty -->
+
+    <div
+      class="empty-history"
+      *ngIf="
+        !loading &&
+        analyses.length === 0
+      ">
+
+      <div class="empty-icon">
+        <i class="bi bi-bar-chart"></i>
+      </div>
+
+      <h3>
+        No analyses yet
+      </h3>
+
+      <p>
+        Complete your first skill gap analysis
+        to see your results here.
+      </p>
+
+    </div>
+
+
+    <!-- History Table -->
+
+    <div
+      class="history-table-wrapper"
+      *ngIf="
+        !loading &&
+        analyses.length > 0
+      ">
+
+      <table class="history-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Target Role
+            </th>
+
+            <th>
+              Match
+            </th>
+
+            <th>
+              Gap Level
+            </th>
+
+            <th>
+              Missing Skills
+            </th>
+
+            <th>
+              Date
+            </th>
+
+            <th>
+              Action
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let analysis of analyses;
+              trackBy: trackByAnalysis
+            ">
+
+            <td>
+
+              <div class="role-cell">
+
+                <div class="role-icon">
+                  <i class="bi bi-briefcase"></i>
+                </div>
+
+                <strong>
+                  {{ analysis.targetRole }}
+                </strong>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <div class="match-cell">
+
+                <strong>
+                  {{ analysis.skillMatchPercentage }}%
+                </strong>
+
+                <div class="mini-progress">
+
+                  <div
+                    [ngClass]="
+                      getProgressClass(
+                        analysis.skillMatchPercentage
+                      )
+                    "
+                    [style.width.%]="
+                      analysis.skillMatchPercentage
+                    ">
+                  </div>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="table-gap-badge"
+                [ngClass]="
+                  getGapClass(
+                    analysis.gapLevel
+                  )
+                ">
+
+                {{ analysis.gapLevel }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <span class="missing-count">
+
+                {{ analysis.missingSkills.length }}
+
+                skill<span
+                  *ngIf="
+                    analysis.missingSkills.length !== 1
+                  ">
+                  s
+                </span>
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              {{ formatDate(
+                analysis.createdAt
+              ) }}
+
+            </td>
+
+
+            <td>
+
+              <button
+                type="button"
+                class="view-button"
+                (click)="
+                  selectAnalysis(analysis)
+                ">
+
+                <i class="bi bi-eye"></i>
+
+                View
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</div>

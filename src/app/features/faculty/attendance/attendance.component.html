@@ -1,0 +1,724 @@
+<div class="attendance-page">
+
+    <!-- ========================================
+       PAGE HEADER
+  ========================================= -->
+    <div class="page-header">
+
+        <div>
+            <div class="breadcrumb-text">
+                Faculty / Attendance
+            </div>
+
+            <h2>
+                <i class="bi bi-calendar-check-fill"></i>
+                Attendance
+            </h2>
+
+            <p>
+                Manage and record student attendance
+            </p>
+        </div>
+
+        <div class="header-info">
+
+            <div class="department-info">
+
+                <span class="department-icon">
+                    <i class="bi bi-building"></i>
+                </span>
+
+                <div>
+                    <span class="department-label">
+                        Department
+                    </span>
+
+                    <strong>
+                        {{ departmentName || 'Loading...' }}
+                    </strong>
+
+                    @if (departmentCode) {
+                    <small>
+                        {{ departmentCode }}
+                    </small>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================
+       LOADING
+  ========================================= -->
+    @if (isLoading) {
+
+    <div class="state-card loading-card">
+
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">
+                Loading...
+            </span>
+        </div>
+
+        <h5>
+            Loading attendance...
+        </h5>
+
+        <p>
+            Please wait while attendance data is being loaded.
+        </p>
+
+    </div>
+
+    }
+
+
+    <!-- ========================================
+       ERROR
+  ========================================= -->
+    @if (!isLoading && errorMessage) {
+
+    <div class="state-card error-card">
+
+        <div class="state-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+
+        <div class="error-content">
+
+            <h5>
+                Unable to load attendance
+            </h5>
+
+            <p>
+                {{ errorMessage }}
+            </p>
+
+        </div>
+
+        <button type="button" class="btn btn-outline-danger" (click)="loadAttendance()">
+            <i class="bi bi-arrow-clockwise"></i>
+            Retry
+        </button>
+
+    </div>
+
+    }
+
+
+    <!-- ========================================
+       MAIN CONTENT
+  ========================================= -->
+    @if (!isLoading && !errorMessage) {
+
+
+    <!-- ======================================
+         STATISTICS
+    ======================================= -->
+    <div class="stats-grid">
+
+        <!-- Total Students -->
+        <div class="stat-card">
+
+            <div class="stat-icon total">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    Total Students
+                </span>
+
+                <strong>
+                    {{ students.length }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Present -->
+        <div class="stat-card">
+
+            <div class="stat-icon present">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    Present
+                </span>
+
+                <strong>
+                    {{ getPresentCount() }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Absent -->
+        <div class="stat-card">
+
+            <div class="stat-icon absent">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    Absent
+                </span>
+
+                <strong>
+                    {{ getAbsentCount() }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Late -->
+        <div class="stat-card">
+
+            <div class="stat-icon late">
+                <i class="bi bi-clock-fill"></i>
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    Late
+                </span>
+
+                <strong>
+                    {{ getLateCount() }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         FILTER CARD
+    ======================================= -->
+    <div class="filter-card">
+
+        <div class="filter-header">
+
+            <div>
+
+                <h5>
+                    <i class="bi bi-sliders"></i>
+                    Attendance Controls
+                </h5>
+
+                <p>
+                    Select date and filter students before marking attendance.
+                </p>
+
+            </div>
+
+            <button type="button" class="clear-btn" (click)="clearFilters()">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Clear Filters
+            </button>
+
+        </div>
+
+
+        <div class="filter-grid">
+
+
+            <!-- DATE -->
+            <div class="filter-group">
+
+                <label for="attendanceDate">
+                    <i class="bi bi-calendar3"></i>
+                    Attendance Date
+                </label>
+
+                <input id="attendanceDate" type="date" class="form-control" [(ngModel)]="selectedDate"
+                    (change)="loadAttendance()" />
+
+            </div>
+
+
+            <!-- SEMESTER -->
+            <div class="filter-group">
+
+                <label for="semester">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    Semester
+                </label>
+
+                <select id="semester" class="form-select" [(ngModel)]="selectedSemester" (change)="filterStudents()">
+
+                    <option value="All">
+                        All Semesters
+                    </option>
+
+                    @for (
+                    semester of semesters;
+                    track semester
+                    ) {
+
+                    <option [value]="semester">
+                        Semester {{ semester }}
+                    </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+
+            <!-- DIVISION -->
+            <div class="filter-group">
+
+                <label for="division">
+                    <i class="bi bi-diagram-3-fill"></i>
+                    Division
+                </label>
+
+                <select id="division" class="form-select" [(ngModel)]="selectedDivision" (change)="filterStudents()">
+
+                    <option value="All">
+                        All Divisions
+                    </option>
+
+                    @for (
+                    division of divisions;
+                    track division
+                    ) {
+
+                    <option [value]="division">
+                        Division {{ division }}
+                    </option>
+
+                    }
+
+                </select>
+
+            </div>
+
+
+            <!-- SEARCH -->
+            <div class="filter-group">
+
+                <label for="studentSearch">
+                    <i class="bi bi-search"></i>
+                    Search Student
+                </label>
+
+                <div class="search-input">
+
+                    <i class="bi bi-search"></i>
+
+                    <input id="studentSearch" type="text" class="form-control" [(ngModel)]="searchText"
+                        (input)="filterStudents()" placeholder="Search by name or enrollment..." />
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         SUCCESS MESSAGE
+    ======================================= -->
+    @if (successMessage) {
+
+    <div class="alert alert-success custom-alert">
+
+        <i class="bi bi-check-circle-fill"></i>
+
+        <span>
+            {{ successMessage }}
+        </span>
+
+    </div>
+
+    }
+
+
+    <!-- ======================================
+         ATTENDANCE TABLE
+    ======================================= -->
+    <div class="attendance-card">
+
+
+        <!-- TABLE HEADER -->
+        <div class="table-header">
+
+            <div>
+
+                <h5>
+                    <i class="bi bi-list-check"></i>
+                    Student Attendance
+                </h5>
+
+                <p>
+                    {{ filteredStudents.length }}
+                    student{{ filteredStudents.length !== 1 ? 's' : '' }}
+                    displayed
+                </p>
+
+            </div>
+
+            <div class="selected-date">
+
+                <i class="bi bi-calendar-event"></i>
+
+                <span>
+                    {{ selectedDate }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================
+           NO STUDENTS
+      ===================================== -->
+        @if (filteredStudents.length === 0) {
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <h5>
+                No students found
+            </h5>
+
+            <p>
+                No students match the selected filters.
+            </p>
+
+            <button type="button" class="btn btn-outline-primary" (click)="clearFilters()">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Clear Filters
+            </button>
+
+        </div>
+
+        }
+
+
+        <!-- ====================================
+           STUDENT TABLE
+      ===================================== -->
+        @if (filteredStudents.length > 0) {
+
+        <div class="table-responsive">
+
+            <table class="attendance-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="student-column">
+                            Student
+                        </th>
+
+                        <th>
+                            Enrollment No.
+                        </th>
+
+                        <th>
+                            Semester
+                        </th>
+
+                        <th>
+                            Division
+                        </th>
+
+                        <th class="status-column">
+                            Attendance Status
+                        </th>
+
+                        <th class="action-column">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @for (
+                    student of filteredStudents;
+                    track student.id || student.uid
+                    ) {
+
+                    <tr>
+
+
+                        <!-- ==========================
+                       STUDENT
+                  =========================== -->
+                        <td>
+
+                            <div class="student-info">
+
+                                <div class="student-avatar">
+
+                                    @if (student.profileImage) {
+
+                                    <img [src]="student.profileImage" [alt]="
+                              student.firstName +
+                              ' ' +
+                              student.lastName
+                            " />
+
+                                    } @else {
+
+                                    <span>
+                                        {{
+                                        (student.firstName ? student.firstName.charAt(0) : '') +
+                                        (student.lastName ? student.lastName.charAt(0) : '')
+                                        }}
+                                    </span>
+
+                                    }
+
+                                </div>
+
+
+                                <div class="student-details">
+
+                                    <strong>
+                                        {{ student.firstName }}
+                                        {{ student.lastName }}
+                                    </strong>
+
+                                    @if (student.phone) {
+
+                                    <small>
+
+                                        <i class="bi bi-telephone"></i>
+
+                                        {{ student.phone }}
+
+                                    </small>
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ==========================
+                       ENROLLMENT
+                  =========================== -->
+                        <td>
+
+                            <span class="enrollment-number">
+
+                                {{
+                                student.enrollmentNo ||
+                                'N/A'
+                                }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ==========================
+                       SEMESTER
+                  =========================== -->
+                        <td>
+
+                            @if (
+                            student.semester !== undefined &&
+                            student.semester !== null
+                            ) {
+
+                            <span class="info-badge">
+
+                                Semester
+                                {{ student.semester }}
+
+                            </span>
+
+                            } @else {
+
+                            <span class="muted-text">
+                                N/A
+                            </span>
+
+                            }
+
+                        </td>
+
+
+                        <!-- ==========================
+                       DIVISION
+                  =========================== -->
+                        <td>
+
+                            @if (student.division) {
+
+                            <span class="division-badge">
+                                {{ student.division }}
+                            </span>
+
+                            } @else {
+
+                            <span class="muted-text">
+                                N/A
+                            </span>
+
+                            }
+
+                        </td>
+
+
+                        <!-- ==========================
+                       ATTENDANCE STATUS
+                  =========================== -->
+                        <td>
+
+                            <div class="status-buttons">
+
+
+                                <!-- PRESENT -->
+                                <button type="button" class="status-btn present-btn" [class.selected]="
+                          getStatus(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          ) === 'Present'
+                        " (click)="
+                          setStatus(
+                            student.id ||
+                            student.uid ||
+                            '',
+                            'Present'
+                          )
+                        ">
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                    Present
+
+                                </button>
+
+
+                                <!-- ABSENT -->
+                                <button type="button" class="status-btn absent-btn" [class.selected]="
+                          getStatus(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          ) === 'Absent'
+                        " (click)="
+                          setStatus(
+                            student.id ||
+                            student.uid ||
+                            '',
+                            'Absent'
+                          )
+                        ">
+
+                                    <i class="bi bi-x-lg"></i>
+
+                                    Absent
+
+                                </button>
+
+
+                                <!-- LATE -->
+                                <button type="button" class="status-btn late-btn" [class.selected]="
+                          getStatus(
+                            student.id ||
+                            student.uid ||
+                            ''
+                          ) === 'Late'
+                        " (click)="
+                          setStatus(
+                            student.id ||
+                            student.uid ||
+                            '',
+                            'Late'
+                          )
+                        ">
+
+                                    <i class="bi bi-clock"></i>
+
+                                    Late
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ==========================
+                       SAVE
+                  =========================== -->
+                        <td>
+
+                            <button type="button" class="save-btn" [disabled]="
+                        !getStatus(
+                          student.id ||
+                          student.uid ||
+                          ''
+                        ) ||
+                        isSaving
+                      " (click)="
+                        saveStudentAttendance(student)
+                      ">
+
+                                <i class="bi bi-save"></i>
+
+                                Save
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>

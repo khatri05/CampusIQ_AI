@@ -396,6 +396,13 @@ export class AttendanceComponent
         );
 
 
+    // Include the student's current semester even when older
+    // attendance records were saved without a semester field.
+    const studentSemester = Number(this.student?.semester);
+    if (Number.isFinite(studentSemester) && studentSemester > 0) {
+      semesterNumbers.push(studentSemester);
+    }
+
     const uniqueSemesters =
       Array.from(
         new Set(
@@ -522,16 +529,25 @@ export class AttendanceComponent
         studentSemester !== ''
       ) {
 
-        return this.attendanceRecords
-          .filter(
-            record =>
-              String(
-                record.semester
-              ) ===
-              String(
-                studentSemester
-              )
-          );
+        const semesterRecords = this.attendanceRecords.filter(
+          record =>
+            record.semester !== undefined &&
+            record.semester !== null &&
+            record.semester !== '' &&
+            String(record.semester) === String(studentSemester)
+        );
+
+        // Faculty records created before semester was stored should
+        // not disappear from the current-semester view.
+        const recordsHaveSemester = this.attendanceRecords.some(
+          record => record.semester !== undefined &&
+                    record.semester !== null &&
+                    record.semester !== ''
+        );
+
+        return recordsHaveSemester
+          ? semesterRecords
+          : [...this.attendanceRecords];
 
       }
 
@@ -562,10 +578,7 @@ export class AttendanceComponent
     return this.attendanceRecords
       .filter(
         record =>
-          String(
-            record.semester
-          ) ===
-          semesterNumber
+          String(record.semester ?? '') === semesterNumber
       );
 
   }
@@ -1022,6 +1035,21 @@ export class AttendanceComponent
 
   }
 
+
+  getFilteredAttendanceForView(): AttendanceRecord[] {
+    return [...this.getFilteredAttendance()].sort((a, b) => {
+      const dateA = new Date(a.date || a.attendanceDate || a.createdAt || 0).getTime();
+      const dateB = new Date(b.date || b.attendanceDate || b.createdAt || 0).getTime();
+      return dateB - dateA;
+    });
+  }
+
+  getStatusClass(status: string | undefined): string {
+    const value = String(status || '').trim().toLowerCase();
+    if (value === 'present') return 'attendance-good';
+    if (value === 'late') return 'attendance-warning';
+    return 'attendance-danger';
+  }
 
   /* ========================================
      Retry

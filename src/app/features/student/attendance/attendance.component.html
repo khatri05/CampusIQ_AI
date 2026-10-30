@@ -656,7 +656,49 @@
 
         </div>
 
+
       }
+
+      <!-- Date-wise Attendance History -->
+      <div class="attendance-history">
+        <div class="section-header">
+          <div>
+            <h3>Attendance History</h3>
+            <p>Individual class records for {{ selectedSemester }}</p>
+          </div>
+        </div>
+
+        @if (getFilteredAttendanceForView().length > 0) {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (record of getFilteredAttendanceForView(); track record.id || $index) {
+                  <tr>
+                    <td>{{ (record.date || record.attendanceDate || record.createdAt) | date:'dd MMM yyyy' }}</td>
+                    <td>{{ record.subjectName || record.subject || record.subjectCode || record.code || record.subjectId || 'Subject not specified' }}</td>
+                    <td>
+                      <span class="attendance-status" [ngClass]="getStatusClass(record.status)">
+                        {{ record.status || 'Not specified' }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>No date-wise attendance records available.</p>
+          </div>
+        }
+      </div>
 
     </div>
 

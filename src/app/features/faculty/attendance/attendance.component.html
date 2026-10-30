@@ -1,8 +1,8 @@
 <div class="attendance-page">
 
     <!-- ========================================
-       PAGE HEADER
-  ========================================= -->
+         PAGE HEADER
+    ========================================= -->
     <div class="page-header">
 
         <div>
@@ -52,8 +52,8 @@
 
 
     <!-- ========================================
-       LOADING
-  ========================================= -->
+         LOADING
+    ========================================= -->
     @if (isLoading) {
 
     <div class="state-card loading-card">
@@ -78,8 +78,8 @@
 
 
     <!-- ========================================
-       ERROR
-  ========================================= -->
+         ERROR
+    ========================================= -->
     @if (!isLoading && errorMessage) {
 
     <div class="state-card error-card">
@@ -101,8 +101,10 @@
         </div>
 
         <button type="button" class="btn btn-outline-danger" (click)="loadAttendance()">
+
             <i class="bi bi-arrow-clockwise"></i>
             Retry
+
         </button>
 
     </div>
@@ -111,14 +113,13 @@
 
 
     <!-- ========================================
-       MAIN CONTENT
-  ========================================= -->
+         MAIN CONTENT
+    ========================================= -->
     @if (!isLoading && !errorMessage) {
 
-
     <!-- ======================================
-         STATISTICS
-    ======================================= -->
+             STATISTICS
+        ======================================= -->
     <div class="stats-grid">
 
         <!-- Total Students -->
@@ -212,8 +213,8 @@
 
 
     <!-- ======================================
-         FILTER CARD
-    ======================================= -->
+             FILTER CARD
+        ======================================= -->
     <div class="filter-card">
 
         <div class="filter-header">
@@ -232,15 +233,16 @@
             </div>
 
             <button type="button" class="clear-btn" (click)="clearFilters()">
+
                 <i class="bi bi-arrow-counterclockwise"></i>
                 Clear Filters
+
             </button>
 
         </div>
 
 
         <div class="filter-grid">
-
 
             <!-- DATE -->
             <div class="filter-group">
@@ -251,7 +253,7 @@
                 </label>
 
                 <input id="attendanceDate" type="date" class="form-control" [(ngModel)]="selectedDate"
-                    (change)="loadAttendance()" />
+                    (change)="loadAttendance()">
 
             </div>
 
@@ -329,7 +331,7 @@
                     <i class="bi bi-search"></i>
 
                     <input id="studentSearch" type="text" class="form-control" [(ngModel)]="searchText"
-                        (input)="filterStudents()" placeholder="Search by name or enrollment..." />
+                        (input)="filterStudents()" placeholder="Search by name or enrollment...">
 
                 </div>
 
@@ -341,8 +343,8 @@
 
 
     <!-- ======================================
-         SUCCESS MESSAGE
-    ======================================= -->
+             SUCCESS MESSAGE
+        ======================================= -->
     @if (successMessage) {
 
     <div class="alert alert-success custom-alert">
@@ -359,10 +361,9 @@
 
 
     <!-- ======================================
-         ATTENDANCE TABLE
-    ======================================= -->
+             ATTENDANCE TABLE
+        ======================================= -->
     <div class="attendance-card">
-
 
         <!-- TABLE HEADER -->
         <div class="table-header">
@@ -395,9 +396,7 @@
         </div>
 
 
-        <!-- ====================================
-           NO STUDENTS
-      ===================================== -->
+        <!-- NO STUDENTS -->
         @if (filteredStudents.length === 0) {
 
         <div class="empty-state">
@@ -415,8 +414,10 @@
             </p>
 
             <button type="button" class="btn btn-outline-primary" (click)="clearFilters()">
+
                 <i class="bi bi-arrow-counterclockwise"></i>
                 Clear Filters
+
             </button>
 
         </div>
@@ -424,9 +425,7 @@
         }
 
 
-        <!-- ====================================
-           STUDENT TABLE
-      ===================================== -->
+        <!-- STUDENT TABLE -->
         @if (filteredStudents.length > 0) {
 
         <div class="table-responsive">
@@ -470,15 +469,12 @@
 
                     @for (
                     student of filteredStudents;
-                    track student.id || student.uid
+                    track getStudentId(student)
                     ) {
 
                     <tr>
 
-
-                        <!-- ==========================
-                       STUDENT
-                  =========================== -->
+                        <!-- STUDENT -->
                         <td>
 
                             <div class="student-info">
@@ -487,18 +483,15 @@
 
                                     @if (student.profileImage) {
 
-                                    <img [src]="student.profileImage" [alt]="
-                              student.firstName +
-                              ' ' +
-                              student.lastName
-                            " />
+                                    <img [src]="student.profileImage"
+                                        [alt]="student.firstName + ' ' + student.lastName">
 
                                     } @else {
 
                                     <span>
                                         {{
-                                        (student.firstName ? student.firstName.charAt(0) : '') +
-                                        (student.lastName ? student.lastName.charAt(0) : '')
+                                        (student.firstName || '').charAt(0) +
+                                        (student.lastName || '').charAt(0)
                                         }}
                                     </span>
 
@@ -517,11 +510,8 @@
                                     @if (student.phone) {
 
                                     <small>
-
                                         <i class="bi bi-telephone"></i>
-
                                         {{ student.phone }}
-
                                     </small>
 
                                     }
@@ -533,26 +523,17 @@
                         </td>
 
 
-                        <!-- ==========================
-                       ENROLLMENT
-                  =========================== -->
+                        <!-- ENROLLMENT -->
                         <td>
 
                             <span class="enrollment-number">
-
-                                {{
-                                student.enrollmentNo ||
-                                'N/A'
-                                }}
-
+                                {{ student.enrollmentNo || 'N/A' }}
                             </span>
 
                         </td>
 
 
-                        <!-- ==========================
-                       SEMESTER
-                  =========================== -->
+                        <!-- SEMESTER -->
                         <td>
 
                             @if (
@@ -561,10 +542,7 @@
                             ) {
 
                             <span class="info-badge">
-
-                                Semester
-                                {{ student.semester }}
-
+                                Semester {{ student.semester }}
                             </span>
 
                             } @else {
@@ -578,9 +556,7 @@
                         </td>
 
 
-                        <!-- ==========================
-                       DIVISION
-                  =========================== -->
+                        <!-- DIVISION -->
                         <td>
 
                             @if (student.division) {
@@ -600,78 +576,45 @@
                         </td>
 
 
-                        <!-- ==========================
-                       ATTENDANCE STATUS
-                  =========================== -->
+                        <!-- ATTENDANCE STATUS -->
                         <td>
 
                             <div class="status-buttons">
 
-
                                 <!-- PRESENT -->
-                                <button type="button" class="status-btn present-btn" [class.selected]="
-                          getStatus(
-                            student.id ||
-                            student.uid ||
-                            ''
-                          ) === 'Present'
-                        " (click)="
-                          setStatus(
-                            student.id ||
-                            student.uid ||
-                            '',
-                            'Present'
-                          )
-                        ">
+                                <button type="button" class="status-btn present-btn"
+                                    [class.selected]="getStatus(getStudentId(student)) === 'Present'"
+                                    [disabled]="!getStudentId(student)"
+                                    [attr.aria-pressed]="getStatus(getStudentId(student)) === 'Present'"
+                                    (click)="setStatus(getStudentId(student), 'Present')">
 
                                     <i class="bi bi-check-lg"></i>
-
                                     Present
 
                                 </button>
 
 
                                 <!-- ABSENT -->
-                                <button type="button" class="status-btn absent-btn" [class.selected]="
-                          getStatus(
-                            student.id ||
-                            student.uid ||
-                            ''
-                          ) === 'Absent'
-                        " (click)="
-                          setStatus(
-                            student.id ||
-                            student.uid ||
-                            '',
-                            'Absent'
-                          )
-                        ">
+                                <button type="button" class="status-btn absent-btn"
+                                    [class.selected]="getStatus(getStudentId(student)) === 'Absent'"
+                                    [disabled]="!getStudentId(student)"
+                                    [attr.aria-pressed]="getStatus(getStudentId(student)) === 'Absent'"
+                                    (click)="setStatus(getStudentId(student), 'Absent')">
 
                                     <i class="bi bi-x-lg"></i>
-
                                     Absent
 
                                 </button>
 
 
                                 <!-- LATE -->
-                                <button type="button" class="status-btn late-btn" [class.selected]="
-                          getStatus(
-                            student.id ||
-                            student.uid ||
-                            ''
-                          ) === 'Late'
-                        " (click)="
-                          setStatus(
-                            student.id ||
-                            student.uid ||
-                            '',
-                            'Late'
-                          )
-                        ">
+                                <button type="button" class="status-btn late-btn"
+                                    [class.selected]="getStatus(getStudentId(student)) === 'Late'"
+                                    [disabled]="!getStudentId(student)"
+                                    [attr.aria-pressed]="getStatus(getStudentId(student)) === 'Late'"
+                                    (click)="setStatus(getStudentId(student), 'Late')">
 
                                     <i class="bi bi-clock"></i>
-
                                     Late
 
                                 </button>
@@ -681,25 +624,18 @@
                         </td>
 
 
-                        <!-- ==========================
-                       SAVE
-                  =========================== -->
+                        <!-- SAVE -->
                         <td>
 
                             <button type="button" class="save-btn" [disabled]="
-                        !getStatus(
-                          student.id ||
-                          student.uid ||
-                          ''
-                        ) ||
-                        isSaving
-                      " (click)="
-                        saveStudentAttendance(student)
-                      ">
+                                                !getStudentId(student) ||
+                                                !getStatus(getStudentId(student)) ||
+                                                isSaving
+                                            " (click)="saveStudentAttendance(student)">
 
                                 <i class="bi bi-save"></i>
 
-                                Save
+                                {{ isSaving ? 'Saving...' : 'Save' }}
 
                             </button>
 

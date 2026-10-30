@@ -21,17 +21,15 @@ import {
 @Component({
   selector: 'app-attendance',
   standalone: true,
-
   imports: [
     CommonModule,
     FormsModule
   ],
-
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.css'
 })
-export class AttendanceComponent implements OnInit {
 
+export class AttendanceComponent implements OnInit {
 
   // ========================================
   // STUDENTS
@@ -78,7 +76,6 @@ export class AttendanceComponent implements OnInit {
 
   searchText = '';
 
-
   semesters: string[] = [];
 
   divisions: string[] = [];
@@ -102,8 +99,7 @@ export class AttendanceComponent implements OnInit {
   // ========================================
 
   constructor(
-    private facultyAttendanceService:
-      FacultyAttendanceService
+    private facultyAttendanceService: FacultyAttendanceService
   ) {}
 
 
@@ -113,8 +109,7 @@ export class AttendanceComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.selectedDate =
-      this.getTodayDate();
+    this.selectedDate = this.getTodayDate();
 
     this.loadAttendance();
 
@@ -127,23 +122,38 @@ export class AttendanceComponent implements OnInit {
 
   private getTodayDate(): string {
 
-    const today =
-      new Date();
+    const today = new Date();
 
-    const year =
-      today.getFullYear();
+    const year = today.getFullYear();
 
-    const month =
-      String(
-        today.getMonth() + 1
-      ).padStart(2, '0');
+    const month = String(
+      today.getMonth() + 1
+    ).padStart(2, '0');
 
-    const day =
-      String(
-        today.getDate()
-      ).padStart(2, '0');
+    const day = String(
+      today.getDate()
+    ).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+
+  }
+
+
+  // ========================================
+  // GET STUDENT ID
+  // ========================================
+
+  getStudentId(student: AttendanceStudent): string {
+
+    // Prefer Firebase Authentication UID.
+    // Use document ID only if UID is unavailable.
+
+    return String(
+      student.uid ||
+      student.id ||
+      ''
+    ).trim();
+
   }
 
 
@@ -157,32 +167,29 @@ export class AttendanceComponent implements OnInit {
 
     this.errorMessage = '';
 
-    this.successMessage = '';
-
     try {
 
       const response =
-        await this.facultyAttendanceService
-          .getAttendance(
-            this.selectedDate
-          );
+        await this.facultyAttendanceService.getAttendance(
+          this.selectedDate
+        );
+
+      console.log(
+        'Faculty Attendance Response:',
+        response
+      );
 
       if (!response || !response.success) {
 
         throw new Error(
-          'Unable to load attendance data'
+          'Unable to load attendance data.'
         );
 
       }
 
+      const data = response.data || {};
 
-      const data =
-        response.data;
-
-
-      // ------------------------------------
       // Department
-      // ------------------------------------
 
       this.departmentName =
         data.department?.name || '';
@@ -190,40 +197,37 @@ export class AttendanceComponent implements OnInit {
       this.departmentCode =
         data.department?.code || '';
 
-
-      // ------------------------------------
       // Students
-      // ------------------------------------
 
-      this.students =
-        data.students || [];
+      this.students = Array.isArray(data.students)
+        ? data.students
+        : [];
 
-
-      // ------------------------------------
       // Attendance
-      // ------------------------------------
 
-      this.attendance =
-        data.attendance || [];
+      this.attendance = Array.isArray(data.attendance)
+        ? data.attendance
+        : [];
 
+      console.log(
+        'Students:',
+        this.students
+      );
 
-      // ------------------------------------
+      console.log(
+        'Attendance Records:',
+        this.attendance
+      );
+
       // Build attendance map
-      // ------------------------------------
 
       this.buildAttendanceMap();
 
-
-      // ------------------------------------
       // Build filters
-      // ------------------------------------
 
       this.buildFilters();
 
-
-      // ------------------------------------
       // Apply filters
-      // ------------------------------------
 
       this.filterStudents();
 
@@ -235,6 +239,7 @@ export class AttendanceComponent implements OnInit {
       );
 
       this.errorMessage =
+        error?.error?.message ||
         error?.message ||
         'Failed to load attendance data.';
 
@@ -243,6 +248,7 @@ export class AttendanceComponent implements OnInit {
       this.isLoading = false;
 
     }
+
   }
 
 
@@ -254,23 +260,31 @@ export class AttendanceComponent implements OnInit {
 
     this.attendanceMap = {};
 
+    for (const record of this.attendance) {
 
-    for (
-      const record of this.attendance
-    ) {
+      const studentId = String(
+        record.studentId || ''
+      ).trim();
 
-      if (
-        record.studentId &&
-        (
-          record.status === 'Present' ||
-          record.status === 'Absent' ||
-          record.status === 'Late'
-        )
-      ) {
+      if (!studentId) {
+        continue;
+      }
 
-        this.attendanceMap[
-          record.studentId
-        ] = record.status;
+      const status = String(
+        record.status || ''
+      ).trim().toLowerCase();
+
+      if (status === 'present') {
+
+        this.attendanceMap[studentId] = 'Present';
+
+      } else if (status === 'absent') {
+
+        this.attendanceMap[studentId] = 'Absent';
+
+      } else if (status === 'late') {
+
+        this.attendanceMap[studentId] = 'Late';
 
       }
 
@@ -285,61 +299,39 @@ export class AttendanceComponent implements OnInit {
 
   buildFilters(): void {
 
-    // ------------------------------------
     // Semesters
-    // ------------------------------------
 
-    this.semesters =
-      Array.from(
-        new Set(
-          this.students
-            .map(
-              student =>
-                student.semester
-            )
-            .filter(
-              (
-                semester
-              ): semester is number =>
-                semester !== undefined &&
-                semester !== null
-            )
-            .map(
-              semester =>
-                String(semester)
-            )
-        )
-      ).sort(
-        (a, b) =>
-          Number(a) - Number(b)
-      );
+    this.semesters = Array.from(
+      new Set(
+        this.students
+          .map(student => student.semester)
+          .filter(
+            semester =>
+              semester !== undefined &&
+              semester !== null &&
+              String(semester).trim() !== ''
+          )
+          .map(semester => String(semester))
+      )
+    ).sort(
+      (a, b) => Number(a) - Number(b)
+    );
 
 
-    // ------------------------------------
     // Divisions
-    // ------------------------------------
 
-    this.divisions =
-      Array.from(
-        new Set(
-          this.students
-            .map(
-              student =>
-                student.division
-            )
-            .filter(
-              (
-                division
-              ): division is string =>
-                typeof division === 'string' &&
-                division.trim().length > 0
-            )
-            .map(
-              division =>
-                division.trim()
-            )
-        )
-      ).sort();
+    this.divisions = Array.from(
+      new Set(
+        this.students
+          .map(student => student.division)
+          .filter(
+            (division): division is string =>
+              typeof division === 'string' &&
+              division.trim().length > 0
+          )
+          .map(division => division.trim())
+      )
+    ).sort();
 
   }
 
@@ -350,75 +342,54 @@ export class AttendanceComponent implements OnInit {
 
   filterStudents(): void {
 
-    const search =
-      this.searchText
-        .trim()
-        .toLowerCase();
+    const search = this.searchText
+      .trim()
+      .toLowerCase();
+
+    this.filteredStudents = this.students.filter(
+      student => {
+
+        // Semester filter
+
+        const semesterMatch =
+          this.selectedSemester === 'All' ||
+          String(student.semester) === this.selectedSemester;
 
 
-    this.filteredStudents =
-      this.students.filter(
-        student => {
+        // Division filter
 
-          // --------------------------------
-          // Semester filter
-          // --------------------------------
-
-          const semesterMatch =
-            this.selectedSemester === 'All' ||
-            String(
-              student.semester
-            ) ===
-            this.selectedSemester;
+        const divisionMatch =
+          this.selectedDivision === 'All' ||
+          (student.division || '').toLowerCase() ===
+          this.selectedDivision.toLowerCase();
 
 
-          // --------------------------------
-          // Division filter
-          // --------------------------------
+        // Search filter
 
-          const divisionMatch =
-            this.selectedDivision === 'All' ||
-            (
-              student.division || ''
-            ).toLowerCase() ===
-            this.selectedDivision.toLowerCase();
+        const fullName =
+          `${student.firstName || ''} ${student.lastName || ''}`
+            .toLowerCase();
 
+        const enrollment =
+          (student.enrollmentNo || '').toLowerCase();
 
-          // --------------------------------
-          // Search filter
-          // --------------------------------
+        const phone =
+          (student.phone || '').toLowerCase();
 
-          const fullName =
-            `${student.firstName || ''} ${
-              student.lastName || ''
-            }`.toLowerCase();
+        const searchMatch =
+          !search ||
+          fullName.includes(search) ||
+          enrollment.includes(search) ||
+          phone.includes(search);
 
-          const enrollment =
-            (
-              student.enrollmentNo || ''
-            ).toLowerCase();
+        return (
+          semesterMatch &&
+          divisionMatch &&
+          searchMatch
+        );
 
-          const phone =
-            (
-              student.phone || ''
-            ).toLowerCase();
-
-
-          const searchMatch =
-            !search ||
-            fullName.includes(search) ||
-            enrollment.includes(search) ||
-            phone.includes(search);
-
-
-          return (
-            semesterMatch &&
-            divisionMatch &&
-            searchMatch
-          );
-
-        }
-      );
+      }
+    );
 
   }
 
@@ -435,9 +406,7 @@ export class AttendanceComponent implements OnInit {
     | 'Late'
     | undefined {
 
-    return this.attendanceMap[
-      studentId
-    ];
+    return this.attendanceMap[studentId];
 
   }
 
@@ -448,23 +417,18 @@ export class AttendanceComponent implements OnInit {
 
   setStatus(
     studentId: string,
-    status:
-      | 'Present'
-      | 'Absent'
-      | 'Late'
+    status: 'Present' | 'Absent' | 'Late'
   ): void {
 
     if (!studentId) {
       return;
     }
 
-
-    this.attendanceMap[
-      studentId
-    ] = status;
-
+    this.attendanceMap[studentId] = status;
 
     this.successMessage = '';
+
+    this.errorMessage = '';
 
   }
 
@@ -478,8 +442,7 @@ export class AttendanceComponent implements OnInit {
     return Object.values(
       this.attendanceMap
     ).filter(
-      status =>
-        status === 'Present'
+      status => status === 'Present'
     ).length;
 
   }
@@ -494,8 +457,7 @@ export class AttendanceComponent implements OnInit {
     return Object.values(
       this.attendanceMap
     ).filter(
-      status =>
-        status === 'Absent'
+      status => status === 'Absent'
     ).length;
 
   }
@@ -510,8 +472,7 @@ export class AttendanceComponent implements OnInit {
     return Object.values(
       this.attendanceMap
     ).filter(
-      status =>
-        status === 'Late'
+      status => status === 'Late'
     ).length;
 
   }
@@ -525,17 +486,7 @@ export class AttendanceComponent implements OnInit {
     student: AttendanceStudent
   ): Promise<void> {
 
-    /*
-     * IMPORTANT:
-     * Use the same ID that is used by
-     * getStatus() and setStatus().
-     */
-
-    const studentId =
-      student.id ||
-      student.uid ||
-      '';
-
+    const studentId = this.getStudentId(student);
 
     if (!studentId) {
 
@@ -546,12 +497,7 @@ export class AttendanceComponent implements OnInit {
 
     }
 
-
-    const status =
-      this.getStatus(
-        studentId
-      );
-
+    const status = this.getStatus(studentId);
 
     if (!status) {
 
@@ -562,53 +508,54 @@ export class AttendanceComponent implements OnInit {
 
     }
 
-
     this.isSaving = true;
 
     this.errorMessage = '';
 
     this.successMessage = '';
 
-
     try {
 
-      await this.facultyAttendanceService
-        .saveAttendance({
+      console.log(
+        'Saving attendance:',
+        {
+          studentId,
+          date: this.selectedDate,
+          status
+        }
+      );
 
-          studentId:
-            studentId,
+      const response =
+        await this.facultyAttendanceService.saveAttendance({
 
-          date:
-            this.selectedDate,
+          studentId: studentId,
 
-          status:
-            status
+          date: this.selectedDate,
+
+          status: status
 
         });
 
+      console.log(
+        'Save Attendance Response:',
+        response
+      );
+
+      if (!response || !response.success) {
+
+        throw new Error(
+          response?.message ||
+          'Failed to save attendance.'
+        );
+
+      }
 
       this.successMessage =
-        `Attendance saved for ${
-          student.firstName
-        } ${
-          student.lastName
-        }.`;
+        `Attendance saved for ${student.firstName || ''} ${student.lastName || ''}.`;
 
-
-      /*
-       * Keep the selected status in the UI.
-       * We don't clear it after saving.
-       */
-
-
-      /*
-       * Reload data from backend so that
-       * attendanceMap contains the latest
-       * saved database record.
-       */
+      // Reload attendance from backend
 
       await this.loadAttendance();
-
 
     } catch (error: any) {
 
@@ -637,15 +584,11 @@ export class AttendanceComponent implements OnInit {
 
   clearFilters(): void {
 
-    this.selectedSemester =
-      'All';
+    this.selectedSemester = 'All';
 
-    this.selectedDivision =
-      'All';
+    this.selectedDivision = 'All';
 
-    this.searchText =
-      '';
-
+    this.searchText = '';
 
     this.filterStudents();
 

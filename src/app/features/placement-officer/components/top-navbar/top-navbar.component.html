@@ -1,0 +1,85 @@
+<header class="top-navbar">
+
+  <!-- =========================
+       SEARCH
+  ========================== -->
+
+  <div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (input)="onSearch()"
+      placeholder="Search students, jobs, applications..."
+    />
+
+  </div>
+
+
+  <!-- =========================
+       RIGHT SIDE
+  ========================== -->
+
+  <div class="navbar-right">
+
+
+    <!-- Notification -->
+
+    <button
+      type="button"
+      class="notification-btn"
+      (click)="openNotifications()"
+      title="Notifications"
+    >
+
+      <i class="bi bi-bell"></i>
+
+      @if (notificationCount > 0) {
+
+        <span class="notification-badge">
+
+          {{
+            notificationCount > 99
+              ? '99+'
+              : notificationCount
+          }}
+
+        </span>
+
+      }
+
+    </button>
+
+
+    <!-- Divider -->
+
+    <div class="navbar-divider"></div>
+
+
+    <!-- Placement Officer Profile -->
+
+    <div class="placement-officer-profile">
+
+      <div class="profile-avatar">
+        {{ initials }}
+      </div>
+
+      <div class="profile-details">
+
+        <span class="profile-name">
+          {{ placementOfficerName }}
+        </span>
+
+        <span class="profile-role">
+          {{ placementOfficerRole }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

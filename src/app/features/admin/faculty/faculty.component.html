@@ -1,0 +1,1031 @@
+<div class="faculty-page">
+
+
+  <!-- PAGE HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Faculty
+      </h2>
+
+      <p>
+        Manage and monitor all faculty members
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUCCESS -->
+
+  <div
+    *ngIf="actionMessage"
+    class="alert-message success-message"
+  >
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ actionMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    *ngIf="actionError && !showEditModal"
+    class="alert-message error-message"
+  >
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ actionError }}
+    </span>
+
+  </div>
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+
+        <i class="bi bi-person-workspace"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Total Faculty
+        </span>
+
+        <strong>
+          {{ totalFaculty }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+
+        <i class="bi bi-person-check-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Active Faculty
+        </span>
+
+        <strong>
+          {{ activeFaculty }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon red">
+
+        <i class="bi bi-person-x-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Inactive Faculty
+        </span>
+
+        <strong>
+          {{ inactiveFaculty }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+  <!-- LOAD ERROR -->
+
+  <div
+    *ngIf="errorMessage"
+    class="error-box"
+  >
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="retry()"
+    >
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+      Retry
+
+    </button>
+
+  </div>
+
+
+  <!-- MAIN CARD -->
+
+  <div
+    *ngIf="!loading"
+    class="faculty-card"
+  >
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          (input)="onSearch()"
+          placeholder="Search faculty..."
+        />
+
+      </div>
+
+
+      <div class="filter-box">
+
+        <select
+          [(ngModel)]="selectedDepartment"
+          (change)="onDepartmentChange()"
+        >
+
+          <option value="all">
+            All Departments
+          </option>
+
+          <option
+            *ngFor="
+              let department of departments
+            "
+            [value]="department"
+          >
+
+            {{ department }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-box">
+
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange()"
+        >
+
+          <option value="all">
+            All Status
+          </option>
+
+          <option value="active">
+            Active
+          </option>
+
+          <option value="inactive">
+            Inactive
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Faculty
+            </th>
+
+            <th>
+              Employee ID
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Department
+            </th>
+
+            <th>
+              Designation
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+          <tr
+            *ngFor="
+              let member of filteredFaculty
+            "
+          >
+
+
+            <td>
+
+              <div class="faculty-cell">
+
+                <div class="faculty-avatar">
+
+                  {{ getInitials(member) }}
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ getFacultyName(member) }}
+                  </strong>
+
+                  <small>
+                    {{ member.specialization || 'No specialization' }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+              {{ member.employeeId || '—' }}
+            </td>
+
+
+            <td>
+              {{ member.email || '—' }}
+            </td>
+
+
+            <td>
+              {{ getDepartmentName(member) }}
+            </td>
+
+
+            <td>
+              {{ member.designation || '—' }}
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-badge"
+                [class.active]="
+                  getStatus(member).toLowerCase() === 'active'
+                "
+                [class.inactive]="
+                  getStatus(member).toLowerCase() !== 'active'
+                "
+              >
+
+                <span class="status-dot"></span>
+
+                {{ getStatus(member) | titlecase }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <div class="action-buttons">
+
+
+                <button
+                  type="button"
+                  class="view-btn"
+                  (click)="openDetails(member)"
+                  title="View Faculty"
+                >
+
+                  <i class="bi bi-eye-fill"></i>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="edit-btn"
+                  (click)="startEdit(member)"
+                  title="Edit Faculty"
+                >
+
+                  <i class="bi bi-pencil-fill"></i>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="delete-btn"
+                  (click)="deleteFaculty(member)"
+                  title="Delete Faculty"
+                  [disabled]="deleting"
+                >
+
+                  <i class="bi bi-trash-fill"></i>
+
+                </button>
+
+
+              </div>
+
+            </td>
+
+
+          </tr>
+
+
+          <tr
+            *ngIf="
+              filteredFaculty.length === 0
+            "
+          >
+
+            <td
+              colspan="7"
+              class="empty-state"
+            >
+
+              <i class="bi bi-person-workspace"></i>
+
+              <strong>
+                No faculty found
+              </strong>
+
+              <span>
+                Try changing your search or filters.
+              </span>
+
+            </td>
+
+          </tr>
+
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="table-footer">
+
+      Showing
+
+      <strong>
+        {{ filteredFaculty.length }}
+      </strong>
+
+      of
+
+      <strong>
+        {{ totalFaculty }}
+      </strong>
+
+      faculty members
+
+    </div>
+
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    *ngIf="loading"
+    class="loading-container"
+  >
+
+    <div
+      class="spinner-border text-primary"
+    ></div>
+
+    <span>
+      Loading faculty...
+    </span>
+
+  </div>
+
+
+</div>
+
+
+<!-- ====================================== -->
+<!-- VIEW MODAL -->
+<!-- ====================================== -->
+
+<div
+  *ngIf="
+    showDetailsModal &&
+    selectedFaculty
+  "
+  class="modal-backdrop"
+  (click)="closeDetails()"
+>
+
+
+  <div
+    class="faculty-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Faculty Details
+        </h4>
+
+        <p>
+          Complete faculty information
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeDetails()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-profile">
+
+      <div class="modal-avatar">
+
+        {{ getInitials(selectedFaculty) }}
+
+      </div>
+
+
+      <div>
+
+        <h3>
+          {{ getFacultyName(selectedFaculty) }}
+        </h3>
+
+        <p>
+          {{ selectedFaculty.email || 'No email' }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="details-grid">
+
+
+      <div class="detail-item">
+
+        <label>
+          Employee ID
+        </label>
+
+        <strong>
+          {{ selectedFaculty.employeeId || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Department
+        </label>
+
+        <strong>
+          {{ getDepartmentName(selectedFaculty) }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Designation
+        </label>
+
+        <strong>
+          {{ selectedFaculty.designation || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Qualification
+        </label>
+
+        <strong>
+          {{ selectedFaculty.qualification || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Specialization
+        </label>
+
+        <strong>
+          {{ selectedFaculty.specialization || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Phone
+        </label>
+
+        <strong>
+          {{ selectedFaculty.phone || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Joining Date
+        </label>
+
+        <strong>
+          {{ selectedFaculty.joiningDate || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Status
+        </label>
+
+        <span
+          class="status-badge"
+          [class.active]="
+            getStatus(selectedFaculty).toLowerCase() === 'active'
+          "
+          [class.inactive]="
+            getStatus(selectedFaculty).toLowerCase() !== 'active'
+          "
+        >
+
+          <span class="status-dot"></span>
+
+          {{ getStatus(selectedFaculty) | titlecase }}
+
+        </span>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="close-modal-btn"
+        (click)="closeDetails()"
+      >
+
+        Close
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+<!-- ====================================== -->
+<!-- EDIT MODAL -->
+<!-- ====================================== -->
+
+<div
+  *ngIf="
+    showEditModal &&
+    editingFaculty
+  "
+  class="modal-backdrop"
+  (click)="cancelEdit()"
+>
+
+
+  <div
+    class="faculty-modal edit-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Edit Faculty
+        </h4>
+
+        <p>
+          Update faculty information
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="cancelEdit()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div
+      *ngIf="actionError"
+      class="modal-error"
+    >
+
+      <i class="bi bi-exclamation-circle-fill"></i>
+
+      {{ actionError }}
+
+    </div>
+
+
+    <div class="edit-form">
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            First Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.firstName
+            "
+            placeholder="Enter first name"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Last Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.lastName
+            "
+            placeholder="Enter last name"
+          />
+
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          type="email"
+          [value]="
+            editingFaculty.email || ''
+          "
+          disabled
+        />
+
+        <small>
+          Email cannot be changed from this page.
+        </small>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            Employee ID
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.employeeId
+            "
+            placeholder="Enter employee ID"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Phone
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.phone
+            "
+            placeholder="Enter phone number"
+          />
+
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            Department ID
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.departmentId
+            "
+            placeholder="Enter department ID"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Designation
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.designation
+            "
+            placeholder="Enter designation"
+          />
+
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            Qualification
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.qualification
+            "
+            placeholder="Enter qualification"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Specialization
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingFaculty.specialization
+            "
+            placeholder="Enter specialization"
+          />
+
+        </div>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            Joining Date
+          </label>
+
+          <input
+            type="date"
+            [(ngModel)]="
+              editingFaculty.joiningDate
+            "
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            [(ngModel)]="
+              editingFaculty.status
+            "
+          >
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="inactive">
+              Inactive
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="cancel-btn"
+        (click)="cancelEdit()"
+        [disabled]="saving"
+      >
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="saveFaculty()"
+        [disabled]="saving"
+      >
+
+        <span
+          *ngIf="saving"
+          class="spinner-border spinner-border-sm"
+        ></span>
+
+        <i
+          *ngIf="!saving"
+          class="bi bi-check-lg"
+        ></i>
+
+        {{
+          saving
+            ? 'Saving...'
+            : 'Save Changes'
+        }}
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>

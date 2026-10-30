@@ -26,7 +26,7 @@ export class ApiService {
 
   constructor(
     private http: HttpClient
-  ) {}
+  ) { }
 
 
   get<T>(
@@ -71,6 +71,19 @@ export class ApiService {
 
   }
 
+  patch<T>(
+    endpoint: string,
+    data: any
+  ): Promise<T> {
+
+    return firstValueFrom(
+      this.http.patch<T>(
+        `${this.apiUrl}${endpoint}`,
+        data
+      )
+    );
+
+  }
 
   delete<T>(
     endpoint: string

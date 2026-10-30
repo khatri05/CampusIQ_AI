@@ -1,0 +1,23 @@
+<div class="admin-layout">
+
+  <app-sidebar></app-sidebar>
+
+
+  <div class="main-content">
+
+    <app-top-navbar
+      [notificationCount]="notificationCount"
+      (searchChange)="onSearch($event)"
+      (notificationClick)="onNotificationClick()"
+    ></app-top-navbar>
+
+
+    <main class="page-content">
+
+      <router-outlet></router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

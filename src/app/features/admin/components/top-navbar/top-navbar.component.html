@@ -1,0 +1,78 @@
+<header class="top-navbar">
+
+
+  <!-- Search -->
+
+  <div class="search-container">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (input)="onSearch()"
+      placeholder="Search students, faculty, jobs..."
+    />
+
+  </div>
+
+
+  <!-- Right Side -->
+
+  <div class="navbar-right">
+
+
+    <!-- Notifications -->
+
+    <button
+      type="button"
+      class="notification-btn"
+      (click)="openNotifications()"
+    >
+
+      <i class="bi bi-bell"></i>
+
+
+      <span
+        *ngIf="notificationCount > 0"
+        class="notification-badge"
+      >
+
+        {{ notificationCount }}
+
+      </span>
+
+    </button>
+
+
+    <div class="divider"></div>
+
+
+    <!-- Profile -->
+
+    <div class="admin-profile">
+
+      <div class="admin-avatar">
+
+        {{ initials }}
+
+      </div>
+
+
+      <div class="admin-info">
+
+        <strong>
+          {{ adminName }}
+        </strong>
+
+        <small>
+          {{ adminRole }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

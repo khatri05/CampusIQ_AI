@@ -1,0 +1,169 @@
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="sidebar-header">
+
+    <div class="logo">
+
+      <div class="logo-icon">
+        <i class="bi bi-mortarboard-fill"></i>
+      </div>
+
+      <div>
+        <h4>CampusIQ AI</h4>
+        <small>Placement Portal</small>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+
+    <!-- Main -->
+    <div class="nav-section">
+      MAIN
+    </div>
+
+    <a
+      routerLink="/placement-officer/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-grid-1x2-fill"></i>
+      </span>
+
+      <span>
+        Dashboard
+      </span>
+    </a>
+
+
+    <a
+      routerLink="/placement-officer/profile"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-person-circle"></i>
+      </span>
+
+      <span>
+        Profile
+      </span>
+    </a>
+
+
+    <!-- Placement -->
+    <div class="nav-section">
+      PLACEMENT
+    </div>
+
+
+    <a
+      routerLink="/placement-officer/students"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-people-fill"></i>
+      </span>
+
+      <span>
+        Students
+      </span>
+    </a>
+
+
+    <a
+      routerLink="/placement-officer/job-opportunities"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-briefcase-fill"></i>
+      </span>
+
+      <span>
+        Job Opportunities
+      </span>
+    </a>
+
+
+    <a
+      routerLink="/placement-officer/applications"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-file-earmark-text-fill"></i>
+      </span>
+
+      <span>
+        Applications
+      </span>
+    </a>
+
+
+    <a
+      routerLink="/placement-officer/placements"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-award-fill"></i>
+      </span>
+
+      <span>
+        Placements
+      </span>
+    </a>
+
+
+    <a
+      routerLink="/placement-officer/notifications"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+      <span>
+        <i class="bi bi-bell-fill"></i>
+      </span>
+
+      <span>
+        Notifications
+      </span>
+    </a>
+
+  </nav>
+
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+
+    <button
+      type="button"
+      class="logout-btn"
+      (click)="logout()"
+    >
+
+      <i class="bi bi-box-arrow-right"></i>
+
+      <span>
+        Logout
+      </span>
+
+    </button>
+
+  </div>
+
+</aside>

@@ -1,23 +1,761 @@
-<div class="container py-5">
+<div class="dashboard-page">
 
-  <div class="card shadow-sm">
+  <!-- Loading -->
+  @if (isLoading) {
 
-    <div class="card-body">
+    <div class="state-container">
 
-      <h2 class="mb-3">
-        Placement Officer Dashboard
-      </h2>
+      <div class="spinner-border" role="status"></div>
 
-      <p class="text-muted">
-        Welcome to CampusIQ AI Placement Portal.
-      </p>
-
-      <div class="alert alert-warning">
-        Placement Officer dashboard loaded successfully.
-      </div>
+      <p>Loading placement dashboard...</p>
 
     </div>
 
-  </div>
+  }
+
+  <!-- Error -->
+  @else if (errorMessage) {
+
+    <div class="state-container error-state">
+
+      <div class="state-icon">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+
+      <h4>Unable to Load Dashboard</h4>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="loadDashboard()"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        Try Again
+      </button>
+
+    </div>
+
+  }
+
+  <!-- Dashboard -->
+  @else {
+
+    <!-- ======================================
+         WELCOME
+    ======================================= -->
+
+    <section class="welcome-section">
+
+      <div class="welcome-content">
+
+        <span class="welcome-label">
+          <i class="bi bi-stars"></i>
+          Placement Management
+        </span>
+
+        <h1>
+          Welcome back, Placement Officer
+        </h1>
+
+        <p>
+          Manage placement opportunities, track student applications,
+          and monitor campus placement activities.
+        </p>
+
+      </div>
+
+
+      <div class="welcome-date">
+
+        <div class="date-icon">
+          <i class="bi bi-briefcase-fill"></i>
+        </div>
+
+        <div>
+          <span>Placement Portal</span>
+
+          <strong>
+            CampusIQ AI
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ======================================
+         STATISTICS
+    ======================================= -->
+
+    <section class="stats-grid">
+
+      @for (
+        stat of statistics;
+        track stat.label
+      ) {
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+
+            <i
+              [class]="stat.icon"
+            ></i>
+
+          </div>
+
+          <div class="stat-content">
+
+            <span class="stat-label">
+              {{ stat.label }}
+            </span>
+
+            <h3>
+              {{ stat.value }}
+            </h3>
+
+            <p>
+              {{ stat.description }}
+            </p>
+
+          </div>
+
+        </div>
+
+      }
+
+    </section>
+
+
+    <!-- ======================================
+         MAIN GRID
+    ======================================= -->
+
+    <section class="dashboard-grid">
+
+
+      <!-- ====================================
+           APPLICATION STATISTICS
+      ===================================== -->
+
+      <div class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <span class="section-label">
+              <i class="bi bi-bar-chart-fill"></i>
+              Applications
+            </span>
+
+            <h2>
+              Application Overview
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            class="header-action"
+            (click)="openApplications()"
+          >
+            View All
+            <i class="bi bi-arrow-right"></i>
+          </button>
+
+        </div>
+
+
+        <div class="application-stats">
+
+          <div class="application-stat">
+
+            <div class="application-stat-icon pending">
+              <i class="bi bi-hourglass-split"></i>
+            </div>
+
+            <div>
+              <strong>
+                {{ dashboard?.applicationStatistics?.pending || 0 }}
+              </strong>
+
+              <span>
+                Pending
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <div class="application-stat-icon shortlisted">
+              <i class="bi bi-person-check-fill"></i>
+            </div>
+
+            <div>
+              <strong>
+                {{ dashboard?.applicationStatistics?.shortlisted || 0 }}
+              </strong>
+
+              <span>
+                Shortlisted
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <div class="application-stat-icon selected">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+
+            <div>
+              <strong>
+                {{ dashboard?.applicationStatistics?.selected || 0 }}
+              </strong>
+
+              <span>
+                Selected
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <div class="application-stat-icon rejected">
+              <i class="bi bi-x-circle-fill"></i>
+            </div>
+
+            <div>
+              <strong>
+                {{ dashboard?.applicationStatistics?.rejected || 0 }}
+              </strong>
+
+              <span>
+                Rejected
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ====================================
+           PLACEMENT SUMMARY
+      ===================================== -->
+
+      <div class="dashboard-card placement-summary-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <span class="section-label">
+              <i class="bi bi-award-fill"></i>
+              Placement
+            </span>
+
+            <h2>
+              Placement Summary
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="placement-summary">
+
+          <div class="placement-rate">
+
+            <div class="rate-circle">
+
+              <div class="rate-circle-inner">
+
+                <strong>
+                  {{ dashboard?.statistics?.placementRate || 0 }}%
+                </strong>
+
+                <span>
+                  Placement Rate
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="placement-details">
+
+            <div class="placement-detail">
+
+              <span class="detail-dot selected-dot"></span>
+
+              <div>
+                <strong>
+                  {{ dashboard?.statistics?.selectedStudents || 0 }}
+                </strong>
+
+                <span>
+                  Students Placed
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="placement-detail">
+
+              <span class="detail-dot shortlist-dot"></span>
+
+              <div>
+                <strong>
+                  {{ dashboard?.statistics?.shortlistedStudents || 0 }}
+                </strong>
+
+                <span>
+                  Students Shortlisted
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ====================================
+           RECENT JOBS
+      ===================================== -->
+
+      <div class="dashboard-card jobs-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <span class="section-label">
+              <i class="bi bi-briefcase-fill"></i>
+              Opportunities
+            </span>
+
+            <h2>
+              Recent Job Opportunities
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            class="header-action"
+            (click)="openJobs()"
+          >
+            Manage Jobs
+            <i class="bi bi-arrow-right"></i>
+          </button>
+
+        </div>
+
+
+        @if (recentJobs.length > 0) {
+
+          <div class="job-list">
+
+            @for (
+              job of recentJobs;
+              track job.id
+            ) {
+
+              <div class="job-item">
+
+                <div class="job-icon">
+                  <i class="bi bi-building"></i>
+                </div>
+
+
+                <div class="job-content">
+
+                  <h4>
+                    {{ getJobTitle(job) }}
+                  </h4>
+
+                  <span>
+                    {{ getCompanyName(job) }}
+                  </span>
+
+                </div>
+
+
+                <div class="job-status">
+
+                  <span
+                    class="status-badge"
+                    [class.status-active]="
+                      job.status?.toLowerCase() === 'active'
+                    "
+                  >
+                    {{ job.status || 'Active' }}
+                  </span>
+
+                  <small>
+                    {{ getRelativeTime(job.createdAt) }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+              <i class="bi bi-briefcase"></i>
+            </div>
+
+            <h4>
+              No Job Opportunities
+            </h4>
+
+            <p>
+              Create your first job opportunity to get started.
+            </p>
+
+            <button
+              type="button"
+              class="empty-action"
+              (click)="openJobs()"
+            >
+              Create Job
+              <i class="bi bi-plus-lg"></i>
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- ====================================
+           RECENT APPLICATIONS
+      ===================================== -->
+
+      <div class="dashboard-card applications-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <span class="section-label">
+              <i class="bi bi-file-earmark-text-fill"></i>
+              Applications
+            </span>
+
+            <h2>
+              Recent Applications
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            class="header-action"
+            (click)="openApplications()"
+          >
+            View All
+            <i class="bi bi-arrow-right"></i>
+          </button>
+
+        </div>
+
+
+        @if (recentApplications.length > 0) {
+
+          <div class="application-list">
+
+            @for (
+              application of recentApplications;
+              track application.id
+            ) {
+
+              <div class="application-item">
+
+                <div class="student-avatar">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+
+
+                <div class="application-content">
+
+                  <h4>
+                    {{ getApplicationStudentName(application) }}
+                  </h4>
+
+                  <span>
+                    {{ getApplicationJobTitle(application) }}
+                  </span>
+
+                </div>
+
+
+                <div class="application-right">
+
+                  <span
+                    class="status-badge"
+                    [ngClass]="
+                      getStatusClass(
+                        getApplicationStatus(application)
+                      )
+                    "
+                  >
+                    {{ getApplicationStatus(application) }}
+                  </span>
+
+                  <small>
+                    {{ getRelativeTime(application.createdAt) }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+        @else {
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+              <i class="bi bi-file-earmark"></i>
+            </div>
+
+            <h4>
+              No Applications
+            </h4>
+
+            <p>
+              Student applications will appear here.
+            </p>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- ======================================
+         QUICK ACTIONS
+    ======================================= -->
+
+    <section class="dashboard-card quick-actions-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="section-label">
+            <i class="bi bi-lightning-charge-fill"></i>
+            Shortcuts
+          </span>
+
+          <h2>
+            Quick Actions
+          </h2>
+
+          <p class="card-subtitle">
+            Access frequently used placement management tools.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="quick-actions-grid">
+
+        <button
+          type="button"
+          class="quick-action"
+          (click)="openJobs()"
+        >
+
+          <div class="quick-action-icon">
+            <i class="bi bi-plus-circle-fill"></i>
+          </div>
+
+          <div class="quick-action-content">
+
+            <strong>
+              Post Job
+            </strong>
+
+            <span>
+              Create a new opportunity
+            </span>
+
+          </div>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="quick-action"
+          (click)="openApplications()"
+        >
+
+          <div class="quick-action-icon">
+            <i class="bi bi-file-earmark-text-fill"></i>
+          </div>
+
+          <div class="quick-action-content">
+
+            <strong>
+              Applications
+            </strong>
+
+            <span>
+              Review student applications
+            </span>
+
+          </div>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="quick-action"
+          (click)="openStudents()"
+        >
+
+          <div class="quick-action-icon">
+            <i class="bi bi-people-fill"></i>
+          </div>
+
+          <div class="quick-action-content">
+
+            <strong>
+              Students
+            </strong>
+
+            <span>
+              View placement candidates
+            </span>
+
+          </div>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="quick-action"
+          (click)="openPlacements()"
+        >
+
+          <div class="quick-action-icon">
+            <i class="bi bi-award-fill"></i>
+          </div>
+
+          <div class="quick-action-content">
+
+            <strong>
+              Placements
+            </strong>
+
+            <span>
+              Track selected students
+            </span>
+
+          </div>
+
+          <i class="bi bi-arrow-up-right"></i>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ======================================
+         BOTTOM BANNER
+    ======================================= -->
+
+    <section class="placement-banner">
+
+      <div class="banner-icon">
+        <i class="bi bi-mortarboard-fill"></i>
+      </div>
+
+      <div class="banner-content">
+
+        <span>
+          Placement Management
+        </span>
+
+        <h2>
+          Connecting Students With Opportunities
+        </h2>
+
+        <p>
+          Help students discover the right opportunities
+          and achieve their career goals.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="banner-btn"
+        (click)="openJobs()"
+      >
+        Manage Opportunities
+        <i class="bi bi-arrow-right"></i>
+      </button>
+
+    </section>
+
+  }
 
 </div>

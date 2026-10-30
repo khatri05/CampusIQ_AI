@@ -59,6 +59,17 @@ interface MarkRecord {
 }
 
 
+interface SubjectCatalogItem {
+  id?: string;
+  subjectId?: string;
+  name?: string;
+  subjectName?: string;
+  subject?: string;
+  code?: string;
+  subjectCode?: string;
+}
+
+
 interface SubjectMark {
 
   subject: string;
@@ -130,6 +141,9 @@ export class MarksComponent
 
   subjects:
     SubjectMark[] = [];
+
+  // Master subject records used to resolve subject IDs to names.
+  subjectCatalog: SubjectCatalogItem[] = [];
 
 
   /* ========================================
@@ -296,6 +310,8 @@ export class MarksComponent
         'Student marks records:',
         this.marksRecords
       );
+
+      await this.loadSubjectCatalog();
 
 
       /* ------------------------------------
@@ -694,6 +710,60 @@ export class MarksComponent
 
 
   /* ========================================
+     Load Subject Catalog
+  ======================================== */
+
+  private async loadSubjectCatalog(): Promise<void> {
+    try {
+      const response =
+        await this.apiService.get<any>(
+          '/subjects'
+        );
+
+      const data = response?.data;
+
+      this.subjectCatalog = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.subjects)
+          ? data.subjects
+          : Array.isArray(data?.records)
+            ? data.records
+            : [];
+
+    } catch (error) {
+      console.error(
+        'Unable to load subject catalog:',
+        error
+      );
+
+      this.subjectCatalog = [];
+    }
+  }
+
+
+  private findSubjectById(
+    subjectId: string
+  ): SubjectCatalogItem | undefined {
+    const normalizedId = String(subjectId || '').trim();
+
+    if (!normalizedId) {
+      return undefined;
+    }
+
+    return this.subjectCatalog.find(subject => {
+      const ids = [
+        subject.id,
+        subject.subjectId
+      ]
+        .filter(id => id !== undefined && id !== null)
+        .map(id => String(id).trim());
+
+      return ids.includes(normalizedId);
+    });
+  }
+
+
+  /* ========================================
      Build Subject Marks
   ======================================== */
 
@@ -805,121 +875,64 @@ export class MarksComponent
 
 
         /*
-         * Get total marks.
+         * Calculate the subject's raw total.
+         *
+         * Prefer the stored total/marksObtained values. If records contain
+         * separate internal/external components without a stored total,
+         * calculate the total from those components.
+         *
+         * If there are multiple records for a subject, use the highest
+         * available maximum and aggregate each record's total once.
          */
+        const storedTotals = records
+          .map(record => this.getTotalMarks(record))
+          .filter(value => Number.isFinite(value) && value >= 0);
 
-        let total = 0;
+        /*
+         * A subject can have more than one mark document. Do not add
+         * each document's already-calculated total together, because
+         * that can double-count the same subject and produce values
+         * such as 158%. Use the highest stored total for the subject.
+         */
+        let totalMarks = storedTotals.length > 0
+          ? Math.max(...storedTotals)
+          : internal + external;
 
+        if (!Number.isFinite(totalMarks) || totalMarks < 0) {
+          totalMarks = 0;
+        }
 
-        records.forEach(
-          record => {
+        /*
+         * Determine the maximum marks. Default to 100 when the backend
+         * does not provide maximumMarks.
+         */
+        let maximumMarks = 100;
 
-            const recordTotal =
-              this.getTotalMarks(
-                record
-              );
+        records.forEach(record => {
+          const recordMaximum = Number(record.maximumMarks);
 
-
-            if (
-              recordTotal > 0
-            ) {
-
-              total +=
-                recordTotal;
-
-            }
-
+          if (
+            Number.isFinite(recordMaximum) &&
+            recordMaximum > 0
+          ) {
+            maximumMarks = recordMaximum;
           }
+        });
+
+        /*
+         * Convert raw marks to a percentage and clamp the result to
+         * the valid 0–100 range. This prevents values such as 158%
+         * from being displayed when summed records exceed the maximum.
+         */
+        const percentage = Number(
+          Math.min(
+            100,
+            Math.max(
+              0,
+              (totalMarks / maximumMarks) * 100
+            )
+          ).toFixed(2)
         );
-
-
-        /*
-         * If total wasn't available
-         * directly, calculate from
-         * internal + external.
-         */
-
-        if (
-          total <= 0
-        ) {
-
-          total =
-            internal +
-            external;
-
-        }
-
-
-        /*
-         * Get maximum marks.
-         */
-
-        let maximum = 100;
-
-
-        records.forEach(
-          record => {
-
-            const recordMaximum =
-              Number(
-                record.maximumMarks
-              );
-
-
-            if (
-              !isNaN(recordMaximum) &&
-              recordMaximum > 0
-            ) {
-
-              maximum =
-                recordMaximum;
-
-            }
-
-          }
-        );
-
-
-        /*
-         * Calculate percentage.
-         */
-
-        let percentage = 0;
-
-
-        /*
-         * If total is already percentage,
-         * use it directly.
-         */
-
-        if (
-          maximum === 100
-        ) {
-
-          percentage =
-            Math.min(
-              Math.max(
-                total,
-                0
-              ),
-              100
-            );
-
-        }
-
-        else {
-
-          percentage =
-            Number(
-              (
-                total /
-                maximum
-              * 100
-              ).toFixed(2)
-            );
-
-        }
-
 
         /*
          * Grade.
@@ -943,23 +956,27 @@ export class MarksComponent
          * Subject name.
          */
 
-        const firstRecord =
-          records[0];
+        const firstRecord = records[0];
 
+        const catalogSubject = this.findSubjectById(
+          String(firstRecord.subjectId || subjectId)
+        );
 
         const subject =
+          catalogSubject?.name ||
+          catalogSubject?.subjectName ||
+          catalogSubject?.subject ||
           firstRecord.subjectName ||
           firstRecord.subject ||
+          catalogSubject?.code ||
+          catalogSubject?.subjectCode ||
           firstRecord.subjectCode ||
           firstRecord.code ||
           subjectId;
 
-
-        /*
-         * Subject code.
-         */
-
         const code =
+          catalogSubject?.code ||
+          catalogSubject?.subjectCode ||
           firstRecord.subjectCode ||
           firstRecord.code ||
           subjectId;
@@ -985,11 +1002,8 @@ export class MarksComponent
               external.toFixed(2)
             ),
 
-          total:
-
-            Number(
-              total.toFixed(2)
-            ),
+          // The HTML displays this value with a percent sign.
+          total: percentage,
 
           grade,
 

@@ -1,0 +1,1068 @@
+<div class="students-page">
+
+
+  <!-- PAGE HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Students
+      </h2>
+
+      <p>
+        Manage and monitor all registered students
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ACTION SUCCESS -->
+
+  <div
+    *ngIf="actionMessage"
+    class="alert-message success-message"
+  >
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      {{ actionMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- ACTION ERROR -->
+
+  <div
+    *ngIf="actionError && !showEditModal"
+    class="alert-message error-message"
+  >
+
+    <i class="bi bi-exclamation-circle-fill"></i>
+
+    <span>
+      {{ actionError }}
+    </span>
+
+  </div>
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+
+        <i class="bi bi-people-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Total Students
+        </span>
+
+        <strong>
+          {{ totalStudents }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+
+        <i class="bi bi-person-check-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Active Students
+        </span>
+
+        <strong>
+          {{ activeStudents }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon red">
+
+        <i class="bi bi-person-x-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Inactive Students
+        </span>
+
+        <strong>
+          {{ inactiveStudents }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+  <!-- LOAD ERROR -->
+
+  <div
+    *ngIf="errorMessage"
+    class="error-box"
+  >
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="retry()"
+    >
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+      Retry
+
+    </button>
+
+  </div>
+
+
+  <!-- STUDENTS CARD -->
+
+  <div
+    *ngIf="!loading"
+    class="students-card"
+  >
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          (input)="onSearch()"
+          placeholder="Search students..."
+        />
+
+      </div>
+
+
+      <div class="filter-box">
+
+        <select
+          [(ngModel)]="selectedDepartment"
+          (change)="onDepartmentChange()"
+        >
+
+          <option value="all">
+            All Departments
+          </option>
+
+          <option
+            *ngFor="
+              let department of departments
+            "
+            [value]="department"
+          >
+
+            {{ department }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-box">
+
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange()"
+        >
+
+          <option value="all">
+            All Status
+          </option>
+
+          <option value="active">
+            Active
+          </option>
+
+          <option value="inactive">
+            Inactive
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Enrollment No.
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Department
+            </th>
+
+            <th>
+              Semester
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+          <tr
+            *ngFor="
+              let student of filteredStudents
+            "
+          >
+
+
+            <td>
+
+              <div class="student-cell">
+
+                <div class="student-avatar">
+
+                  {{ getInitials(student) }}
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ getStudentName(student) }}
+                  </strong>
+
+                  <small>
+                    {{ student.phone || 'No phone' }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              {{ student.enrollmentNo || '—' }}
+
+            </td>
+
+
+            <td>
+
+              {{ student.email || '—' }}
+
+            </td>
+
+
+            <td>
+
+              {{ getDepartmentName(student) }}
+
+            </td>
+
+
+            <td>
+
+              {{ student.semester || '—' }}
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-badge"
+                [class.active]="
+                  getStatus(student)
+                    .toLowerCase() === 'active'
+                "
+                [class.inactive]="
+                  getStatus(student)
+                    .toLowerCase() !== 'active'
+                "
+              >
+
+                <span class="status-dot"></span>
+
+                {{ getStatus(student) | titlecase }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <div class="action-buttons">
+
+
+                <!-- VIEW -->
+
+                <button
+                  type="button"
+                  class="view-btn"
+                  (click)="openDetails(student)"
+                  title="View Student"
+                >
+
+                  <i class="bi bi-eye-fill"></i>
+
+                </button>
+
+
+                <!-- EDIT -->
+
+                <button
+                  type="button"
+                  class="edit-btn"
+                  (click)="startEdit(student)"
+                  title="Edit Student"
+                >
+
+                  <i class="bi bi-pencil-fill"></i>
+
+                </button>
+
+
+                <!-- DELETE -->
+
+                <button
+                  type="button"
+                  class="delete-btn"
+                  (click)="deleteStudent(student)"
+                  title="Delete Student"
+                  [disabled]="deleting"
+                >
+
+                  <i class="bi bi-trash-fill"></i>
+
+                </button>
+
+
+              </div>
+
+            </td>
+
+
+          </tr>
+
+
+          <!-- EMPTY -->
+
+          <tr
+            *ngIf="
+              filteredStudents.length === 0
+            "
+          >
+
+            <td
+              colspan="7"
+              class="empty-state"
+            >
+
+              <i class="bi bi-people"></i>
+
+              <strong>
+                No students found
+              </strong>
+
+              <span>
+                Try changing your search or filters.
+              </span>
+
+            </td>
+
+          </tr>
+
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="table-footer">
+
+      Showing
+
+      <strong>
+        {{ filteredStudents.length }}
+      </strong>
+
+      of
+
+      <strong>
+        {{ totalStudents }}
+      </strong>
+
+      students
+
+    </div>
+
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    *ngIf="loading"
+    class="loading-container"
+  >
+
+    <div
+      class="spinner-border text-primary"
+    ></div>
+
+    <span>
+      Loading students...
+    </span>
+
+  </div>
+
+
+</div>
+
+
+<!-- ====================================== -->
+<!-- VIEW STUDENT MODAL -->
+<!-- ====================================== -->
+
+<div
+  *ngIf="
+    showDetailsModal &&
+    selectedStudent
+  "
+  class="modal-backdrop"
+  (click)="closeDetails()"
+>
+
+
+  <div
+    class="student-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Student Details
+        </h4>
+
+        <p>
+          Complete student information
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeDetails()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-profile">
+
+      <div class="modal-avatar">
+
+        {{ getInitials(selectedStudent) }}
+
+      </div>
+
+
+      <div>
+
+        <h3>
+          {{ getStudentName(selectedStudent) }}
+        </h3>
+
+        <p>
+          {{ selectedStudent.email || 'No email' }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="details-grid">
+
+
+      <div class="detail-item">
+
+        <label>
+          Enrollment Number
+        </label>
+
+        <strong>
+          {{ selectedStudent.enrollmentNo || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Department
+        </label>
+
+        <strong>
+          {{ getDepartmentName(selectedStudent) }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Semester
+        </label>
+
+        <strong>
+          {{ selectedStudent.semester || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Division
+        </label>
+
+        <strong>
+          {{ selectedStudent.division || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Phone
+        </label>
+
+        <strong>
+          {{ selectedStudent.phone || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Admission Year
+        </label>
+
+        <strong>
+          {{ selectedStudent.admissionYear || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Graduation Year
+        </label>
+
+        <strong>
+          {{ selectedStudent.graduationYear || 'Not available' }}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Status
+        </label>
+
+        <span
+          class="status-badge"
+          [class.active]="
+            getStatus(selectedStudent)
+              .toLowerCase() === 'active'
+          "
+          [class.inactive]="
+            getStatus(selectedStudent)
+              .toLowerCase() !== 'active'
+          "
+        >
+
+          <span class="status-dot"></span>
+
+          {{ getStatus(selectedStudent) | titlecase }}
+
+        </span>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="close-modal-btn"
+        (click)="closeDetails()"
+      >
+
+        Close
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+<!-- ====================================== -->
+<!-- EDIT STUDENT MODAL -->
+<!-- ====================================== -->
+
+<div
+  *ngIf="
+    showEditModal &&
+    editingStudent
+  "
+  class="modal-backdrop"
+  (click)="cancelEdit()"
+>
+
+
+  <div
+    class="student-modal edit-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Edit Student
+        </h4>
+
+        <p>
+          Update student information
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="cancelEdit()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <!-- EDIT ERROR -->
+
+    <div
+      *ngIf="actionError"
+      class="modal-error"
+    >
+
+      <i class="bi bi-exclamation-circle-fill"></i>
+
+      {{ actionError }}
+
+    </div>
+
+
+    <div class="edit-form">
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label>
+            First Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.firstName
+            "
+            placeholder="Enter first name"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Last Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.lastName
+            "
+            placeholder="Enter last name"
+          />
+
+        </div>
+
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          type="email"
+          [value]="
+            editingStudent.email || ''
+          "
+          disabled
+        />
+
+        <small>
+          Email cannot be changed from this page.
+        </small>
+
+      </div>
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label>
+            Enrollment Number
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.enrollmentNo
+            "
+            placeholder="Enter enrollment number"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Phone
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.phone
+            "
+            placeholder="Enter phone number"
+          />
+
+        </div>
+
+
+      </div>
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label>
+            Department ID
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.departmentId
+            "
+            placeholder="Enter department ID"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Semester
+          </label>
+
+          <input
+            type="number"
+            [(ngModel)]="
+              editingStudent.semester
+            "
+            min="1"
+            max="12"
+            placeholder="Semester"
+          />
+
+        </div>
+
+
+      </div>
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label>
+            Division
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="
+              editingStudent.division
+            "
+            placeholder="Enter division"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            [(ngModel)]="
+              editingStudent.status
+            "
+          >
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="inactive">
+              Inactive
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label>
+            Admission Year
+          </label>
+
+          <input
+            type="number"
+            [(ngModel)]="
+              editingStudent.admissionYear
+            "
+            placeholder="Admission year"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Graduation Year
+          </label>
+
+          <input
+            type="number"
+            [(ngModel)]="
+              editingStudent.graduationYear
+            "
+            placeholder="Graduation year"
+          />
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+
+
+      <button
+        type="button"
+        class="cancel-btn"
+        (click)="cancelEdit()"
+        [disabled]="saving"
+      >
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="save-btn"
+        (click)="saveStudent()"
+        [disabled]="saving"
+      >
+
+        <span
+          *ngIf="saving"
+          class="spinner-border spinner-border-sm"
+        ></span>
+
+        <i
+          *ngIf="!saving"
+          class="bi bi-check-lg"
+        ></i>
+
+        {{
+          saving
+            ? 'Saving...'
+            : 'Save Changes'
+        }}
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+</div>

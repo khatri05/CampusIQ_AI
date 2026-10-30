@@ -299,12 +299,32 @@
                 Department
               </label>
 
-              <input
-                type="text"
+              <select
                 class="profile-input"
+                id="departmentId"
+                name="departmentId"
                 [(ngModel)]="editProfile.departmentId"
-                placeholder="Enter department"
+                (ngModelChange)="onDepartmentChange()"
+                [disabled]="departmentsLoading"
               >
+                <option value="">Select Department</option>
+
+                @for (department of departments; track department.id) {
+                  <option [value]="department.id">
+                    {{ department.name }}
+                  </option>
+                }
+              </select>
+
+              @if (departmentsLoading) {
+                <small class="field-note">
+                  Loading departments...
+                </small>
+              } @else if (departments.length === 0) {
+                <small class="field-note">
+                  Department list is unavailable.
+                </small>
+              }
 
             </div>
 
@@ -570,7 +590,7 @@
               </span>
 
               <strong>
-                {{ student.departmentId || 'Not available' }}
+                {{ departmentName || 'Not available' }}
               </strong>
 
             </div>

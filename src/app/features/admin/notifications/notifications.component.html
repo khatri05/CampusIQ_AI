@@ -1,0 +1,799 @@
+<div class="notifications-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Notifications
+      </h2>
+
+      <p>
+        Manage campus notifications
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ALERTS -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+    <i class="bi bi-check-circle me-2"></i>
+
+    {{ successMessage }}
+
+  </div>
+
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    <i class="bi bi-exclamation-circle me-2"></i>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-bell"></i>
+      </div>
+
+      <div>
+
+        <span>
+          Total Notifications
+        </span>
+
+        <strong>
+          {{ totalNotifications }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon orange">
+        <i class="bi bi-bell-fill"></i>
+      </div>
+
+      <div>
+
+        <span>
+          Unread
+        </span>
+
+        <strong>
+          {{ unreadNotifications }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+
+        <span>
+          Read
+        </span>
+
+        <strong>
+          {{ readNotifications }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        <i class="bi bi-info-circle"></i>
+      </div>
+
+      <div>
+
+        <span>
+          System
+        </span>
+
+        <strong>
+          {{ systemNotifications }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTERS -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="Search notifications..."
+      >
+
+    </div>
+
+
+    <select
+      class="form-select"
+      [(ngModel)]="selectedStatus"
+      (change)="applyFilters()"
+    >
+
+      <option value="All">
+        All Status
+      </option>
+
+      <option value="Unread">
+        Unread
+      </option>
+
+      <option value="Read">
+        Read
+      </option>
+
+    </select>
+
+
+    <select
+      class="form-select"
+      [(ngModel)]="selectedType"
+      (change)="applyFilters()"
+    >
+
+      <option value="All">
+        All Types
+      </option>
+
+      <option value="System">
+        System
+      </option>
+
+      <option value="Academic">
+        Academic
+      </option>
+
+      <option value="Placement">
+        Placement
+      </option>
+
+      <option value="Assignment">
+        Assignment
+      </option>
+
+      <option value="Attendance">
+        Attendance
+      </option>
+
+    </select>
+
+
+    <button
+      class="btn btn-light"
+      (click)="loadNotifications()"
+    >
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- TABLE -->
+
+  <div class="table-card">
+
+    <div class="table-header">
+
+      <div>
+
+        <h5>
+          All Notifications
+        </h5>
+
+        <span>
+          {{ filteredNotifications.length }}
+          notifications
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div
+      *ngIf="loading"
+      class="loading-state"
+    >
+
+      <div
+        class="spinner-border text-primary"
+      ></div>
+
+      <p>
+        Loading notifications...
+      </p>
+
+    </div>
+
+
+    <div
+      *ngIf="
+        !loading &&
+        filteredNotifications.length === 0
+      "
+      class="empty-state"
+    >
+
+      <i class="bi bi-bell-slash"></i>
+
+      <h5>
+        No notifications found
+      </h5>
+
+      <p>
+        There are no notifications matching
+        your filters.
+      </p>
+
+    </div>
+
+
+    <div
+      *ngIf="
+        !loading &&
+        filteredNotifications.length > 0
+      "
+      class="table-responsive"
+    >
+
+      <table class="table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Notification
+            </th>
+
+            <th>
+              User ID
+            </th>
+
+            <th>
+              Type
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Created
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let notification of filteredNotifications;
+              trackBy: trackByNotification
+            "
+          >
+
+            <td>
+
+              <div class="notification-cell">
+
+                <div class="notification-icon">
+
+                  <i class="bi bi-bell"></i>
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{
+                      notification.title ||
+                      'Notification'
+                    }}
+                  </strong>
+
+                  <small>
+                    {{
+                      notification.message ||
+                      '-'
+                    }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <span class="user-id">
+
+                {{
+                  notification.userId ||
+                  'All Users'
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <span class="type-badge">
+
+                {{
+                  notification.type ||
+                  notification.category ||
+                  'General'
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(notification)
+                "
+              >
+
+                {{
+                  getNotificationStatus(
+                    notification
+                  )
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <span class="date-text">
+
+                {{
+                  formatDate(
+                    notification.createdAt
+                  )
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  class="action-btn view"
+                  title="View"
+                  (click)="
+                    viewNotification(
+                      notification
+                    )
+                  "
+                >
+
+                  <i class="bi bi-eye"></i>
+
+                </button>
+
+
+                <button
+                  class="action-btn edit"
+                  title="Edit"
+                  (click)="
+                    editNotification(
+                      notification
+                    )
+                  "
+                >
+
+                  <i class="bi bi-pencil"></i>
+
+                </button>
+
+
+                <button
+                  class="action-btn delete"
+                  title="Delete"
+                  (click)="
+                    deleteNotification(
+                      notification
+                    )
+                  "
+                >
+
+                  <i class="bi bi-trash"></i>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div
+  *ngIf="showViewModal && selectedNotification"
+  class="modal-backdrop-custom"
+  (click)="closeViewModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header-custom">
+
+      <div>
+
+        <h5>
+          Notification Details
+        </h5>
+
+        <p>
+          View notification information
+        </p>
+
+      </div>
+
+      <button
+        class="close-btn"
+        (click)="closeViewModal()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body-custom">
+
+      <div class="detail-item">
+
+        <label>
+          Title
+        </label>
+
+        <p>
+          {{
+            selectedNotification.title ||
+            '-'
+          }}
+        </p>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <label>
+          Message
+        </label>
+
+        <p>
+          {{
+            selectedNotification.message ||
+            '-'
+          }}
+        </p>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <div class="detail-item">
+
+          <label>
+            User ID
+          </label>
+
+          <p>
+            {{
+              selectedNotification.userId ||
+              'All Users'
+            }}
+          </p>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Type
+          </label>
+
+          <p>
+            {{
+              selectedNotification.type ||
+              '-'
+            }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <div class="detail-item">
+
+          <label>
+            Status
+          </label>
+
+          <p>
+            {{
+              getNotificationStatus(
+                selectedNotification
+              )
+            }}
+          </p>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Created At
+          </label>
+
+          <p>
+            {{
+              formatDate(
+                selectedNotification.createdAt
+              )
+            }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- EDIT MODAL -->
+
+<div
+  *ngIf="showEditModal && editingNotification"
+  class="modal-backdrop-custom"
+  (click)="closeEditModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header-custom">
+
+      <div>
+
+        <h5>
+          Edit Notification
+        </h5>
+
+        <p>
+          Update notification information
+        </p>
+
+      </div>
+
+      <button
+        class="close-btn"
+        (click)="closeEditModal()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body-custom">
+
+      <div class="form-group">
+
+        <label>
+          Title
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="
+            editingNotification.title
+          "
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Message
+        </label>
+
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="
+            editingNotification.message
+          "
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label>
+            Type
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="
+              editingNotification.type
+            "
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            class="form-select"
+            [(ngModel)]="
+              editingNotification.status
+            "
+          >
+
+            <option value="Unread">
+              Unread
+            </option>
+
+            <option value="Read">
+              Read
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer-custom">
+
+      <button
+        class="btn btn-light"
+        (click)="closeEditModal()"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        [disabled]="loading"
+        (click)="saveNotification()"
+      >
+
+        <i
+          class="bi bi-check-lg me-1"
+        ></i>
+
+        Save Changes
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

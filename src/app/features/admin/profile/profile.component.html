@@ -1,0 +1,500 @@
+<div class="profile-page">
+
+  <!-- Page Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Admin Profile
+      </h2>
+
+      <p>
+        Manage your account information and security settings
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="loading-container"
+  >
+
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    ></div>
+
+    <span>
+      Loading profile...
+    </span>
+
+  </div>
+
+
+  <!-- Error -->
+
+  <div
+    *ngIf="!loading && errorMessage"
+    class="error-container"
+  >
+
+    <div class="error-icon">
+
+      <i class="bi bi-exclamation-triangle-fill"></i>
+
+    </div>
+
+    <div>
+
+      <h5>
+        Unable to load profile
+      </h5>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="retry()"
+      >
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Try Again
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- Profile -->
+
+  <div
+    *ngIf="!loading && !errorMessage && profile"
+    class="profile-content"
+  >
+
+    <!-- Profile Hero -->
+
+    <section class="profile-hero">
+
+      <div class="profile-avatar">
+
+        {{ initials }}
+
+      </div>
+
+
+      <div class="profile-identity">
+
+        <h3>
+          {{ fullName }}
+        </h3>
+
+        <p>
+          {{ profile.email }}
+        </p>
+
+        <div class="identity-meta">
+
+          <span class="role-badge">
+
+            <i class="bi bi-shield-check"></i>
+
+            {{ formattedRole }}
+
+          </span>
+
+
+          <span
+            class="status-badge"
+            [ngClass]="statusClass"
+          >
+
+            <span class="status-dot"></span>
+
+            {{ accountStatus | titlecase }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Main Grid -->
+
+    <div class="profile-grid">
+
+
+      <!-- Personal Information -->
+
+      <section class="profile-card">
+
+        <div class="card-header">
+
+          <div class="card-title">
+
+            <div class="title-icon">
+
+              <i class="bi bi-person-fill"></i>
+
+            </div>
+
+            <div>
+
+              <h4>
+                Personal Information
+              </h4>
+
+              <p>
+                Your basic account information
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+          <div class="info-grid">
+
+            <div class="info-item">
+
+              <label>
+                First Name
+              </label>
+
+              <div class="info-value">
+
+                {{ profile.firstName || 'Not available' }}
+
+              </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <label>
+                Last Name
+              </label>
+
+              <div class="info-value">
+
+                {{ profile.lastName || 'Not available' }}
+
+              </div>
+
+            </div>
+
+
+            <div class="info-item full-width">
+
+              <label>
+                Email Address
+              </label>
+
+              <div class="info-value">
+
+                <i class="bi bi-envelope"></i>
+
+                {{ profile.email || 'Not available' }}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Account Information -->
+
+      <section class="profile-card">
+
+        <div class="card-header">
+
+          <div class="card-title">
+
+            <div class="title-icon">
+
+              <i class="bi bi-shield-lock-fill"></i>
+
+            </div>
+
+            <div>
+
+              <h4>
+                Account Information
+              </h4>
+
+              <p>
+                Account role and status
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+          <div class="info-grid">
+
+            <div class="info-item">
+
+              <label>
+                Account Role
+              </label>
+
+              <div class="info-value">
+
+                {{ formattedRole }}
+
+              </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <label>
+                Account Status
+              </label>
+
+              <div class="info-value">
+
+                <span
+                  class="inline-status"
+                  [ngClass]="statusClass"
+                >
+
+                  <span class="status-dot"></span>
+
+                  {{ accountStatus | titlecase }}
+
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <label>
+                Account Created
+              </label>
+
+              <div class="info-value">
+
+                {{ formatDate(profile.createdAt) }}
+
+              </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <label>
+                Last Updated
+              </label>
+
+              <div class="info-value">
+
+                {{ formatDate(profile.updatedAt) }}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </div>
+
+
+    <!-- Security Section -->
+
+    <section class="profile-card security-card">
+
+      <div class="card-header">
+
+        <div class="card-title">
+
+          <div class="title-icon security-icon">
+
+            <i class="bi bi-key-fill"></i>
+
+          </div>
+
+          <div>
+
+            <h4>
+              Security & Password
+            </h4>
+
+            <p>
+              Keep your account secure
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="security-content">
+
+        <div class="security-info">
+
+          <div class="security-symbol">
+
+            <i class="bi bi-lock-fill"></i>
+
+          </div>
+
+
+          <div>
+
+            <h5>
+              Password
+            </h5>
+
+            <p>
+              Reset your account password using your registered email address.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="password-btn"
+          (click)="changePassword()"
+        >
+
+          <i class="bi bi-envelope-fill"></i>
+
+          Change Password
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- Account Summary -->
+
+    <section class="account-summary">
+
+      <div class="summary-item">
+
+        <div class="summary-icon">
+
+          <i class="bi bi-person-check-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Account
+          </span>
+
+          <strong>
+            {{ accountStatus | titlecase }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-divider"></div>
+
+
+      <div class="summary-item">
+
+        <div class="summary-icon">
+
+          <i class="bi bi-shield-fill-check"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Access Level
+          </span>
+
+          <strong>
+            {{ formattedRole }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-divider"></div>
+
+
+      <div class="summary-item">
+
+        <div class="summary-icon">
+
+          <i class="bi bi-calendar-check-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Member Since
+          </span>
+
+          <strong>
+            {{ formatDate(profile.createdAt) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

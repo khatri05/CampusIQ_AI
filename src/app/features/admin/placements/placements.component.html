@@ -1,0 +1,846 @@
+<div class="placements-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>Placements</h2>
+
+      <p>
+        Monitor and manage student placement records
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+    <i class="bi bi-check-circle me-2"></i>
+    {{ successMessage }}
+  </div>
+
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    <i class="bi bi-exclamation-circle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+
+  <!-- STATS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-briefcase"></i>
+      </div>
+
+      <div>
+
+        <span>Total Placements</span>
+
+        <h3>
+          {{ totalPlacements }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+
+        <span>Placed</span>
+
+        <h3>
+          {{ placedCount }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon orange">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+
+      <div>
+
+        <span>Pending</span>
+
+        <h3>
+          {{ pendingCount }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        <i class="bi bi-bar-chart"></i>
+      </div>
+
+      <div>
+
+        <span>Other</span>
+
+        <h3>
+          {{ otherCount }}
+        </h3>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CONTENT -->
+
+  <div class="content-card">
+
+    <div class="filter-toolbar">
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Search student, company, job..."
+        />
+
+        <button
+          *ngIf="searchTerm"
+          type="button"
+          class="clear-search"
+          (click)="clearFilters()"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+
+      </div>
+
+
+      <select
+        class="filter-select"
+        [(ngModel)]="statusFilter"
+        (change)="onStatusChange()"
+      >
+
+        <option value="all">
+          All Status
+        </option>
+
+        <option value="placed">
+          Placed
+        </option>
+
+        <option value="pending">
+          Pending
+        </option>
+
+        <option value="cancelled">
+          Cancelled
+        </option>
+
+      </select>
+
+
+      <button
+        type="button"
+        class="refresh-btn"
+        (click)="loadPlacements()"
+        [disabled]="loading"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        Refresh
+      </button>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+      <table class="placements-table">
+
+        <thead>
+
+          <tr>
+
+            <th>#</th>
+
+            <th>Student ID</th>
+
+            <th>Company</th>
+
+            <th>Job Title</th>
+
+            <th>Package</th>
+
+            <th>Placement Date</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let placement of filteredPlacements;
+              let i = index
+            "
+          >
+
+            <td>
+              {{ i + 1 }}
+            </td>
+
+
+            <td>
+
+              <div class="student-info">
+
+                <div class="student-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <span>
+                  {{ placement.studentId || 'N/A' }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <strong>
+                {{ placement.companyName || 'N/A' }}
+              </strong>
+
+            </td>
+
+
+            <td>
+              {{ placement.jobTitle || 'N/A' }}
+            </td>
+
+
+            <td>
+
+              <span
+                *ngIf="placement.package"
+              >
+                ₹{{ placement.package }}
+              </span>
+
+              <span
+                *ngIf="!placement.package"
+                class="text-muted"
+              >
+                N/A
+              </span>
+
+            </td>
+
+
+            <td>
+
+              {{
+                formatDate(
+                  placement.placementDate
+                )
+              }}
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(
+                    placement.status
+                  )
+                "
+              >
+                {{ placement.status || 'Pending' }}
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  class="action-btn view"
+                  title="View"
+                  (click)="
+                    viewPlacement(placement)
+                  "
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Edit"
+                  (click)="
+                    editPlacement(placement)
+                  "
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  title="Delete"
+                  (click)="
+                    deletePlacement(placement)
+                  "
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <tr
+            *ngIf="
+              !loading &&
+              filteredPlacements.length === 0
+            "
+          >
+
+            <td
+              colspan="8"
+              class="empty-state"
+            >
+
+              <i class="bi bi-briefcase"></i>
+
+              <h5>
+                No placements found
+              </h5>
+
+              <p>
+                Try changing your search or filter.
+              </p>
+
+            </td>
+
+          </tr>
+
+
+          <tr
+            *ngIf="
+              loading &&
+              placements.length === 0
+            "
+          >
+
+            <td
+              colspan="8"
+              class="loading-state"
+            >
+
+              <div
+                class="spinner-border text-primary"
+              ></div>
+
+              <p>
+                Loading placements...
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div
+  *ngIf="
+    showViewModal &&
+    selectedPlacement
+  "
+  class="modal-overlay"
+  (click)="closeViewModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Placement Details
+        </h4>
+
+        <p>
+          Complete placement information
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeViewModal()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="placement-header">
+
+        <div class="large-placement-icon">
+          <i class="bi bi-briefcase"></i>
+        </div>
+
+        <div>
+
+          <h3>
+            {{ selectedPlacement.companyName }}
+          </h3>
+
+          <p>
+            {{ selectedPlacement.jobTitle }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+
+          <label>
+            Student ID
+          </label>
+
+          <span>
+            {{ selectedPlacement.studentId || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Company
+          </label>
+
+          <span>
+            {{ selectedPlacement.companyName || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Job Title
+          </label>
+
+          <span>
+            {{ selectedPlacement.jobTitle || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Package
+          </label>
+
+          <span>
+            ₹{{ selectedPlacement.package || 0 }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Placement Date
+          </label>
+
+          <span>
+            {{
+              formatDate(
+                selectedPlacement.placementDate
+              )
+            }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Status
+          </label>
+
+          <span
+            class="status-badge"
+            [ngClass]="
+              getStatusClass(
+                selectedPlacement.status
+              )
+            "
+          >
+            {{ selectedPlacement.status || 'Pending' }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="detail-item full-width"
+        >
+
+          <label>
+            Remarks
+          </label>
+
+          <p class="description">
+
+            {{
+              selectedPlacement.remarks ||
+              'No remarks available.'
+            }}
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeViewModal()"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- EDIT MODAL -->
+
+<div
+  *ngIf="
+    showEditModal &&
+    editingPlacement
+  "
+  class="modal-overlay"
+  (click)="closeEditModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Edit Placement
+        </h4>
+
+        <p>
+          Update placement information
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeEditModal()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>
+            Student ID
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [value]="
+              editingPlacement.studentId
+            "
+            disabled
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Job ID
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [value]="
+              editingPlacement.jobId
+            "
+            disabled
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Company Name
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="
+              editingPlacement.companyName
+            "
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Job Title
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="
+              editingPlacement.jobTitle
+            "
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Package
+          </label>
+
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="
+              editingPlacement.package
+            "
+            min="0"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Placement Date
+          </label>
+
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="
+              editingPlacement.placementDate
+            "
+          />
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            class="form-control"
+            [(ngModel)]="
+              editingPlacement.status
+            "
+          >
+
+            <option value="Placed">
+              Placed
+            </option>
+
+            <option value="Pending">
+              Pending
+            </option>
+
+            <option value="Cancelled">
+              Cancelled
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            Remarks
+          </label>
+
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="
+              editingPlacement.remarks
+            "
+            placeholder="Enter remarks..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeEditModal()"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="savePlacement()"
+        [disabled]="loading"
+      >
+
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"
+        ></span>
+
+        <i
+          *ngIf="!loading"
+          class="bi bi-check-lg me-1"
+        ></i>
+
+        Save Changes
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

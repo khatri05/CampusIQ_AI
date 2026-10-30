@@ -4,6 +4,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { StudentLayoutComponent } from './layouts/student-layout/student-layout.component';
 import { FacultyDashboardComponent } from './layouts/faculty-dashboard/faculty-dashboard.component';
+import { PlacementOfficerDashboardComponent } from './layouts/placement-officer-dashboard/placement-officer-dashboard.component';
+import { AdminDashboardComponent } from './layouts/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
 
@@ -326,7 +328,7 @@ export const routes: Routes = [
   {
     path: 'placement-officer',
 
-    component: DashboardLayoutComponent,
+    component: PlacementOfficerDashboardComponent,
 
     canActivate: [
       authGuard
@@ -353,11 +355,73 @@ export const routes: Routes = [
           ).then(
             m => m.DashboardComponent
           )
+      },
+
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import(
+            './features/placement-officer/profile/profile.component'
+          ).then(
+            m => m.ProfileComponent
+          )
+      },
+
+      {
+        path: 'students',
+        loadComponent: () =>
+          import(
+            './features/placement-officer/students/students.component'
+          ).then(
+            m => m.StudentsComponent
+          )
+      },
+
+      {
+        path: 'job-opportunities',
+        loadComponent: () =>
+          import(
+            './features/placement-officer/job-opportunities/job-opportunities.component'
+          ).then(
+            m => m.JobOpportunitiesComponent
+          )
+      },
+
+      {
+        path: 'applications',
+
+        loadComponent: () =>
+          import(
+            './features/placement-officer/applications/applications.component'
+          ).then(
+            m => m.ApplicationsComponent
+          )
+      },
+
+      {
+        path: 'placements',
+
+        loadComponent: () =>
+          import(
+            './features/placement-officer/placements/placements.component'
+          ).then(
+            m => m.PlacementsComponent
+          )
+      },
+
+      {
+        path: 'notifications',
+
+        loadComponent: () =>
+          import(
+            './features/placement-officer/notifications/notifications.component'
+          ).then(
+            m => m.NotificationsComponent
+          )
       }
 
     ]
   },
-
 
   // =====================================================
   // ADMIN ROUTES
@@ -366,7 +430,7 @@ export const routes: Routes = [
   {
     path: 'admin',
 
-    component: DashboardLayoutComponent,
+    component: AdminDashboardComponent,
 
     canActivate: [
       authGuard
@@ -392,6 +456,85 @@ export const routes: Routes = [
             './features/admin/dashboard/dashboard.component'
           ).then(
             m => m.DashboardComponent
+          )
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import(
+            './features/admin/profile/profile.component'
+          ).then(
+            m => m.ProfileComponent
+          )
+      },
+
+      {
+        path: 'students',
+        loadComponent: () =>
+          import(
+            './features/admin/students/students.component'
+          ).then(
+            m => m.StudentsComponent
+          )
+      },
+
+      {
+        path: 'faculty',
+        loadComponent: () =>
+          import(
+            './features/admin/faculty/faculty.component'
+          ).then(
+            m => m.FacultyComponent
+          )
+      },
+
+      {
+        path: 'departments',
+        loadComponent: () =>
+          import(
+            './features/admin/departments/departments.component'
+          ).then(
+            m => m.DepartmentsComponent
+          )
+      },
+
+      {
+        path: 'job-opportunities',
+        loadComponent: () =>
+          import(
+            './features/admin/job-opportunities/job-opportunities.component'
+          ).then(
+            m => m.JobOpportunitiesComponent
+          )
+      },
+
+      {
+        path: 'applications',
+        loadComponent: () =>
+          import(
+            './features/admin/applications/applications.component'
+          ).then(
+            m => m.ApplicationsComponent
+          )
+      },
+
+      {
+        path: 'placements',
+        loadComponent: () =>
+          import(
+            './features/admin/placements/placements.component'
+          ).then(
+            m => m.PlacementsComponent
+          )
+      },
+
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import(
+            './features/admin/notifications/notifications.component'
+          ).then(
+            m => m.NotificationsComponent
           )
       }
 

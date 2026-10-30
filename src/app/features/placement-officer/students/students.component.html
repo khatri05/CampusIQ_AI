@@ -1,0 +1,413 @@
+<div class="students-page">
+
+  <!-- =================================
+       PAGE HEADER
+  ================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>Students</h2>
+
+      <p>
+        View student information and placement status
+      </p>
+
+    </div>
+
+    <div class="student-count">
+
+      <i class="bi bi-people-fill"></i>
+
+      <span>
+        {{ filteredStudents.length }}
+      </span>
+
+      Students
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================
+       ERROR
+  ================================== -->
+
+  @if (errorMessage) {
+
+    <div class="alert alert-danger">
+
+      <i class="bi bi-exclamation-circle-fill"></i>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+      <button
+        type="button"
+        class="retry-btn"
+        (click)="loadStudents()"
+      >
+        Retry
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- =================================
+       FILTER CARD
+  ================================== -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="applyFilters()"
+        placeholder="Search students, enrollment number, email..."
+      />
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <select
+        [(ngModel)]="selectedDepartment"
+        (change)="applyFilters()"
+      >
+
+        <option value="All">
+          All Departments
+        </option>
+
+        @for (
+          department of departments;
+          track department
+        ) {
+
+          <option [value]="department">
+            {{ department }}
+          </option>
+
+        }
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <select
+        [(ngModel)]="selectedStatus"
+        (change)="applyFilters()"
+      >
+
+        <option value="All">
+          All Placement Status
+        </option>
+
+        <option value="Placed">
+          Placed
+        </option>
+
+        <option value="Shortlisted">
+          Shortlisted
+        </option>
+
+        <option value="Not Placed">
+          Not Placed
+        </option>
+
+        <option value="Rejected">
+          Rejected
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearFilters()"
+    >
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+      Clear
+
+    </button>
+
+  </div>
+
+
+  <!-- =================================
+       LOADING
+  ================================== -->
+
+  @if (loading) {
+
+    <div class="state-card">
+
+      <div
+        class="spinner-border text-primary"
+        role="status"
+      ></div>
+
+      <p>
+        Loading students...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- =================================
+       STUDENTS TABLE
+  ================================== -->
+
+  @if (!loading) {
+
+    @if (filteredStudents.length > 0) {
+
+      <div class="table-card">
+
+        <div class="table-responsive">
+
+          <table class="students-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Student
+                </th>
+
+                <th>
+                  Enrollment No.
+                </th>
+
+                <th>
+                  Department
+                </th>
+
+                <th>
+                  Email
+                </th>
+
+                <th>
+                  Semester
+                </th>
+
+                <th>
+                  CGPA
+                </th>
+
+                <th>
+                  Placement Status
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                student of filteredStudents;
+                track student.id || student.uid
+              ) {
+
+                <tr>
+
+                  <!-- Student -->
+
+                  <td>
+
+                    <div class="student-info">
+
+                      <div class="student-avatar">
+
+                        {{ getInitials(student) }}
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {{ getFullName(student) }}
+                        </strong>
+
+                        <span>
+                          {{ student.phone || 'No phone' }}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <!-- Enrollment -->
+
+                  <td>
+
+                    <span class="normal-text">
+
+                      {{
+                        student.enrollmentNumber ||
+                        '—'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- Department -->
+
+                  <td>
+
+                    <span class="department-text">
+
+                      {{
+                        student.department ||
+                        '—'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- Email -->
+
+                  <td>
+
+                    <span class="email-text">
+
+                      {{
+                        student.email ||
+                        '—'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- Semester -->
+
+                  <td>
+
+                    <span class="normal-text">
+
+                      {{
+                        student.semester ||
+                        '—'
+                      }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- CGPA -->
+
+                  <td>
+
+                    <span class="cgpa">
+
+                      {{ getCgpa(student) }}
+
+                    </span>
+
+                  </td>
+
+
+                  <!-- Status -->
+
+                  <td>
+
+                    <span
+                      class="status-badge"
+                      [ngClass]="
+                        getStatusClass(student)
+                      "
+                    >
+
+                      {{
+                        getPlacementStatus(student)
+                      }}
+
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    } @else {
+
+      <!-- =================================
+           EMPTY STATE
+      ================================== -->
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+
+          <i class="bi bi-people"></i>
+
+        </div>
+
+        <h4>
+          No Students Found
+        </h4>
+
+        <p>
+          No students match your current
+          search or filters.
+        </p>
+
+        <button
+          type="button"
+          class="clear-empty-btn"
+          (click)="clearFilters()"
+        >
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+    }
+
+  }
+
+</div>

@@ -1,0 +1,673 @@
+<div class="applications-page">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <h2>Applications</h2>
+
+      <p>
+        Manage student job applications
+        and placement status.
+      </p>
+    </div>
+
+    <div class="header-count">
+
+      <i class="bi bi-file-earmark-text-fill"></i>
+
+      <span>
+        {{ filteredApplications.length }}
+        Applications
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- Alerts -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+    <i class="bi bi-check-circle-fill"></i>
+
+    {{ successMessage }}
+  </div>
+
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    {{ errorMessage }}
+  </div>
+
+
+  <!-- Filters -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="applyFilters()"
+        placeholder="Search student, company, job..."
+      />
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label>
+        Status
+      </label>
+
+      <select
+        [(ngModel)]="statusFilter"
+        (change)="applyFilters()"
+      >
+
+        <option value="all">
+          All Status
+        </option>
+
+        <option value="applied">
+          Applied
+        </option>
+
+        <option value="shortlisted">
+          Shortlisted
+        </option>
+
+        <option value="selected">
+          Selected
+        </option>
+
+        <option value="rejected">
+          Rejected
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn-clear"
+      (click)="clearFilters()"
+    >
+      <i class="bi bi-arrow-clockwise"></i>
+      Clear
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="state-card"
+  >
+
+    <div class="spinner-border"></div>
+
+    <p>
+      Loading applications...
+    </p>
+
+  </div>
+
+
+  <!-- Table -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredApplications.length > 0
+    "
+    class="table-card"
+  >
+
+    <div class="table-responsive">
+
+      <table class="applications-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Student</th>
+
+            <th>Company</th>
+
+            <th>Position</th>
+
+            <th>Applied On</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let application of filteredApplications;
+              trackBy: trackByApplication
+            "
+          >
+
+            <!-- Student -->
+
+            <td>
+
+              <div class="student-cell">
+
+                <div class="student-avatar">
+
+                  {{
+                    getStudentName(application)
+                      .charAt(0)
+                      .toUpperCase()
+                  }}
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ getStudentName(application) }}
+                  </strong>
+
+                  <small>
+                    {{ application.studentEmail || '-' }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- Company -->
+
+            <td>
+
+              <div class="company-cell">
+
+                <i class="bi bi-building"></i>
+
+                <span>
+                  {{ getCompanyName(application) }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- Position -->
+
+            <td>
+
+              <strong>
+                {{ getJobTitle(application) }}
+              </strong>
+
+            </td>
+
+
+            <!-- Date -->
+
+            <td>
+
+              {{ getApplicationDate(application) }}
+
+            </td>
+
+
+            <!-- Status -->
+
+            <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(application)
+                "
+              >
+
+                {{ getStatusLabel(application) }}
+
+              </span>
+
+            </td>
+
+
+            <!-- Actions -->
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  class="action-btn view-btn"
+                  title="View Application"
+                  (click)="
+                    openViewModal(application)
+                  "
+                >
+
+                  <i class="bi bi-eye-fill"></i>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-btn status-btn"
+                  title="Update Status"
+                  (click)="
+                    openStatusModal(application)
+                  "
+                >
+
+                  <i class="bi bi-arrow-repeat"></i>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- Empty -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredApplications.length === 0
+    "
+    class="empty-state"
+  >
+
+    <div class="empty-icon">
+
+      <i class="bi bi-file-earmark-x"></i>
+
+    </div>
+
+    <h4>
+      No Applications Found
+    </h4>
+
+    <p>
+      No applications match your
+      current search or filter.
+    </p>
+
+    <button
+      type="button"
+      class="btn-clear"
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+
+  </div>
+
+
+  <!-- View Modal -->
+
+  <div
+    *ngIf="showViewModal && selectedApplication"
+    class="modal-overlay"
+    (click)="closeViewModal()"
+  >
+
+    <div
+      class="application-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+
+        <div>
+
+          <h4>
+            Application Details
+          </h4>
+
+          <p>
+            Student application information
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeViewModal()"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="detail-section">
+
+          <h6>
+            Student Information
+          </h6>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Student
+              </span>
+
+              <strong>
+                {{
+                  getStudentName(
+                    selectedApplication
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Email
+              </span>
+
+              <strong>
+                {{
+                  selectedApplication.studentEmail ||
+                  '-'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Enrollment Number
+              </span>
+
+              <strong>
+                {{
+                  selectedApplication.enrollmentNumber ||
+                  '-'
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h6>
+            Job Information
+          </h6>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Company
+              </span>
+
+              <strong>
+                {{
+                  getCompanyName(
+                    selectedApplication
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Position
+              </span>
+
+              <strong>
+                {{
+                  getJobTitle(
+                    selectedApplication
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Applied On
+              </span>
+
+              <strong>
+                {{
+                  getApplicationDate(
+                    selectedApplication
+                  )
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h6>
+            Application Status
+          </h6>
+
+          <span
+            class="status-badge"
+            [ngClass]="
+              getStatusClass(
+                selectedApplication
+              )
+            "
+          >
+            {{
+              getStatusLabel(
+                selectedApplication
+              )
+            }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="closeViewModal()"
+        >
+          Close
+        </button>
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="
+            closeViewModal();
+            openStatusModal(selectedApplication)
+          "
+        >
+          <i class="bi bi-pencil-square"></i>
+          Update Status
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Status Modal -->
+
+  <div
+    *ngIf="showStatusModal && selectedApplication"
+    class="modal-overlay"
+    (click)="closeStatusModal()"
+  >
+
+    <div
+      class="status-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+
+        <div>
+
+          <h4>
+            Update Application Status
+          </h4>
+
+          <p>
+            {{
+              getStudentName(
+                selectedApplication
+              )
+            }}
+            -
+            {{
+              getJobTitle(
+                selectedApplication
+              )
+            }}
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeStatusModal()"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <label class="form-label">
+          Application Status
+        </label>
+
+        <select
+          class="form-control"
+          [(ngModel)]="newStatus"
+        >
+
+          <option value="applied">
+            Applied
+          </option>
+
+          <option value="shortlisted">
+            Shortlisted
+          </option>
+
+          <option value="selected">
+            Selected
+          </option>
+
+          <option value="rejected">
+            Rejected
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="closeStatusModal()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="updateStatus()"
+        >
+          <i class="bi bi-check-lg"></i>
+          Update Status
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

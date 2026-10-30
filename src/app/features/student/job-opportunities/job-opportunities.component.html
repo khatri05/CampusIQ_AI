@@ -87,18 +87,13 @@
 
       <i class="bi bi-search"></i>
 
-      <input
-        type="text"
-        placeholder="Search jobs, companies or skills..."
-        [(ngModel)]="searchTerm"
+      <input type="text" placeholder="Search jobs, companies or skills..." [(ngModel)]="searchTerm"
         (input)="onSearchChange()">
 
     </div>
 
 
-    <select
-      [(ngModel)]="selectedJobType"
-      (change)="onJobTypeChange()">
+    <select [(ngModel)]="selectedJobType" (change)="onJobTypeChange()">
 
       <option value="All">
         All Job Types
@@ -123,17 +118,13 @@
     </select>
 
 
-    <select
-      [(ngModel)]="selectedLocation"
-      (change)="onLocationChange()">
+    <select [(ngModel)]="selectedLocation" (change)="onLocationChange()">
 
       <option value="All">
         All Locations
       </option>
 
-      <option
-        *ngFor="let location of getUniqueLocations()"
-        [value]="location">
+      <option *ngFor="let location of getUniqueLocations()" [value]="location">
 
         {{ location }}
 
@@ -142,10 +133,7 @@
     </select>
 
 
-    <button
-      type="button"
-      class="clear-btn"
-      (click)="clearFilters()">
+    <button type="button" class="clear-btn" (click)="clearFilters()">
 
       <i class="bi bi-arrow-counterclockwise"></i>
 
@@ -157,9 +145,7 @@
 
 
   <!-- Loading -->
-  <div
-    class="state-box"
-    *ngIf="isLoading">
+  <div class="state-box" *ngIf="isLoading">
 
     <div class="spinner"></div>
 
@@ -171,9 +157,7 @@
 
 
   <!-- Error -->
-  <div
-    class="error-box"
-    *ngIf="!isLoading && errorMessage">
+  <div class="error-box" *ngIf="!isLoading && errorMessage">
 
     <i class="bi bi-exclamation-triangle"></i>
 
@@ -187,9 +171,7 @@
       </p>
     </div>
 
-    <button
-      type="button"
-      (click)="loadJobs()">
+    <button type="button" (click)="loadJobs()">
 
       Retry
 
@@ -199,9 +181,7 @@
 
 
   <!-- Empty -->
-  <div
-    class="empty-box"
-    *ngIf="
+  <div class="empty-box" *ngIf="
       !isLoading &&
       !errorMessage &&
       filteredJobs.length === 0
@@ -223,17 +203,13 @@
 
 
   <!-- Job List -->
-  <div
-    class="jobs-grid"
-    *ngIf="
+  <div class="jobs-grid" *ngIf="
       !isLoading &&
       !errorMessage &&
       filteredJobs.length > 0
     ">
 
-    <div
-      class="job-card"
-      *ngFor="let job of filteredJobs">
+    <div class="job-card" *ngFor="let job of filteredJobs">
 
       <div class="job-top">
 
@@ -241,9 +217,7 @@
           {{ job.companyName.charAt(0) }}
         </div>
 
-        <span
-          class="status-badge"
-          [class.closed]="job.status !== 'Open'">
+        <span class="status-badge" [class.closed]="job.status !== 'Open'">
 
           {{ job.status }}
 
@@ -288,8 +262,8 @@
           <i class="bi bi-cash-stack"></i>
 
           {{ formatSalary(
-            job.salaryMin,
-            job.salaryMax
+          job.salaryMin,
+          job.salaryMax
           ) }}
 
         </div>
@@ -297,9 +271,7 @@
 
         <div class="skills">
 
-          <span
-            class="skill-tag"
-            *ngFor="
+          <span class="skill-tag" *ngFor="
               let skill of job.requiredSkills?.slice(0, 4)
             ">
 
@@ -307,9 +279,7 @@
 
           </span>
 
-          <span
-            class="skill-more"
-            *ngIf="
+          <span class="skill-more" *ngIf="
               job.requiredSkills &&
               job.requiredSkills.length > 4
             ">
@@ -321,9 +291,7 @@
         </div>
 
 
-        <div
-          class="deadline"
-          *ngIf="job.applicationDeadline">
+        <div class="deadline" *ngIf="job.applicationDeadline">
 
           <i class="bi bi-calendar-event"></i>
 
@@ -337,10 +305,7 @@
 
       <div class="job-footer">
 
-        <button
-          type="button"
-          class="details-btn"
-          (click)="viewJob(job.id)">
+        <button type="button" class="details-btn" (click)="viewJob(job.id)">
 
           View Details
 
@@ -358,14 +323,9 @@
 
 
 <!-- Job Details Modal -->
-<div
-  class="modal-backdrop-custom"
-  *ngIf="selectedJob"
-  (click)="closeJobDetails()">
+<div class="modal-backdrop-custom" *ngIf="selectedJob" (click)="closeJobDetails()">
 
-  <div
-    class="job-modal"
-    (click)="$event.stopPropagation()">
+  <div class="job-modal" (click)="$event.stopPropagation()">
 
     <div class="modal-header-custom">
 
@@ -377,10 +337,7 @@
 
       </div>
 
-      <button
-        type="button"
-        class="close-btn"
-        (click)="closeJobDetails()">
+      <button type="button" class="close-btn" (click)="closeJobDetails()">
 
         <i class="bi bi-x-lg"></i>
 
@@ -445,9 +402,7 @@
 
         <div class="skills">
 
-          <span
-            class="skill-tag"
-            *ngFor="
+          <span class="skill-tag" *ngFor="
               let skill of selectedJob.requiredSkills
             ">
 
@@ -482,8 +437,8 @@
         <p class="modal-salary">
 
           {{ formatSalary(
-            selectedJob.salaryMin,
-            selectedJob.salaryMax
+          selectedJob.salaryMin,
+          selectedJob.salaryMax
           ) }}
 
         </p>
@@ -491,9 +446,7 @@
       </div>
 
 
-      <div
-        class="detail-section"
-        *ngIf="selectedJob.applicationDeadline">
+      <div class="detail-section" *ngIf="selectedJob.applicationDeadline">
 
         <h4>
           Application Deadline
@@ -502,7 +455,7 @@
         <p>
 
           {{ selectedJob.applicationDeadline
-            | date:'dd MMMM yyyy' }}
+          | date:'dd MMMM yyyy' }}
 
         </p>
 
@@ -513,23 +466,17 @@
 
     <div class="modal-footer-custom">
 
-      <a
-        *ngIf="selectedJob.jobUrl"
-        [href]="selectedJob.jobUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="apply-btn">
-
+      <button type="button" class="apply-btn" [disabled]="
+    selectedJob.status !== 'Open' ||
+    isDeadlinePassed(
+      selectedJob.applicationDeadline
+    )
+  " (click)="openApplyModal()">
         Apply Now
+        <i class="bi bi-send-fill"></i>
+      </button>
 
-        <i class="bi bi-box-arrow-up-right"></i>
-
-      </a>
-
-      <button
-        type="button"
-        class="secondary-btn"
-        (click)="closeJobDetails()">
+      <button type="button" class="secondary-btn" (click)="closeJobDetails()">
 
         Close
 

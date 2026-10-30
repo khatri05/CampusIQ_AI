@@ -1,19 +1,718 @@
-<div class="container py-5">
+<div class="admin-dashboard-page">
 
-  <div class="card shadow-sm">
+  <!-- Header -->
 
-    <div class="card-body">
+  <div class="page-header">
 
-      <h2 class="mb-3">
+    <div>
+
+      <h2>
         Admin Dashboard
       </h2>
 
-      <p class="text-muted">
-        Welcome to CampusIQ AI Administration Portal.
+      <p>
+        Overview of CampusIQ AI system
+        and campus activities.
       </p>
 
-      <div class="alert alert-danger">
-        Admin dashboard loaded successfully.
+    </div>
+
+  </div>
+
+
+  <!-- Error -->
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="state-card"
+  >
+
+    <div class="spinner-border"></div>
+
+    <p>
+      Loading dashboard...
+    </p>
+
+  </div>
+
+
+  <!-- Dashboard -->
+
+  <div
+    *ngIf="!loading && dashboard"
+  >
+
+
+    <!-- Statistics -->
+
+    <div class="stats-grid">
+
+
+      <!-- Students -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon blue">
+
+          <i class="bi bi-people-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Total Students
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.totalStudents
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Faculty -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon purple">
+
+          <i class="bi bi-person-workspace"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Total Faculty
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.totalFaculty
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Departments -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon orange">
+
+          <i class="bi bi-building-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Departments
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.totalDepartments
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Active Jobs -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon green">
+
+          <i class="bi bi-briefcase-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Active Jobs
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.activeJobs
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Applications -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon cyan">
+
+          <i class="bi bi-file-earmark-text-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Applications
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.totalApplications
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Placements -->
+
+      <div class="stat-card">
+
+        <div class="stat-icon success">
+
+          <i class="bi bi-award-fill"></i>
+
+        </div>
+
+        <div>
+
+          <span>
+            Placed Students
+          </span>
+
+          <strong>
+            {{
+              dashboard.statistics.placedStudents
+            }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Middle Section -->
+
+    <div class="dashboard-grid">
+
+
+      <!-- Application Overview -->
+
+      <div class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h4>
+              Application Overview
+            </h4>
+
+            <p>
+              Current application status
+            </p>
+
+          </div>
+
+          <i class="bi bi-bar-chart-fill"></i>
+
+        </div>
+
+
+        <div class="application-stats">
+
+
+          <div class="application-stat">
+
+            <span class="dot blue-dot"></span>
+
+            <span>
+              Applied
+            </span>
+
+            <strong>
+              {{
+                dashboard.applicationStatistics.applied
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <span class="dot orange-dot"></span>
+
+            <span>
+              Shortlisted
+            </span>
+
+            <strong>
+              {{
+                dashboard.applicationStatistics.shortlisted
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <span class="dot green-dot"></span>
+
+            <span>
+              Selected
+            </span>
+
+            <strong>
+              {{
+                dashboard.applicationStatistics.selected
+              }}
+            </strong>
+
+          </div>
+
+
+          <div class="application-stat">
+
+            <span class="dot red-dot"></span>
+
+            <span>
+              Rejected
+            </span>
+
+            <strong>
+              {{
+                dashboard.applicationStatistics.rejected
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Placement Summary -->
+
+      <div class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h4>
+              Placement Summary
+            </h4>
+
+            <p>
+              Overall placement performance
+            </p>
+
+          </div>
+
+          <i class="bi bi-award-fill"></i>
+
+        </div>
+
+
+        <div class="placement-summary">
+
+          <div class="placement-rate">
+
+            <strong>
+              {{
+                dashboard.statistics.placementRate
+              }}%
+            </strong>
+
+            <span>
+              Application Selection Rate
+            </span>
+
+          </div>
+
+
+          <div class="placement-info">
+
+            <div>
+
+              <span>
+                Total Applications
+              </span>
+
+              <strong>
+                {{
+                  dashboard.statistics.totalApplications
+                }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Selected
+              </span>
+
+              <strong>
+                {{
+                  dashboard.statistics.placedStudents
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Bottom Section -->
+
+    <div class="dashboard-grid">
+
+
+      <!-- Recent Jobs -->
+
+      <div class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h4>
+              Recent Job Opportunities
+            </h4>
+
+            <p>
+              Latest jobs posted
+            </p>
+
+          </div>
+
+
+          <a
+            routerLink="/admin/job-opportunities"
+            class="view-link"
+          >
+            View All
+          </a>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            dashboard.recentJobs.length > 0
+          "
+          class="recent-list"
+        >
+
+          <div
+            class="recent-item"
+            *ngFor="
+              let job of dashboard.recentJobs
+            "
+          >
+
+            <div class="recent-icon blue">
+
+              <i class="bi bi-briefcase-fill"></i>
+
+            </div>
+
+
+            <div class="recent-content">
+
+              <strong>
+                {{ getJobTitle(job) }}
+              </strong>
+
+              <span>
+                {{ getCompanyName(job) }}
+              </span>
+
+            </div>
+
+
+            <span
+              class="job-status"
+              [class.closed]="
+                job.status === 'closed'
+              "
+            >
+
+              {{
+                job.status || 'active'
+              }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            dashboard.recentJobs.length === 0
+          "
+          class="empty-mini"
+        >
+
+          No recent jobs found.
+
+        </div>
+
+      </div>
+
+
+      <!-- Recent Applications -->
+
+      <div class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h4>
+              Recent Applications
+            </h4>
+
+            <p>
+              Latest student applications
+            </p>
+
+          </div>
+
+
+          <a
+            routerLink="/admin/applications"
+            class="view-link"
+          >
+            View All
+          </a>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            dashboard.recentApplications.length > 0
+          "
+          class="recent-list"
+        >
+
+          <div
+            class="recent-item"
+            *ngFor="
+              let application
+              of dashboard.recentApplications
+            "
+          >
+
+            <div class="recent-icon green">
+
+              <i class="bi bi-file-earmark-text-fill"></i>
+
+            </div>
+
+
+            <div class="recent-content">
+
+              <strong>
+                {{
+                  getApplicationStudent(
+                    application
+                  )
+                }}
+              </strong>
+
+              <span>
+                {{
+                  getApplicationCompany(
+                    application
+                  )
+                }}
+                -
+                {{
+                  getApplicationJob(
+                    application
+                  )
+                }}
+              </span>
+
+            </div>
+
+
+            <span
+              class="status-badge"
+              [ngClass]="
+                getStatusClass(application)
+              "
+            >
+
+              {{
+                getStatusLabel(application)
+              }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            dashboard.recentApplications.length === 0
+          "
+          class="empty-mini"
+        >
+
+          No recent applications found.
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Quick Actions -->
+
+    <div class="quick-actions-card">
+
+      <div>
+
+        <h4>
+          Quick Actions
+        </h4>
+
+        <p>
+          Manage important CampusIQ AI
+          resources.
+        </p>
+
+      </div>
+
+
+      <div class="quick-actions">
+
+
+        <a
+          routerLink="/admin/students"
+          class="quick-action"
+        >
+
+          <i class="bi bi-people-fill"></i>
+
+          Students
+
+        </a>
+
+
+        <a
+          routerLink="/admin/faculty"
+          class="quick-action"
+        >
+
+          <i class="bi bi-person-workspace"></i>
+
+          Faculty
+
+        </a>
+
+
+        <a
+          routerLink="/admin/departments"
+          class="quick-action"
+        >
+
+          <i class="bi bi-building-fill"></i>
+
+          Departments
+
+        </a>
+
+
+        <a
+          routerLink="/admin/job-opportunities"
+          class="quick-action"
+        >
+
+          <i class="bi bi-briefcase-fill"></i>
+
+          Jobs
+
+        </a>
+
+
+        <a
+          routerLink="/admin/applications"
+          class="quick-action"
+        >
+
+          <i class="bi bi-file-earmark-text-fill"></i>
+
+          Applications
+
+        </a>
+
+
+        <a
+          routerLink="/admin/placements"
+          class="quick-action"
+        >
+
+          <i class="bi bi-award-fill"></i>
+
+          Placements
+
+        </a>
+
       </div>
 
     </div>

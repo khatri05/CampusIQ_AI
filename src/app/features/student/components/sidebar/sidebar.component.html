@@ -2,77 +2,208 @@
 
   <!-- Logo -->
   <div class="sidebar-header">
+
     <div class="logo">
-      <span class="logo-icon">C</span>
+
+      <div class="logo-icon">
+        <i class="bi bi-mortarboard-fill"></i>
+      </div>
 
       <div>
-        <h4>CampusIQ</h4>
-        <small>AI Campus</small>
+        <h4>CampusIQ AI</h4>
+        <small>Student Portal</small>
       </div>
+
     </div>
+
   </div>
+
 
   <!-- Navigation -->
   <nav class="sidebar-nav">
 
-    <a routerLink="/student/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="nav-item">
-      <span>⌂</span>
-      <span>Dashboard</span>
+    <!-- MAIN -->
+    <div class="nav-section">
+      MAIN
+    </div>
+
+
+    <a
+      routerLink="/student/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-grid-1x2-fill"></i>
+      </span>
+
+      <span>
+        Dashboard
+      </span>
+
     </a>
 
-    <a routerLink="/student/profile" routerLinkActive="active" class="nav-item">
-      <span>👤</span>
-      <span>My Profile</span>
+
+    <a
+      routerLink="/student/profile"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-person-circle"></i>
+      </span>
+
+      <span>
+        Profile
+      </span>
+
     </a>
 
+
+    <!-- ACADEMICS -->
     <div class="nav-section">
       ACADEMICS
     </div>
 
-    <a routerLink="/student/performance" routerLinkActive="active" class="nav-item">
-      <span>📊</span>
-      <span>Performance</span>
+
+    <a
+      routerLink="/student/performance"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-graph-up-arrow"></i>
+      </span>
+
+      <span>
+        Performance
+      </span>
+
     </a>
 
-    <a routerLink="/student/attendance" routerLinkActive="active" class="nav-item">
-      <span>📅</span>
-      <span>Attendance</span>
+
+    <a
+      routerLink="/student/attendance"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-calendar-check-fill"></i>
+      </span>
+
+      <span>
+        Attendance
+      </span>
+
     </a>
 
-    <a routerLink="/student/marks" routerLinkActive="active" class="nav-item">
-      <span>📝</span>
-      <span>Marks</span>
+
+    <a
+      routerLink="/student/marks"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-bar-chart-fill"></i>
+      </span>
+
+      <span>
+        Marks
+      </span>
+
     </a>
 
-    <a routerLink="/student/assignments" routerLinkActive="active" class="nav-item">
-      <span>📚</span>
-      <span>Assignments</span>
+
+    <a
+      routerLink="/student/assignments"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-file-earmark-text-fill"></i>
+      </span>
+
+      <span>
+        Assignments
+      </span>
+
     </a>
 
-    <a routerLink="/student/skills" routerLinkActive="active" class="nav-item">
-      <span>💡</span>
-      <span>Skills</span>
+
+    <a
+      routerLink="/student/skills"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-lightbulb-fill"></i>
+      </span>
+
+      <span>
+        Skills
+      </span>
+
     </a>
 
-    <a routerLink="/student/certifications" routerLinkActive="active" class="nav-item">
-      <span>🎓</span>
-      <span>Certifications</span>
+
+    <a
+      routerLink="/student/certifications"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-award-fill"></i>
+      </span>
+
+      <span>
+        Certifications
+      </span>
+
     </a>
 
-    <a routerLink="/student/projects" routerLinkActive="active" class="nav-item">
-      <span>📁</span>
-      <span>Projects</span>
+
+    <a
+      routerLink="/student/projects"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-folder-fill"></i>
+      </span>
+
+      <span>
+        Projects
+      </span>
+
     </a>
 
+
+    <!-- AI INSIGHTS -->
     <div class="nav-section">
       AI INSIGHTS
     </div>
 
-    <a routerLink="/student/digital-twin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
 
-      <i class="bi bi-cpu"></i>
+    <a
+      routerLink="/student/digital-twin"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-cpu-fill"></i>
+      </span>
 
       <span>
         AI Digital Twin
@@ -81,10 +212,16 @@
     </a>
 
 
-    <a routerLink="/student/performance-analysis" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
+    <a
+      routerLink="/student/performance-analysis"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
 
-      <i class="bi bi-bar-chart-line"></i>
+      <span>
+        <i class="bi bi-bar-chart-line-fill"></i>
+      </span>
 
       <span>
         Performance Analysis
@@ -93,10 +230,16 @@
     </a>
 
 
-    <a routerLink="/student/skill-gap-analysis" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
+    <a
+      routerLink="/student/skill-gap-analysis"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
 
-      <i class="bi bi-bullseye"></i>
+      <span>
+        <i class="bi bi-bullseye"></i>
+      </span>
 
       <span>
         Skill Gap Analysis
@@ -105,10 +248,16 @@
     </a>
 
 
-    <a routerLink="/student/ai-recommendations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
+    <a
+      routerLink="/student/ai-recommendations"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
 
-      <i class="bi bi-stars"></i>
+      <span>
+        <i class="bi bi-stars"></i>
+      </span>
 
       <span>
         AI Recommendations
@@ -116,14 +265,23 @@
 
     </a>
 
+
+    <!-- CAREER -->
     <div class="nav-section">
       CAREER
     </div>
 
-    <a routerLink="/student/placement-readiness" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
 
-      <i class="bi bi-briefcase-fill"></i>
+    <a
+      routerLink="/student/placement-readiness"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
+
+      <span>
+        <i class="bi bi-briefcase-fill"></i>
+      </span>
 
       <span>
         Placement Readiness
@@ -131,32 +289,60 @@
 
     </a>
 
-    <a routerLink="/student/job-opportunities" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
 
-      <i class="bi bi-briefcase"></i>
+    <a
+      routerLink="/student/job-opportunities"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
 
-      <span>Job Opportunities</span>
+      <span>
+        <i class="bi bi-briefcase"></i>
+      </span>
+
+      <span>
+        Job Opportunities
+      </span>
 
     </a>
 
-    <a routerLink="/student/job-applications" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      class="sidebar-link">
 
-      <i class="bi bi-file-earmark-text"></i>
+    <a
+      routerLink="/student/job-applications"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-item"
+    >
 
-      <span>My Applications</span>
+      <span>
+        <i class="bi bi-file-earmark-text"></i>
+      </span>
+
+      <span>
+        My Applications
+      </span>
 
     </a>
 
   </nav>
 
-  <!-- Logout -->
+
+  <!-- Footer -->
   <div class="sidebar-footer">
 
-    <button type="button" class="logout-btn" (click)="logout()">
-      <span>↪</span>
-      Logout
+    <button
+      type="button"
+      class="logout-btn"
+      (click)="logout()"
+    >
+
+      <i class="bi bi-box-arrow-right"></i>
+
+      <span>
+        Logout
+      </span>
+
     </button>
 
   </div>

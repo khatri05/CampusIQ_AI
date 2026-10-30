@@ -1,26 +1,88 @@
 <header class="top-navbar">
 
-  <div>
-    <h3>Student Dashboard</h3>
-    <p>Welcome back to CampusIQ AI</p>
+  <!-- =========================
+       SEARCH
+  ========================== -->
+
+  <div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (input)="onSearch()"
+      placeholder="Search assignments, projects, skills..."
+    />
+
   </div>
 
-  <div class="navbar-actions">
 
-    <button class="notification-btn">
-      🔔
-      <span class="notification-badge">3</span>
+  <!-- =========================
+       RIGHT SIDE
+  ========================== -->
+
+  <div class="navbar-right">
+
+    <!-- Notification -->
+
+    <button
+      type="button"
+      class="notification-btn"
+      (click)="openNotifications()"
+      title="Notifications"
+    >
+
+      <i class="bi bi-bell"></i>
+
+      @if (notificationCount > 0) {
+
+        <span class="notification-badge">
+
+          {{
+            notificationCount > 99
+              ? '99+'
+              : notificationCount
+          }}
+
+        </span>
+
+      }
+
     </button>
 
-    <div class="user-profile">
 
-      <div class="avatar">
-        S
+    <!-- Divider -->
+
+    <div class="navbar-divider"></div>
+
+
+    <!-- Student Profile -->
+
+    <div class="student-profile">
+
+      <div class="profile-avatar">
+
+        {{ initials }}
+
       </div>
 
-      <div class="user-info">
-        <strong>Student</strong>
-        <small>Student</small>
+
+      <div class="profile-details">
+
+        <span class="profile-name">
+
+          {{ studentName }}
+
+        </span>
+
+
+        <span class="profile-role">
+
+          {{ studentRole }}
+
+        </span>
+
       </div>
 
     </div>

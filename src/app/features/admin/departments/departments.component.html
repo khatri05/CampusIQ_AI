@@ -1,0 +1,683 @@
+<div class="departments-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+      <h2>Departments</h2>
+
+      <p>
+        Manage and monitor college departments
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- SUCCESS MESSAGE -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+    <i class="bi bi-check-circle me-2"></i>
+
+    {{ successMessage }}
+  </div>
+
+
+  <!-- ERROR MESSAGE -->
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+    <i class="bi bi-exclamation-circle me-2"></i>
+
+    {{ errorMessage }}
+  </div>
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-building"></i>
+      </div>
+
+      <div>
+        <span>Total Departments</span>
+
+        <h3>
+          {{ totalDepartments }}
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+        <span>Active</span>
+
+        <h3>
+          {{ activeDepartments }}
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon red">
+        <i class="bi bi-x-circle"></i>
+      </div>
+
+      <div>
+        <span>Inactive</span>
+
+        <h3>
+          {{ inactiveDepartments }}
+        </h3>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CONTENT CARD -->
+
+  <div class="content-card">
+
+    <!-- TOOLBAR -->
+
+    <div class="table-toolbar">
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Search departments..."
+        />
+
+        <button
+          *ngIf="searchTerm"
+          type="button"
+          class="clear-search"
+          (click)="clearSearch()"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+
+      </div>
+
+      <button
+        type="button"
+        class="refresh-btn"
+        (click)="loadDepartments()"
+        [disabled]="loading"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+      </button>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      *ngIf="loading && departments.length === 0"
+      class="loading-state"
+    >
+
+      <div
+        class="spinner-border text-primary"
+        role="status"
+      ></div>
+
+      <p>
+        Loading departments...
+      </p>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div
+      *ngIf="!loading || departments.length > 0"
+      class="table-responsive"
+    >
+
+      <table class="departments-table">
+
+        <thead>
+
+          <tr>
+
+            <th>#</th>
+
+            <th>Department</th>
+
+            <th>Code</th>
+
+            <th>HOD</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let department of filteredDepartments;
+              let i = index
+            "
+          >
+
+            <!-- NUMBER -->
+
+            <td>
+              {{ i + 1 }}
+            </td>
+
+
+            <!-- DEPARTMENT -->
+
+            <td>
+
+              <div class="department-info">
+
+                <div class="department-icon">
+                  <i class="bi bi-building"></i>
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ department.name || 'N/A' }}
+                  </strong>
+
+                  <small
+                    *ngIf="department.description"
+                  >
+                    {{ department.description }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- CODE -->
+
+            <td>
+
+              <span class="code-badge">
+                {{ department.code || 'N/A' }}
+              </span>
+
+            </td>
+
+
+            <!-- HOD -->
+
+            <td>
+
+              <span
+                *ngIf="department.hod"
+              >
+                {{ department.hod }}
+              </span>
+
+              <span
+                *ngIf="!department.hod"
+                class="text-muted"
+              >
+                Not assigned
+              </span>
+
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+              <span
+                class="status-badge"
+                [class.active]="
+                  !department.status ||
+                  department.status
+                    .toLowerCase() === 'active'
+                "
+                [class.inactive]="
+                  department.status
+                    ?.toLowerCase() === 'inactive'
+                "
+              >
+
+                {{
+                  department.status || 'Active'
+                }}
+
+              </span>
+
+            </td>
+
+
+            <!-- ACTIONS -->
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  class="action-btn view"
+                  title="View"
+                  (click)="viewDepartment(department)"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Edit"
+                  (click)="editDepartment(department)"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  title="Delete"
+                  (click)="deleteDepartment(department)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- EMPTY -->
+
+          <tr
+            *ngIf="
+              !loading &&
+              filteredDepartments.length === 0
+            "
+          >
+
+            <td
+              colspan="6"
+              class="empty-state"
+            >
+
+              <i class="bi bi-building"></i>
+
+              <h5>
+                No departments found
+              </h5>
+
+              <p>
+                Try changing your search criteria.
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div
+  *ngIf="showViewModal && selectedDepartment"
+  class="modal-overlay"
+  (click)="closeViewModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Department Details
+        </h4>
+
+        <p>
+          View department information
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeViewModal()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="profile-header">
+
+        <div class="large-department-icon">
+          <i class="bi bi-building"></i>
+        </div>
+
+        <div>
+
+          <h3>
+            {{ selectedDepartment.name }}
+          </h3>
+
+          <span class="code-badge">
+            {{ selectedDepartment.code }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+
+          <label>Department Name</label>
+
+          <span>
+            {{ selectedDepartment.name || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>Department Code</label>
+
+          <span>
+            {{ selectedDepartment.code || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>Head of Department</label>
+
+          <span>
+            {{ selectedDepartment.hod || 'Not assigned' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>Status</label>
+
+          <span>
+            {{ selectedDepartment.status || 'Active' }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="detail-item full-width"
+          *ngIf="selectedDepartment.description"
+        >
+
+          <label>Description</label>
+
+          <span>
+            {{ selectedDepartment.description }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeViewModal()"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- EDIT MODAL -->
+
+<div
+  *ngIf="showEditModal && editingDepartment"
+  class="modal-overlay"
+  (click)="closeEditModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Edit Department
+        </h4>
+
+        <p>
+          Update department information
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeEditModal()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>
+            Department Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="editingDepartment.name"
+            class="form-control"
+            placeholder="Enter department name"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Department Code
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="editingDepartment.code"
+            class="form-control"
+            placeholder="Enter department code"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Head of Department
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="editingDepartment.hod"
+            class="form-control"
+            placeholder="Enter HOD name"
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Status
+          </label>
+
+          <select
+            [(ngModel)]="editingDepartment.status"
+            class="form-control"
+          >
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="inactive">
+              Inactive
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            [(ngModel)]="editingDepartment.description"
+            class="form-control"
+            rows="4"
+            placeholder="Enter department description"
+          ></textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeEditModal()"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="saveDepartment()"
+        [disabled]="loading"
+      >
+
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"
+        ></span>
+
+        <i
+          *ngIf="!loading"
+          class="bi bi-check-lg me-1"
+        ></i>
+
+        Save Changes
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

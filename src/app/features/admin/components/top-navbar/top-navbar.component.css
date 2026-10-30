@@ -1,0 +1,226 @@
+.top-navbar {
+  height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 30px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  position: sticky;
+  top: 0;
+
+  z-index: 900;
+}
+
+
+/* Search */
+
+.search-container {
+  position: relative;
+  width: 420px;
+}
+
+
+.search-container i {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #9ca3af;
+}
+
+
+.search-container input {
+  width: 100%;
+  height: 42px;
+
+  padding: 0 15px 0 42px;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 9px;
+
+  background: #f9fafb;
+
+  outline: none;
+
+  font-size: 14px;
+}
+
+
+.search-container input:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+}
+
+
+/* Right */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+
+.notification-btn {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #f9fafb;
+
+  color: #4b5563;
+
+  cursor: pointer;
+
+  font-size: 18px;
+}
+
+
+.notification-btn:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+
+.notification-badge {
+  position: absolute;
+
+  top: -3px;
+  right: -3px;
+
+  min-width: 17px;
+  height: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 4px;
+
+  background: #ef4444;
+
+  color: #ffffff;
+
+  border-radius: 20px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.divider {
+  width: 1px;
+  height: 34px;
+  background: #e5e7eb;
+}
+
+
+/* Admin */
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.admin-avatar {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+.admin-info strong {
+  display: block;
+
+  color: #111827;
+
+  font-size: 13px;
+}
+
+
+.admin-info small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #9ca3af;
+
+  font-size: 11px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 992px) {
+
+  .search-container {
+    width: 320px;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .top-navbar {
+    padding: 0 20px;
+  }
+
+  .search-container {
+    width: 250px;
+  }
+
+  .admin-info {
+    display: none;
+  }
+
+}
+
+
+@media (max-width: 576px) {
+
+  .top-navbar {
+    padding: 0 15px;
+  }
+
+  .search-container {
+    width: 180px;
+  }
+
+  .divider {
+    display: none;
+  }
+
+}

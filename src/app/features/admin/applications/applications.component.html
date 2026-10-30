@@ -1,0 +1,887 @@
+<div class="applications-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>Applications</h2>
+
+      <p>
+        Monitor and manage student job applications
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUCCESS -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+
+    <i class="bi bi-check-circle me-2"></i>
+
+    {{ successMessage }}
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+
+    <i class="bi bi-exclamation-circle me-2"></i>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        <i class="bi bi-file-earmark-text"></i>
+      </div>
+
+      <div>
+
+        <span>Total Applications</span>
+
+        <h3>
+          {{ totalApplications }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        <i class="bi bi-hourglass"></i>
+      </div>
+
+      <div>
+
+        <span>Applied</span>
+
+        <h3>
+          {{ appliedApplications }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon orange">
+        <i class="bi bi-star"></i>
+      </div>
+
+      <div>
+
+        <span>Shortlisted</span>
+
+        <h3>
+          {{ shortlistedApplications }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div>
+
+        <span>Selected</span>
+
+        <h3>
+          {{ selectedApplications }}
+        </h3>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- TABLE CARD -->
+
+  <div class="content-card">
+
+    <!-- TOOLBAR -->
+
+    <div class="filter-toolbar">
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Search student ID, job ID..."
+        />
+
+        <button
+          *ngIf="searchTerm"
+          type="button"
+          class="clear-search"
+          (click)="clearFilters()"
+        >
+
+          <i class="bi bi-x"></i>
+
+        </button>
+
+      </div>
+
+
+      <select
+        class="filter-select"
+        [(ngModel)]="statusFilter"
+        (change)="onStatusChange()"
+      >
+
+        <option value="all">
+          All Status
+        </option>
+
+        <option value="Applied">
+          Applied
+        </option>
+
+        <option value="Shortlisted">
+          Shortlisted
+        </option>
+
+        <option value="Interview">
+          Interview
+        </option>
+
+        <option value="Selected">
+          Selected
+        </option>
+
+        <option value="Rejected">
+          Rejected
+        </option>
+
+        <option value="Withdrawn">
+          Withdrawn
+        </option>
+
+      </select>
+
+
+      <button
+        type="button"
+        class="refresh-btn"
+        (click)="loadApplications()"
+        [disabled]="loading"
+      >
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-responsive">
+
+      <table class="applications-table">
+
+        <thead>
+
+          <tr>
+
+            <th>#</th>
+
+            <th>Student ID</th>
+
+            <th>Job ID</th>
+
+            <th>Applied On</th>
+
+            <th>Status</th>
+
+            <th>Reviewed On</th>
+
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let application of filteredApplications;
+              let i = index
+            "
+          >
+
+            <td>
+              {{ i + 1 }}
+            </td>
+
+
+            <td>
+
+              <div class="id-info">
+
+                <div class="id-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+
+                <span>
+                  {{ application.studentId || 'N/A' }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <td>
+
+              <span class="job-id">
+
+                <i class="bi bi-briefcase me-1"></i>
+
+                {{ application.jobId || 'N/A' }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              {{
+                formatDate(
+                  application.appliedAt
+                )
+              }}
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-badge"
+                [ngClass]="
+                  getStatusClass(
+                    application.status
+                  )
+                "
+              >
+
+                {{
+                  application.status ||
+                  'Applied'
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              {{
+                formatDate(
+                  application.reviewedAt
+                )
+              }}
+
+            </td>
+
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  type="button"
+                  class="action-btn view"
+                  title="View"
+                  (click)="
+                    viewApplication(application)
+                  "
+                >
+
+                  <i class="bi bi-eye"></i>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-btn edit"
+                  title="Update Status"
+                  (click)="
+                    editApplication(application)
+                  "
+                >
+
+                  <i class="bi bi-pencil"></i>
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  title="Delete"
+                  (click)="
+                    deleteApplication(application)
+                  "
+                >
+
+                  <i class="bi bi-trash"></i>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- EMPTY -->
+
+          <tr
+            *ngIf="
+              !loading &&
+              filteredApplications.length === 0
+            "
+          >
+
+            <td
+              colspan="7"
+              class="empty-state"
+            >
+
+              <i class="bi bi-file-earmark-text"></i>
+
+              <h5>
+                No applications found
+              </h5>
+
+              <p>
+                Try changing your search or filter.
+              </p>
+
+            </td>
+
+          </tr>
+
+
+          <!-- LOADING -->
+
+          <tr
+            *ngIf="
+              loading &&
+              applications.length === 0
+            "
+          >
+
+            <td
+              colspan="7"
+              class="loading-state"
+            >
+
+              <div
+                class="spinner-border text-primary"
+              ></div>
+
+              <p>
+                Loading applications...
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- VIEW MODAL -->
+
+<div
+  *ngIf="
+    showViewModal &&
+    selectedApplication
+  "
+  class="modal-overlay"
+  (click)="closeViewModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Application Details
+        </h4>
+
+        <p>
+          Complete application information
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeViewModal()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="application-header">
+
+        <div class="large-user-icon">
+
+          <i class="bi bi-person"></i>
+
+        </div>
+
+        <div>
+
+          <h3>
+            Student Application
+          </h3>
+
+          <p>
+            {{ selectedApplication.studentId }}
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+
+          <label>
+            Student ID
+          </label>
+
+          <span>
+            {{ selectedApplication.studentId || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Job ID
+          </label>
+
+          <span>
+            {{ selectedApplication.jobId || 'N/A' }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Status
+          </label>
+
+          <span
+            class="status-badge"
+            [ngClass]="
+              getStatusClass(
+                selectedApplication.status
+              )
+            "
+          >
+            {{ selectedApplication.status }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Applied On
+          </label>
+
+          <span>
+            {{
+              formatDate(
+                selectedApplication.appliedAt
+              )
+            }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Reviewed On
+          </label>
+
+          <span>
+            {{
+              formatDate(
+                selectedApplication.reviewedAt
+              )
+            }}
+          </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <label>
+            Application ID
+          </label>
+
+          <span class="small-id">
+            {{ selectedApplication.id }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="detail-item full-width"
+        >
+
+          <label>
+            Cover Letter
+          </label>
+
+          <p class="description">
+
+            {{
+              selectedApplication.coverLetter ||
+              'No cover letter provided.'
+            }}
+
+          </p>
+
+        </div>
+
+
+        <div
+          class="detail-item full-width"
+        >
+
+          <label>
+            Remarks
+          </label>
+
+          <p class="description">
+
+            {{
+              selectedApplication.remarks ||
+              'No remarks.'
+            }}
+
+          </p>
+
+        </div>
+
+
+        <div
+          class="detail-item full-width"
+          *ngIf="
+            selectedApplication.resumeUrl
+          "
+        >
+
+          <label>
+            Resume
+          </label>
+
+          <a
+            [href]="
+              selectedApplication.resumeUrl
+            "
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+
+            <i class="bi bi-file-earmark-pdf me-1"></i>
+
+            View Resume
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeViewModal()"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- EDIT STATUS MODAL -->
+
+<div
+  *ngIf="
+    showEditModal &&
+    editingApplication
+  "
+  class="modal-overlay"
+  (click)="closeEditModal()"
+>
+
+  <div
+    class="custom-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="modal-header">
+
+      <div>
+
+        <h4>
+          Update Application
+        </h4>
+
+        <p>
+          Change application status and remarks
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="modal-close"
+        (click)="closeEditModal()"
+      >
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>
+            Student ID
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [value]="
+              editingApplication.studentId
+            "
+            disabled
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Job ID
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            [value]="
+              editingApplication.jobId
+            "
+            disabled
+          />
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            Application Status
+          </label>
+
+          <select
+            class="form-control"
+            [(ngModel)]="
+              editingApplication.status
+            "
+          >
+
+            <option value="Applied">
+              Applied
+            </option>
+
+            <option value="Shortlisted">
+              Shortlisted
+            </option>
+
+            <option value="Interview">
+              Interview
+            </option>
+
+            <option value="Selected">
+              Selected
+            </option>
+
+            <option value="Rejected">
+              Rejected
+            </option>
+
+            <option value="Withdrawn">
+              Withdrawn
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+          <label>
+            Remarks
+          </label>
+
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="
+              editingApplication.remarks
+            "
+            placeholder="Enter remarks..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="closeEditModal()"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="saveApplicationStatus()"
+        [disabled]="loading"
+      >
+
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"
+        ></span>
+
+        <i
+          *ngIf="!loading"
+          class="bi bi-check-lg me-1"
+        ></i>
+
+        Update Application
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

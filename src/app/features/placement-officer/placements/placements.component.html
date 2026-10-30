@@ -1,0 +1,609 @@
+<div class="placements-page">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Placements
+      </h2>
+
+      <p>
+        Track successfully placed students
+        and placement outcomes.
+      </p>
+
+    </div>
+
+
+    <div class="header-count">
+
+      <i class="bi bi-award-fill"></i>
+
+      <span>
+        {{ filteredPlacements.length }}
+        Placements
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- Error -->
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+
+    <i
+      class="bi bi-exclamation-triangle-fill"
+    ></i>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- Statistics -->
+
+  <div
+    *ngIf="!loading"
+    class="stats-grid"
+  >
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+
+        <i class="bi bi-people-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Total Placements
+        </span>
+
+        <strong>
+          {{ statistics.totalPlacements }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+
+        <i class="bi bi-building-fill"></i>
+
+      </div>
+
+      <div>
+
+        <span>
+          Companies
+        </span>
+
+        <strong>
+          {{ statistics.totalCompanies }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Filters -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <i class="bi bi-search"></i>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (input)="applyFilters()"
+        placeholder="Search student, company, job..."
+      />
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label>
+        Company
+      </label>
+
+      <select
+        [(ngModel)]="companyFilter"
+        (change)="applyFilters()"
+      >
+
+        <option value="all">
+          All Companies
+        </option>
+
+        <option
+          *ngFor="let company of companies"
+          [value]="company"
+        >
+          {{ company }}
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn-clear"
+      (click)="clearFilters()"
+    >
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+      Clear
+
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="state-card"
+  >
+
+    <div class="spinner-border"></div>
+
+    <p>
+      Loading placements...
+    </p>
+
+  </div>
+
+
+  <!-- Table -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredPlacements.length > 0
+    "
+    class="table-card"
+  >
+
+    <div class="table-responsive">
+
+      <table class="placements-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Company
+            </th>
+
+            <th>
+              Position
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Placement Date
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let placement of filteredPlacements;
+              trackBy: trackByPlacement
+            "
+          >
+
+            <!-- Student -->
+
+            <td>
+
+              <div class="student-cell">
+
+                <div class="student-avatar">
+
+                  {{
+                    getStudentName(placement)
+                      .charAt(0)
+                      .toUpperCase()
+                  }}
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {{ getStudentName(placement) }}
+                  </strong>
+
+                  <small>
+                    {{
+                      placement.enrollmentNumber ||
+                      '-'
+                    }}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- Company -->
+
+            <td>
+
+              <div class="company-cell">
+
+                <i class="bi bi-building-fill"></i>
+
+                <span>
+                  {{ getCompanyName(placement) }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- Position -->
+
+            <td>
+
+              <strong>
+                {{ getJobTitle(placement) }}
+              </strong>
+
+            </td>
+
+
+            <!-- Email -->
+
+            <td>
+
+              {{ placement.studentEmail || '-' }}
+
+            </td>
+
+
+            <!-- Date -->
+
+            <td>
+
+              {{ getPlacementDate(placement) }}
+
+            </td>
+
+
+            <!-- Status -->
+
+            <td>
+
+              <span class="status-badge">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Selected
+
+              </span>
+
+            </td>
+
+
+            <!-- Actions -->
+
+            <td>
+
+              <button
+                type="button"
+                class="action-btn"
+                title="View Placement"
+                (click)="
+                  openViewModal(placement)
+                "
+              >
+
+                <i class="bi bi-eye-fill"></i>
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- Empty -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredPlacements.length === 0
+    "
+    class="empty-state"
+  >
+
+    <div class="empty-icon">
+
+      <i class="bi bi-award"></i>
+
+    </div>
+
+    <h4>
+      No Placements Found
+    </h4>
+
+    <p>
+      Students will appear here after
+      their applications are marked
+      as selected.
+    </p>
+
+    <button
+      type="button"
+      class="btn-clear"
+      (click)="clearFilters()"
+    >
+
+      Clear Filters
+
+    </button>
+
+  </div>
+
+
+  <!-- View Modal -->
+
+  <div
+    *ngIf="
+      showViewModal &&
+      selectedPlacement
+    "
+    class="modal-overlay"
+    (click)="closeViewModal()"
+  >
+
+    <div
+      class="placement-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="modal-header">
+
+        <div>
+
+          <h4>
+            Placement Details
+          </h4>
+
+          <p>
+            Selected student information
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close-btn"
+          (click)="closeViewModal()"
+        >
+
+          <i class="bi bi-x-lg"></i>
+
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="detail-section">
+
+          <h6>
+            Student Information
+          </h6>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Student
+              </span>
+
+              <strong>
+                {{
+                  getStudentName(
+                    selectedPlacement
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Enrollment Number
+              </span>
+
+              <strong>
+                {{
+                  selectedPlacement.enrollmentNumber ||
+                  '-'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Email
+              </span>
+
+              <strong>
+                {{
+                  selectedPlacement.studentEmail ||
+                  '-'
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+          <h6>
+            Placement Information
+          </h6>
+
+          <div class="detail-grid">
+
+            <div class="detail-item">
+
+              <span>
+                Company
+              </span>
+
+              <strong>
+                {{
+                  getCompanyName(
+                    selectedPlacement
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Position
+              </span>
+
+              <strong>
+                {{
+                  getJobTitle(
+                    selectedPlacement
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Placement Date
+              </span>
+
+              <strong>
+                {{
+                  getPlacementDate(
+                    selectedPlacement
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+              <span>
+                Status
+              </span>
+
+              <strong class="selected-text">
+                Selected
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="closeViewModal()"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

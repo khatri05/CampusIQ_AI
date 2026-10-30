@@ -1,6 +1,7 @@
 import {
   Component,
-  OnInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 
 import {
@@ -90,7 +91,7 @@ interface SubjectAttendance {
 
 
 export class AttendanceComponent
-  implements OnInit {
+  implements OnInit, OnDestroy {
 
 
   /* ========================================
@@ -100,6 +101,15 @@ export class AttendanceComponent
   loading = true;
 
   errorMessage = '';
+
+  refreshing = false;
+
+  private refreshTimer:
+    ReturnType<typeof setInterval> | null = null;
+
+  private refreshInProgress = false;
+
+  private readonly refreshIntervalMs = 30000;
 
 
   /* ========================================
@@ -169,18 +179,80 @@ export class AttendanceComponent
 
     await this.loadAttendance();
 
+    // Refresh the student's attendance periodically so updates
+    // made by faculty appear without requiring a page reload.
+    this.refreshTimer = setInterval(() => {
+      if (!document.hidden) {
+        void this.loadAttendance(false);
+      }
+    }, this.refreshIntervalMs);
+
+    // Refresh immediately when the student returns to this tab.
+    document.addEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange
+    );
+
+    window.addEventListener(
+      'focus',
+      this.handleWindowFocus
+    );
+
   }
+
+
+  ngOnDestroy(): void {
+
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+
+    document.removeEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange
+    );
+
+    window.removeEventListener(
+      'focus',
+      this.handleWindowFocus
+    );
+
+  }
+
+
+  private handleVisibilityChange = (): void => {
+    if (!document.hidden) {
+      void this.loadAttendance(false);
+    }
+  };
+
+
+  private handleWindowFocus = (): void => {
+    void this.loadAttendance(false);
+  };
 
 
   /* ========================================
      Load Attendance
   ======================================== */
 
-  async loadAttendance(): Promise<void> {
+  async loadAttendance(showLoader = true): Promise<void> {
+
+    // Prevent overlapping requests from polling, focus, and manual refresh.
+    if (this.refreshInProgress) {
+      return;
+    }
+
+    this.refreshInProgress = true;
 
     try {
 
-      this.loading = true;
+      if (showLoader) {
+        this.loading = true;
+      } else {
+        this.refreshing = true;
+      }
 
       this.errorMessage = '';
 
@@ -240,14 +312,19 @@ export class AttendanceComponent
          Build Semesters
       ------------------------------------ */
 
+      const previousSemester = this.selectedSemester;
+
       this.buildAvailableSemesters();
 
-
-      /* ------------------------------------
-         Select Student Semester
-      ------------------------------------ */
-
-      this.setDefaultSemester();
+      // Keep the student's current selection if it still exists.
+      if (
+        previousSemester !== 'Current Semester' &&
+        this.availableSemesters.includes(previousSemester)
+      ) {
+        this.selectedSemester = previousSemester;
+      } else {
+        this.setDefaultSemester();
+      }
 
 
       /* ------------------------------------
@@ -276,6 +353,8 @@ export class AttendanceComponent
     finally {
 
       this.loading = false;
+      this.refreshing = false;
+      this.refreshInProgress = false;
 
     }
 
@@ -947,6 +1026,13 @@ export class AttendanceComponent
   /* ========================================
      Retry
   ======================================== */
+
+  async refreshAttendance(): Promise<void> {
+
+    await this.loadAttendance(false);
+
+  }
+
 
   async retry(): Promise<void> {
 

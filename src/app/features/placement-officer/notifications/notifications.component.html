@@ -1,0 +1,282 @@
+<div class="notifications-page">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
+        Notifications
+      </h2>
+
+      <p>
+        Stay updated with placement
+        activities and applications.
+      </p>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <div class="notification-count">
+
+        <i class="bi bi-bell-fill"></i>
+
+        <span>
+          {{ getUnreadCount() }}
+          Unread
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="mark-all-btn"
+        *ngIf="getUnreadCount() > 0"
+        (click)="markAllAsRead()"
+      >
+
+        <i class="bi bi-check2-all"></i>
+
+        Mark All Read
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- Success -->
+
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success"
+  >
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    {{ successMessage }}
+
+  </div>
+
+
+  <!-- Error -->
+
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger"
+  >
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- Filters -->
+
+  <div class="filter-card">
+
+    <button
+      type="button"
+      class="filter-btn"
+      [class.active]="activeFilter === 'all'"
+      (click)="setFilter('all')"
+    >
+
+      All
+
+      <span>
+        {{ notifications.length }}
+      </span>
+
+    </button>
+
+
+    <button
+      type="button"
+      class="filter-btn"
+      [class.active]="activeFilter === 'unread'"
+      (click)="setFilter('unread')"
+    >
+
+      Unread
+
+      <span>
+        {{ getUnreadCount() }}
+      </span>
+
+    </button>
+
+
+    <button
+      type="button"
+      class="filter-btn"
+      [class.active]="activeFilter === 'read'"
+      (click)="setFilter('read')"
+    >
+
+      Read
+
+      <span>
+        {{ notifications.length - getUnreadCount() }}
+      </span>
+
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  <div
+    *ngIf="loading"
+    class="state-card"
+  >
+
+    <div class="spinner-border"></div>
+
+    <p>
+      Loading notifications...
+    </p>
+
+  </div>
+
+
+  <!-- Notifications -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredNotifications.length > 0
+    "
+    class="notifications-card"
+  >
+
+    <div
+      class="notification-item"
+      *ngFor="
+        let notification of filteredNotifications;
+        trackBy: trackByNotification
+      "
+      [class.unread]="
+        !isRead(notification)
+      "
+      (click)="markAsRead(notification)"
+    >
+
+      <!-- Icon -->
+
+      <div
+        class="notification-icon"
+        [ngClass]="
+          getNotificationClass(notification)
+        "
+      >
+
+        <i
+          [class]="
+            getNotificationIcon(notification)
+          "
+        ></i>
+
+      </div>
+
+
+      <!-- Content -->
+
+      <div class="notification-content">
+
+        <div class="notification-top">
+
+          <h5>
+            {{
+              notification.title ||
+              'Notification'
+            }}
+          </h5>
+
+          <span class="notification-time">
+
+            {{
+              getNotificationDate(
+                notification
+              )
+            }}
+
+          </span>
+
+        </div>
+
+
+        <p>
+          {{
+            notification.message ||
+            'You have a new notification.'
+          }}
+        </p>
+
+
+        <div
+          *ngIf="!isRead(notification)"
+          class="unread-label"
+        >
+
+          <span></span>
+
+          Unread
+
+        </div>
+
+      </div>
+
+
+      <!-- Read indicator -->
+
+      <div
+        class="read-indicator"
+        *ngIf="!isRead(notification)"
+      >
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Empty -->
+
+  <div
+    *ngIf="
+      !loading &&
+      filteredNotifications.length === 0
+    "
+    class="empty-state"
+  >
+
+    <div class="empty-icon">
+
+      <i class="bi bi-bell-slash"></i>
+
+    </div>
+
+
+    <h4>
+      No Notifications
+    </h4>
+
+
+    <p>
+      You're all caught up.
+      New placement activities
+      will appear here.
+    </p>
+
+  </div>
+
+</div>
